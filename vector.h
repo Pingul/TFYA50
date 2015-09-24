@@ -18,6 +18,9 @@ class Vector3
 
 Vector3 operator+(const Vector3& lhs, const Vector3& rhs);
 Vector3 operator-(const Vector3& lhs, const Vector3& rhs);
+Vector3 operator*(double a, const Vector3&);
+Vector3 operator*(const Vector3&, double a);
+Vector3 operator/(const Vector3&, double a);
 double operator*(const Vector3& lhs, const Vector3& rhs); // dot product
 
 std::ostream& operator<<(std::ostream&, const Vector3&);
