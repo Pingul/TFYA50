@@ -15,7 +15,7 @@ Vector3 operator*(const Vector3& vec, double a)
 Vector3 operator/(const Vector3& vec, double a)
 {
 	if (a == 0.0)
-		throw std::runtime_error{"division by zero"};
+		throw std::runtime_error{"division by zero"}; // Not neccessarily desirable
 	return (1/a)*vec;
 }
 

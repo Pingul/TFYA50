@@ -1,10 +1,12 @@
 #ifndef _SIMULATION_
 #define _SIMULATION_
 
+class Lattice;
+
 class Simulation
 {
 	public:
-		Simulation() = default;
+		Simulation();
 		~Simulation() = default;
 
 		void run();
@@ -15,11 +17,14 @@ class Simulation
 		// MDBox box;
 		int measureDataLogFrequency;
 		// List of Measure:s
-		bool saveVisualizationData{false);
+		bool saveVisualizationData{false};
 		int visualizationLogFrequency;
 		// Material material
-		// Lattice lattice
 		double cutoffDistance;
+
+		Lattice* lattice;
+
+		void setup();
 };
 
 #endif

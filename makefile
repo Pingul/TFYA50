@@ -1,9 +1,9 @@
 CCC = gcc
 CPPFLAGS = -Wall -Wpedantic -I/opt/local/include/ -std=c++11
 FRAMEWORKS = -lstdc++
-DEPS = vector.h
+DEPS = vector.h atom.h simulation.h mdbox.h lattice.h
 
-main: vector.cc
+main: vector.cc atom.cc simulation.cc mdbox.cc lattice.cc
 	$(CCC) $(CPPFLAGS) $(FRAMEWORKS) -o main $^
 
 %.o: %.cc $(DEPS)
