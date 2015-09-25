@@ -6,6 +6,8 @@
 class Vector3
 {
 	public:
+		static Vector3 ONES() { return Vector3{1.0, 1.0, 1.0}; }
+
 		Vector3() = default;
 		Vector3(double xp, double yp, double zp) 
 			: x{xp}, y{yp}, z{zp} {}

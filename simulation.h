@@ -1,28 +1,35 @@
 #ifndef _SIMULATION_
 #define _SIMULATION_
 
+#include "vector.h"
+
 class Lattice;
+class MDBox;
+class Material;
 
 class Simulation
 {
+	friend MDBox;
+
 	public:
 		Simulation();
-		~Simulation() = default;
+		~Simulation();
 
 		void run();
 
 	private:
-		int timesteps;
-		int timestepLength;
-		// MDBox box;
-		int measureDataLogFrequency;
-		// List of Measure:s
+		int timesteps; 
+		double timestepLength; // in femtoseconds
 		bool saveVisualizationData{false};
-		int visualizationLogFrequency;
-		// Material material
-		double cutoffDistance;
+		int visualizationLogRate; // every x femtosecond
+		int measureDataLogRate; // every x femtosecond
+		double cutoffDistance; // in Ångström
+		Vector3 dimensions; // in Unit cells
 
 		Lattice* lattice;
+		MDBox* box;
+		Material* material;
+		// List of Measure:s
 
 		void setup();
 };
