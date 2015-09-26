@@ -1,0 +1,24 @@
+# definition of a settingsfile
+
+# Number of timesteps
+timesteps = 100
+timestepLength = 1 # The timestep is measured in femtoseconds
+
+# Visualization
+saveVisualizationData = 0 # boolean
+visualizationLogRate = 100 # Save data every x femtosecond
+
+measureDataLogRate = 10 # every x femtosecond
+cutoffDistance = 5.2 # in Ångström
+
+thermostat = 0 # boolean
+goalTemperature = 200 # Kelvin
+
+initialTemperature = 150 # Kelvin
+
+dimensions.x = 2 # in Unit cells
+dimensions.y = 2
+dimensions.z = 2
+
+lattice = FCC
+material = X
