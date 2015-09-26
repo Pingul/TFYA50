@@ -20,7 +20,7 @@ class MDBox
 		void updatePositionsAndVelocities();
 
 	private:
-		const Simulation& simulation; // Accessing a lot of Simulation variables
+		const Simulation& simulation; // We will need to access a lot of Simulation variables
 		Vector3 dimensions;
 		std::vector<Atom*> atoms;
 		std::vector<std::vector<Atom*>> verletList;
@@ -30,6 +30,7 @@ class MDBox
 		void setInitialVelocities(double temperature);
 
 		void TEST_createInitialAtoms(const Lattice&);
+		void TEST_setInitialVelocities(double temperature);
 };
 
 #endif
