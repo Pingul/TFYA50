@@ -21,6 +21,22 @@ MDBox::MDBox(Simulation& sim) : simulation{sim}
 void MDBox::createInitialAtoms(const Lattice& lattice)
 {
 	// DAVIDE
+	// Atom* atom1 = new Atom();
+	// atom1->setPosition(Vector3{1, 2, 3});
+	// for (int x = 0; x < dimensions.x; ++x)
+	// {
+			// for (auto& position : lattice.atomPositons)
+			// {
+			// 		position == Vector3
+			// }
+	// }
+
+	// Pseudoalgorithm
+	// for all the dimensions:
+	// 	for all atoms in a unit cell in the lattice:
+	// 		create a new atom
+	// 		push is back the container 'atoms'
+	// atoms.push_back(atom1));
 }
 
 void MDBox::TEST_createInitialAtoms(const Lattice& lattice)
