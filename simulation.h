@@ -13,7 +13,7 @@ class Simulation
 	friend MDBox;
 
 	public:
-		Simulation(const char* setFile = "settingsfile.set");
+		Simulation(const char* setFile = "../../settings/default.set");
 		~Simulation();
 
 		void run();
