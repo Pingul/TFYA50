@@ -6,7 +6,7 @@ int main()
 {
 	try
 	{
-		Simulation sim{"../../settingsfile.set"};
+		Simulation sim{};
 	}
 	catch (const std::exception& e)
 	{
@@ -14,6 +14,7 @@ int main()
 		std::cout << "exiting" << std::endl;
 	}
 
+	// Press enter to quit
 	std::cin.ignore();
 
 	return 0;
