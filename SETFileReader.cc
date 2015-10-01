@@ -68,15 +68,17 @@ void SETFileReader::readFile(const char* file, std::map<std::string, double>& nb
 	{
 		while (getline(simFile, line))
 		{
-			std::string trimmedLine{trim(strip(line))};
+			std::string trimmedLine{ trim(strip(line)) };
 			if (trimmedLine.empty())
 				continue;
 
 			if (isStatement(trimmedLine))
 				extractStatement(trimmedLine, nbrSettings, strSettings);
 			else
-				throw std::runtime_error{"Could not parse '" + line + "'"};
+				throw std::runtime_error{ "Could not parse '" + line + "'" };
 		}
 		simFile.close();
 	}
+	else
+		throw std::runtime_error{ "Could not open settings file" };
 }

@@ -2,6 +2,7 @@
 #define _SIMULATION_
 
 #include "vector.h"
+#include <string>
 
 class Lattice;
 class MDBox;
@@ -12,7 +13,7 @@ class Simulation
 	friend MDBox;
 
 	public:
-		Simulation();
+		Simulation(const char* setFile = "settingsfile.set");
 		~Simulation();
 
 		void run();
@@ -34,8 +35,7 @@ class Simulation
 		Material* material{nullptr};
 		// List of Measure:s
 
-		void setup();
-		void initSettings();
+		void initSettings(const char*);
 		void validateSettings();
 };
 

@@ -12,25 +12,20 @@
 #include <exception>
 
 
-Simulation::Simulation()
+Simulation::Simulation(const char* setFile)
 {
 	Random::setup();
-	setup();
-}
-
-void Simulation::setup()
-{
-	initSettings();
+	initSettings(setFile);
 	validateSettings();
 	box = new MDBox(*this);
 }
 
-void Simulation::initSettings()
+void Simulation::initSettings(const char* setFile)
 {
 	SETFileReader reader{};
 	std::map<std::string, double> nbrSettings;
 	std::map<std::string, std::string> strSettings;
-	reader.readFile("settingsfile.set", nbrSettings, strSettings);
+	reader.readFile(setFile, nbrSettings, strSettings);
 
 	for (auto& nbrSetting : nbrSettings)
 	{

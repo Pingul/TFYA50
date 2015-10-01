@@ -1,13 +1,20 @@
 #include "simulation.h"
 #include <iostream>
+#include <exception>
 
 int main()
 {
-	std::cout << "main: started" << std::endl;
+	try
+	{
+		Simulation sim{"../../settingsfile.set"};
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "ERROR: " << e.what() << std::endl;
+		std::cout << "exiting" << std::endl;
+	}
 
-	Simulation sim{};
-
-	std::cout << "main: finished" << std::endl;
+	std::cin.ignore();
 
 	return 0;
 }
