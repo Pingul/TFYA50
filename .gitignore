@@ -1,0 +1,13 @@
+# All debug folders
+Debug
+
+# VS solution extensions
+*.sdf
+*.filters
+*.user
+*.opensdf
+.vs
+
+x86
+x64
+x32
