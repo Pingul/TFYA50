@@ -14,7 +14,7 @@ int main()
 		std::cout << "exiting" << std::endl;
 	}
 
-	// Press enter to quit
+	// press enter to quit
 	std::cin.ignore();
 
 	return 0;
