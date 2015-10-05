@@ -8,7 +8,7 @@
 
 MDBox::MDBox(Simulation& sim) : simulation{sim}
 {
-	TEST_createInitialAtoms(*simulation.lattice);
+	createInitialAtoms(*simulation.lattice);
 	TEST_setInitialVelocities(simulation.initialTemperature);
 
 	// Testing purpose
@@ -20,23 +20,22 @@ MDBox::MDBox(Simulation& sim) : simulation{sim}
 
 void MDBox::createInitialAtoms(const Lattice& lattice)
 {
-	// DAVIDE
-	// Atom* atom1 = new Atom();
-	// atom1->setPosition(Vector3{1, 2, 3});
-	// for (int x = 0; x < dimensions.x; ++x)
-	// {
-			// for (auto& position : lattice.atomPositons)
-			// {
-			// 		position == Vector3
-			// }
-	// }
+	for (auto& position : lattice.atomPositions)
+	{
+		for (int iii = 0; iii < simulation.dimensions.x; ++iii)
+		{
+			for (int jjj = 0; jjj < simulation.dimensions.y; ++jjj)
+			{
+				for (int kkk = 0; kkk < simulation.dimensions.z; ++kkk)
+				{
+					Atom* atom = new Atom();
+					atom->setPosition(lattice.latticeConstant*position + lattice.latticeConstant*Vector3{ static_cast<double>(iii), static_cast<double>(jjj), static_cast<double>(kkk) });
+					atoms.push_back(atom);
+				}
+			}
+		}
+	}
 
-	// Pseudoalgorithm
-	// for all the dimensions:
-	// 	for all atoms in a unit cell in the lattice:
-	// 		create a new atom
-	// 		push is back the container 'atoms'
-	// atoms.push_back(atom1));
 }
 
 void MDBox::TEST_createInitialAtoms(const Lattice& lattice)
