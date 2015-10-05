@@ -12,9 +12,10 @@ MDBox::MDBox(Simulation& sim) : simulation{sim}
 	TEST_setInitialVelocities(simulation.initialTemperature);
 
 	// Testing purpose // just adding text
+	int index = 0;
 	for (auto& atom : atoms)
 	{
-		std::cout << "atom:\n\t at " << atom->at() << "\n\t v " << atom->velocity() << std::endl; 
+		std::cout << index++ << " - atom:\n\t at " << atom->at() << "\n\t v " << atom->velocity() << std::endl; 
 	}	
 }
 
@@ -62,6 +63,26 @@ void MDBox::setInitialAtomOffsets()
 }
 
 void MDBox::setInitialVelocities(double temperature)
+{
+
+}
+
+void MDBox::updateVerletList()
+{
+
+}
+
+void MDBox::updateForces(const Material& material)
+{
+
+}
+
+void MDBox::updatePositions()
+{
+
+}
+
+void MDBox::updateVelocities()
 {
 
 }

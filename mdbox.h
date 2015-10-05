@@ -7,6 +7,7 @@
 class Lattice;
 class Vector3;
 class Simulation;
+class Material;
 
 class MDBox
 {
@@ -16,7 +17,7 @@ class MDBox
 		~MDBox();
 
 		void updateVerletList();
-		void updateForces();
+		void updateForces(const Material&);
 		void updatePositions();
 		void updateVelocities();
 

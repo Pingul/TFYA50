@@ -145,9 +145,17 @@ void Simulation::validateSettings()
 	}
 }
 
-void run()
+void Simulation::run()
 {
-
+	for (int i = 0; i < timesteps; ++i)
+	{
+		double t = i*timestepLength;
+		if (i % verletListUpdateFrequency == 0)
+			box->updateVerletList();
+		box->updatePositions();
+		box->updateForces(*material);
+		box->updateVelocities();
+	}
 }
 
 Simulation::~Simulation()

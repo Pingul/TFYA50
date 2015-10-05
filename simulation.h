@@ -32,7 +32,7 @@ class Simulation
 		Vector3 dimensions{-1, -1, -1}; // in Unit cells
 
 		// Internal parameters
-		int currentTimestep{-1};
+		//int currentTimestep{-1};
 		int verletListUpdateFrequency{50};
 
 		Lattice* lattice{nullptr};
