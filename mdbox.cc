@@ -74,3 +74,9 @@ MDBox::~MDBox()
 		delete atom;
 	}
 }
+
+void MDBox::updatePositions()
+{
+
+
+}
