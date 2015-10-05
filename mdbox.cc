@@ -10,6 +10,7 @@ MDBox::MDBox(Simulation& sim) : simulation{sim}
 {
 	TEST_createInitialAtoms(*simulation.lattice);
 	TEST_setInitialVelocities(simulation.initialTemperature);
+	updateVerletList();
 
 	// Testing purpose // just adding text
 	for (auto& atom : atoms)
@@ -37,6 +38,16 @@ void MDBox::createInitialAtoms(const Lattice& lattice)
 	// 		create a new atom
 	// 		push is back the container 'atoms'
 	// atoms.push_back(atom1));
+}
+
+void MDBox::updateVerletList()
+{
+	
+
+	for (int i = 0; i < 10; i++)
+	{
+
+	}
 }
 
 void MDBox::TEST_createInitialAtoms(const Lattice& lattice)
