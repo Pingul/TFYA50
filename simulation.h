@@ -19,6 +19,7 @@ class Simulation
 		void run();
 
 	private:
+		// Parameters needing initialization
 		int timesteps{-1}; 
 		double timestepLength; // in femtoseconds
 		bool saveVisualizationData{false};
@@ -29,6 +30,10 @@ class Simulation
 		bool thermostat{false};
 		double goalTemperature; // Kelvin
 		Vector3 dimensions{-1, -1, -1}; // in Unit cells
+
+		// Internal parameters
+		int currentTimestep{-1};
+		int verletListUpdateFrequency{50};
 
 		Lattice* lattice{nullptr};
 		MDBox* box;

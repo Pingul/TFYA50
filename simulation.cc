@@ -27,6 +27,24 @@ void Simulation::initSettings(const char* setFile)
 	std::map<std::string, std::string> strSettings;
 	reader.readFile(setFile, nbrSettings, strSettings);
 
+	for (auto& strSetting : strSettings)
+	{
+		std::string variable = strSetting.first;
+		std::string value = strSetting.second;
+		if (variable.compare("lattice") == 0)
+		{
+			if (value.compare("FCC") == 0)
+				lattice = Lattice::createFCCLattice();
+			else
+				throw std::runtime_error{ "Lattice '" + value + "' does not exist" };
+		}
+		else if (variable.compare("material") == 0)
+		{
+			// We have no special materials atm
+			material = Material::TESTMaterial();
+		}
+	}
+
 	for (auto& nbrSetting : nbrSettings)
 	{
 		std::string variable = nbrSetting.first;
@@ -55,25 +73,10 @@ void Simulation::initSettings(const char* setFile)
 			dimensions.y = std::round(value);
 		else if (variable.compare("dimensions.z") == 0)
 			dimensions.z = std::round(value);
+		else if (variable.compare("latticeConstant") == 0)
+			lattice->latticeConstant = value; // Dependent on the lattice that we create earlier
 		else
 			throw std::runtime_error{"Could not find a match for setting '" + variable + "'"};
-	}
-
-	for (auto& strSetting : strSettings)
-	{
-		std::string variable = strSetting.first;
-		std::string value = strSetting.second;
-		if (variable.compare("lattice") == 0)
-		{
-			if (value.compare("FCC") == 0)
-				lattice = Lattice::createFCCLattice();
-			else
-				throw std::runtime_error{"Lattice '" + value + "' does not exist"};
-		}
-		else if (variable.compare("material") == 0)
-		{
-			material = Material::TESTMaterial();
-		}
 	}
 }
 
@@ -116,6 +119,11 @@ void Simulation::validateSettings()
 		errors++;
 		variables.push_back("lattice");	
 	}
+	else if (lattice->latticeConstant <= 0.0) 
+	{
+		errors++;
+		variables.push_back("latticeConstant");
+	}
 	if (material == nullptr)
 	{
 		errors++;
@@ -135,6 +143,11 @@ void Simulation::validateSettings()
 	{
 		std::cout << "simulation initialization OK" << std::endl;
 	}
+}
+
+void run()
+{
+
 }
 
 Simulation::~Simulation()
