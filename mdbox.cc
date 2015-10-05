@@ -11,7 +11,7 @@ MDBox::MDBox(Simulation& sim) : simulation{sim}
 	TEST_createInitialAtoms(*simulation.lattice);
 	TEST_setInitialVelocities(simulation.initialTemperature);
 
-	// Testing purpose
+	// Testing purpose // just adding text
 	for (auto& atom : atoms)
 	{
 		std::cout << "atom:\n\t at " << atom->at() << "\n\t v " << atom->velocity() << std::endl; 
