@@ -10,7 +10,7 @@ class Lattice
 		static Lattice* createFCCLattice();
 
 		std::vector<Vector3> atomPositions; // For a unit cell in the pattern
-		double latticeConstant{ 1.0 };
+		double latticeConstant{1.0};
 };
 
 #endif
