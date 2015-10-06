@@ -6,17 +6,21 @@
 
 #include <iostream>
 
-MDBox::MDBox(Simulation& sim) : simulation{sim}
+void DEBUG_PRINT_ATOMS(const std::vector<Atom*>& atoms)
 {
-	createInitialAtoms(*simulation.lattice);
-	TEST_setInitialVelocities(simulation.initialTemperature);
-
 	// Testing purpose // just adding text
 	int index = 0;
 	for (auto& atom : atoms)
 	{
-		std::cout << index++ << " - atom:\n\t at " << atom->at() << "\n\t v " << atom->velocity() << std::endl; 
-	}	
+		std::cout << index++ << " - atom:\n\t at " << atom->at() << "\n\t v " << atom->velocity() << std::endl;
+	}
+}
+
+MDBox::MDBox(Simulation& sim) : simulation{sim}
+{
+	createInitialAtoms(*simulation.lattice);
+	setInitialVelocities(simulation.initialTemperature);
+	//DEBUG_PRINT_ATOMS(atoms);
 }
 
 void MDBox::createInitialAtoms(const Lattice& lattice)
@@ -39,32 +43,13 @@ void MDBox::createInitialAtoms(const Lattice& lattice)
 
 }
 
-void MDBox::TEST_createInitialAtoms(const Lattice& lattice)
-{
-	for (int i = 0; i < 10; ++i)
-	{
-		Atom* atom = new Atom();
-		atom->setPosition(Vector3::ONES()/(i + 1));
-		atoms.push_back(atom);
-	}
-}
-
-void MDBox::TEST_setInitialVelocities(double temperature)
-{
-	for (auto& atom : atoms)
-	{
-		atom->setVelocity(Vector3{Random::next(), Random::next(), Random::next()});
-	}
-}
-
-void MDBox::setInitialAtomOffsets()
-{
-
-}
-
 void MDBox::setInitialVelocities(double temperature)
 {
-
+	// Not implemented fully
+	for (auto& atom : atoms)
+	{
+		atom->setVelocity(Vector3{ Random::next(), Random::next(), Random::next() });
+	}
 }
 
 void MDBox::updateVerletList()

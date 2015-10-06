@@ -28,11 +28,7 @@ class MDBox
 		std::vector<std::vector<Atom*>> verletList;
 
 		void createInitialAtoms(const Lattice&);
-		void setInitialAtomOffsets();
 		void setInitialVelocities(double temperature);
-
-		void TEST_createInitialAtoms(const Lattice&);
-		void TEST_setInitialVelocities(double temperature);
 };
 
 #endif
