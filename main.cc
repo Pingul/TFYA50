@@ -7,6 +7,8 @@ int main()
 	try
 	{
 		Simulation sim{};
+		sim.run();
+		std::cout << "simulation completed" << std::endl;
 	}
 	catch (const std::exception& e)
 	{

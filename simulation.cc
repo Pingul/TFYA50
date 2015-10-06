@@ -50,19 +50,19 @@ void Simulation::initSettings(const char* setFile)
 		std::string variable = nbrSetting.first;
 		double value = nbrSetting.second;
 		if (variable.compare("timesteps") == 0)
-			timesteps = std::round(value);
+			timesteps = (int)std::round(value);
 		else if (variable.compare("timestepLength") == 0)
-			timestepLength = std::round(value);
+			timestepLength = (int)std::round(value);
 		else if (variable.compare("saveVisualizationData") == 0)
-			saveVisualizationData = value;
+			saveVisualizationData = (bool)value;
 		else if (variable.compare("visualizationLogRate") == 0)
-			visualizationLogRate = std::round(value);
+			visualizationLogRate = (int)std::round(value);
 		else if (variable.compare("measureDataLogRate") == 0)
-			measureDataLogRate = std::round(value);
+			measureDataLogRate = (int)std::round(value);
 		else if (variable.compare("cutoffDistance") == 0)
 			cutoffDistance = value;
 		else if (variable.compare("thermostat") == 0)
-			thermostat = value;
+			thermostat = (bool)value;
 		else if (variable.compare("goalTemperature") == 0)
 			goalTemperature = value;
 		else if (variable.compare("initialTemperature") == 0)
@@ -155,6 +155,11 @@ void Simulation::run()
 		box->updatePositions();
 		box->updateForces(*material);
 		box->updateVelocities();
+		if (i % 10 == 0)
+		{
+			double percentFinished = ((double)i/(double)timesteps)*100.0;
+			std::cout << "completed " << i << " out of " << timesteps << " steps (" << percentFinished << "%)." << std::endl;
+		}
 	}
 }
 
