@@ -18,6 +18,10 @@ void DEBUG_PRINT_ATOMS(const std::vector<Atom*>& atoms)
 
 MDBox::MDBox(Simulation& sim) : simulation{sim}
 {
+	// We call init functions here using the simulation as an argument to better separate the 
+	// implementation details from the parameters (it is not necessarily good to have a Simulation&
+	// as access to all parameters, and might be changed in the future), as well as making each
+	// more independent.
 	createInitialAtoms(*simulation.lattice);
 	setInitialVelocities(simulation.initialTemperature);
 	//DEBUG_PRINT_ATOMS(atoms);
