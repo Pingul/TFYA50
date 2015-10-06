@@ -1,7 +1,6 @@
 #ifndef _POTENTIAL_H_
 #define _POTENTIAL_H_
 
-
 class Atom;
 class Vector3;
 
