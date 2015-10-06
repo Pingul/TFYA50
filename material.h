@@ -1,6 +1,8 @@
 #ifndef _MATERIAL_H_
 #define _MATERIAL_H_
 
+class AtomicPotential;
+
 class Material
 {
 	public:
@@ -13,7 +15,7 @@ class Material
 
 		double mass; // kg
 		double radius; // Ångström
-		// Potential
+		AtomicPotential* potential{nullptr};
 };
 
 #endif
