@@ -100,3 +100,17 @@ void MDBox::updatePositions()
 
 }
 
+void MDBox::updateVelocities()
+{
+	for (auto& atom : atoms)
+	{
+		Vector3 oldvelocity = atom->velocity();
+		Vector3 newforce = atom->totalForce();
+		Vector3 oldforce = atom->forcePreviousTimestep();
+		double mass = 1;
+		double deltatime = MDBox::timestepLength();
+		Vector3 newvelocity = oldvelocity + (deltatime / 2)(oldforce + newforce) / mass;
+		atom->setVelocity(newvelocity);
+		atoms.push_back(atom);
+	}
+}
