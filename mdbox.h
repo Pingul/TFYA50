@@ -19,7 +19,6 @@ class MDBox
 		void updateForces();
 		void updatePositions();
 		void updateVelocities();
-		double timestepLength();
 
 	private:
 		const Simulation& simulation; // We will need to access a lot of Simulation variables

@@ -12,7 +12,12 @@ MDBox::MDBox(Simulation& sim) : simulation{sim}
 {
 	createInitialAtoms(*simulation.lattice);
 	TEST_setInitialVelocities(simulation.initialTemperature);
+	for (auto& atom : atoms)
+	{
+		std::cout << "atom:\n\t at " << atom->at() << "\n\t v " << atom->velocity() << std::endl;
+	}
 	updatePositions();
+	updateVelocities();
 
 	// Testing purpose // just adding text
 	for (auto& atom : atoms)
@@ -23,13 +28,13 @@ MDBox::MDBox(Simulation& sim) : simulation{sim}
 
 void MDBox::createInitialAtoms(const Lattice& lattice)
 {
-	for (auto& position : lattice.atomPositions)
+	for (int iii = 0; iii < simulation.dimensions.x; ++iii)
 	{
-		for (int iii = 0; iii < simulation.dimensions.x; ++iii)
+		for (int jjj = 0; jjj < simulation.dimensions.y; ++jjj)
 		{
-			for (int jjj = 0; jjj < simulation.dimensions.y; ++jjj)
+			for (int kkk = 0; kkk < simulation.dimensions.z; ++kkk)
 			{
-				for (int kkk = 0; kkk < simulation.dimensions.z; ++kkk)
+				for (auto& position : lattice.atomPositions)
 				{
 					Atom* atom = new Atom();
 					atom->setPosition(lattice.latticeConstant*position + lattice.latticeConstant*Vector3{ static_cast<double>(iii), static_cast<double>(jjj), static_cast<double>(kkk) });
@@ -78,11 +83,6 @@ MDBox::~MDBox()
 	}
 }
 
-double MDBox::timestepLength()
-{
-	return simulation.timestepLength;
-}
-
 void MDBox::updatePositions()
 {
 	for (auto& atom : atoms)
@@ -90,27 +90,28 @@ void MDBox::updatePositions()
 		Vector3 oldposition = atom->at();
 		Vector3 oldvelocity = atom->velocity();
 		Vector3 oldforce = atom->totalForce();
-		double  deltatime = MDBox::timestepLength();
-		double mass = 1;
+		double  deltatime = simulation.timestepLength;
+		double mass = simulation.material->mass;
 		Vector3 newposition = oldposition + oldvelocity * deltatime + (oldforce/mass)*(deltatime/2)*deltatime;
 		atom->setPosition(newposition);
 		atom->setForcePreviousTimestep(oldforce);
-		atoms.push_back(atom);
 	}
-
 }
 
 void MDBox::updateVelocities()
 {
+	Vector3 sumvelocity = { 0.0, 0.0, 0.0 };
+	double sumvelocity2 = 0.0;
 	for (auto& atom : atoms)
 	{
 		Vector3 oldvelocity = atom->velocity();
 		Vector3 newforce = atom->totalForce();
 		Vector3 oldforce = atom->forcePreviousTimestep();
-		double mass = 1;
-		double deltatime = MDBox::timestepLength();
-		Vector3 newvelocity = oldvelocity + (deltatime / 2)(oldforce + newforce) / mass;
+		double mass = simulation.material->mass;
+		double  deltatime = simulation.timestepLength;
+		Vector3 newvelocity = oldvelocity + (deltatime/2)*(oldforce + newforce)/mass;
 		atom->setVelocity(newvelocity);
-		atoms.push_back(atom);
+		sumvelocity = sumvelocity + newvelocity;
+		sumvelocity2 = sumvelocity2 + newvelocity*newvelocity;
 	}
 }
