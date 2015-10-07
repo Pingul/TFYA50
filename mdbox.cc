@@ -3,6 +3,7 @@
 #include "vector.h"
 #include "simulation.h"
 #include "random.h"
+#include "atom.h"
 
 #include <iostream>
 
@@ -75,8 +76,20 @@ MDBox::~MDBox()
 	}
 }
 
+
 void MDBox::updatePositions()
 {
-
+	for (auto& atom : atoms)
+	{
+		Vector3 oldposition = atom->at();
+		Vector3 oldvelocity = atom->velocity();
+		Vector3 oldforce = atom->totalForce();
+		double  deltatime = Simulation::timestepLength;
+		Vector3 position = atom.at + Atom->velocity()*Simulation::timestepLength+Atom::totalForce*Simulation::timestepLength*Simulation::timestepLength/(2*Material->mass) ;
+		atom->setPosition(position);
+		Vector3 forceprevioustimestep = Atom::totalForce;
+		atom->setForcePreviousTimestep(Atom::totalForce);
+		atoms.push_back(atom);
+	}
 
 }
