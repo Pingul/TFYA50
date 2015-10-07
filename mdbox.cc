@@ -4,6 +4,7 @@
 #include "simulation.h"
 #include "random.h"
 #include "atom.h"
+#include "material.h"
 
 #include <iostream>
 
@@ -11,6 +12,7 @@ MDBox::MDBox(Simulation& sim) : simulation{sim}
 {
 	createInitialAtoms(*simulation.lattice);
 	TEST_setInitialVelocities(simulation.initialTemperature);
+	updatePositions();
 
 	// Testing purpose // just adding text
 	for (auto& atom : atoms)
@@ -76,6 +78,10 @@ MDBox::~MDBox()
 	}
 }
 
+double MDBox::timestepLength()
+{
+	return simulation.timestepLength;
+}
 
 void MDBox::updatePositions()
 {
@@ -84,12 +90,13 @@ void MDBox::updatePositions()
 		Vector3 oldposition = atom->at();
 		Vector3 oldvelocity = atom->velocity();
 		Vector3 oldforce = atom->totalForce();
-		double  deltatime = Simulation::timestepLength;
-		Vector3 position = atom.at + Atom->velocity()*Simulation::timestepLength+Atom::totalForce*Simulation::timestepLength*Simulation::timestepLength/(2*Material->mass) ;
-		atom->setPosition(position);
-		Vector3 forceprevioustimestep = Atom::totalForce;
-		atom->setForcePreviousTimestep(Atom::totalForce);
+		double  deltatime = MDBox::timestepLength();
+		double mass = 1;
+		Vector3 newposition = oldposition + oldvelocity * deltatime + (oldforce/mass)*(deltatime/2)*deltatime;
+		atom->setPosition(newposition);
+		atom->setForcePreviousTimestep(oldforce);
 		atoms.push_back(atom);
 	}
 
 }
+
