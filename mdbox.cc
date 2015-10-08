@@ -11,7 +11,7 @@
 MDBox::MDBox(Simulation& sim) : simulation{sim}
 {
 	createInitialAtoms(*simulation.lattice);
-	TEST_setInitialVelocities(simulation.initialTemperature);
+	setInitialVelocities(simulation.initialTemperature);
 	for (auto& atom : atoms)
 	{
 		std::cout << "atom:\n\t at " << atom->at() << "\n\t v " << atom->velocity() << std::endl;
@@ -66,12 +66,38 @@ void MDBox::TEST_setInitialVelocities(double temperature)
 
 void MDBox::setInitialAtomOffsets()
 {
-
+	
 }
 
 void MDBox::setInitialVelocities(double temperature)
 {
+	Vector3 sumvelocity = { 0.0, 0.0, 0.0 };
+	double sumvelocity2 = 0;
+	int index = 1;
 
+	for (auto& atom : atoms)
+	{
+		atom->setVelocity(Vector3{ Random::next(), Random::next(), Random::next() });
+		Vector3 velocity = atom->velocity();
+		sumvelocity = sumvelocity + velocity;
+		sumvelocity2 = sumvelocity2 + velocity*velocity;
+		index++;
+	}
+
+	sumvelocity = sumvelocity / static_cast<double>(index);		//center of mass velocity
+	sumvelocity2 = sumvelocity2 / static_cast<double>(index);	//mean squared velocity
+	double scalefactor = 1.0;
+	scalefactor = sqrt(3.0*(temperature /sumvelocity2));
+	std::cout << "center of mass velocity = " << sumvelocity << std::endl;
+	std::cout << "mean squared velocity = " << sumvelocity2 << std::endl;
+	std::cout << "temperature = " << temperature << std::endl;
+
+	for (auto& atom : atoms)
+	{
+		Vector3 velocity = atom->velocity();
+		velocity = (velocity - sumvelocity)*scalefactor;
+		atom->setVelocity(velocity);
+	}
 }
 
 
