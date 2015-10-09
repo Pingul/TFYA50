@@ -73,7 +73,7 @@ void MDBox::setInitialVelocities(double temperature)
 {
 	Vector3 sumvelocity = { 0.0, 0.0, 0.0 };
 	double sumvelocity2 = 0;
-	int index = 1;
+	int nbrAtoms = atoms.size();
 
 	for (auto& atom : atoms)
 	{
@@ -81,12 +81,11 @@ void MDBox::setInitialVelocities(double temperature)
 		Vector3 velocity = atom->velocity();
 		sumvelocity = sumvelocity + velocity;
 		sumvelocity2 = sumvelocity2 + velocity*velocity;
-		index++;
 	}
 
 	double kboltzmann = 1.38064852e-23;							// in m^2 kg s^-2 K^-1, need to be written somewhere else cause often useful
-	sumvelocity = sumvelocity / static_cast<double>(index);		//center of mass velocity
-	sumvelocity2 = sumvelocity2 / static_cast<double>(index);	//mean squared velocity
+	sumvelocity = sumvelocity / (double)nbrAtoms; 		//center of mass velocity
+	sumvelocity2 = sumvelocity2 / (double)nbrAtoms;	//mean squared velocity
 	double scalefactor = 1.0;
 	scalefactor = sqrt(3.0*(temperature /sumvelocity2)*(kboltzmann/simulation.material->mass));
 	std::cout << "center of mass velocity = " << sumvelocity << std::endl;
