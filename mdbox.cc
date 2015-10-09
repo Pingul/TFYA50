@@ -9,13 +9,13 @@
 
 #include <iostream>
 
-void DEBUG_PRINT_ATOMS(const std::vector<Atom*>& atoms)
+void MDBox::DEBUG_PRINT()
 {
 	// Testing purpose // just adding text
-	int index = 0;
-	for (auto& atom : atoms)
+
+	for (int i = 0; i < 1; i++)
 	{
-		std::cout << index++ << " - atom:\n\t at " << atom->at() << "\n\t v " << atom->velocity() << std::endl;
+		std::cout << i << " - atom:\n\t at " << atoms[i]->at() << "\n\t v " << atoms[i]->velocity() << std::endl;
 	}
 }
 
@@ -29,8 +29,8 @@ MDBox::MDBox(Simulation& sim) : simulation{sim}
 	createInitialAtoms(*simulation.lattice);
 	setInitialVelocities(simulation.initialTemperature);
 	//DEBUG_PRINT_ATOMS(atoms);
-	updatePositions();
-	updateVelocities();
+	//updatePositions();
+	//updateVelocities();
 }
 
 void MDBox::createInitialAtoms(const Lattice& lattice)
@@ -45,6 +45,7 @@ void MDBox::createInitialAtoms(const Lattice& lattice)
 				{
 					Atom* atom = new Atom();
 					atom->setPosition(lattice.latticeConstant*position + lattice.latticeConstant*Vector3{ (double)iii, (double)jjj, (double)kkk });
+					//atom->setForce(Vector3{ 1, 1, 1 });
 					atoms.push_back(atom);
 				}
 			}

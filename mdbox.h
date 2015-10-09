@@ -20,6 +20,7 @@ class MDBox
 		void updateForces(const Material&);
 		void updatePositions();
 		void updateVelocities();
+		void DEBUG_PRINT();
 
 	private:
 		const Simulation& simulation; // We will need to access a lot of Simulation variables
