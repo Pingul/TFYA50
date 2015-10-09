@@ -3,6 +3,7 @@
 #include "vector.h"
 #include "simulation.h"
 #include "random.h"
+#include "atom.h"
 
 #include <iostream>
 
@@ -42,10 +43,23 @@ void MDBox::createInitialAtoms(const Lattice& lattice)
 
 void MDBox::updateVerletList()
 {
-	
+	verletList.clear();
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < atoms.size(); ++i)
 	{
+		Atom* atom = atoms[i];
+		std::vector<Atom*> interactionList;
+
+		for (int j = i; j < atoms.size(); ++j)
+		{
+			Atom* nextAtom = atoms[j];
+			Vector3 vectorBetween = atom->at() - nextAtom->at();
+			double dotprod = vectorBetween*vectorBetween;
+
+			if (close enough)
+				interactionList.push_back(nextAtom);
+		}
+		verletList.push_back(interactionList);
 
 	}
 }
