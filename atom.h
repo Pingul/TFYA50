@@ -14,14 +14,17 @@ class Atom
 		Vector3 at();
 		Vector3 velocity();
 		Vector3 totalForce();
+		Vector3 forcePreviousTimestep();
 		void setPosition(const Vector3&);
 		void setVelocity(const Vector3&);
 		void setForce(const Vector3&);
+		void setForcePreviousTimestep(const Vector3&);
 
 	private:
 		Vector3 coordinates_{0, 0, 0}; // Ångström
 		Vector3 velocity_{0, 0, 0}; // m/s
 		Vector3 force_{0, 0, 0}; // N
+		Vector3 forceprevioustimestep_{ 0, 0, 0 }; // N
 
 };
 

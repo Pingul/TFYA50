@@ -134,6 +134,7 @@
     <ClInclude Include="..\..\lattice.h" />
     <ClInclude Include="..\..\material.h" />
     <ClInclude Include="..\..\mdbox.h" />
+    <ClInclude Include="..\..\physicalConstants.h" />
     <ClInclude Include="..\..\potential.h" />
     <ClInclude Include="..\..\random.h" />
     <ClInclude Include="..\..\SETFileReader.h" />
