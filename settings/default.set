@@ -1,7 +1,7 @@
 # definition of a settingsfile
 
 # Number of timesteps
-timesteps = 100
+timesteps = 1
 timestepLength = 1 # The timestep is measured in femtoseconds
 
 # Visualization
@@ -9,7 +9,7 @@ saveVisualizationData = 0 # boolean
 visualizationLogRate = 100 # Save data every x femtosecond
 
 measureDataLogRate = 10 # every x femtosecond
-cutoffDistance = 5.2 # in Ångström
+cutoffDistance = 1 # in Ångström
 
 thermostat = 0 # boolean
 goalTemperature = 200 # Kelvin
@@ -21,4 +21,5 @@ dimensions.y = 2
 dimensions.z = 2
 
 lattice = FCC
+latticeConstant = 1.0 # Ångström
 material = X
