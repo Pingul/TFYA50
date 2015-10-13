@@ -1,21 +1,21 @@
 #include "atom.h"
 
-Vector3 Atom::at()
+Vector3 Atom::at() const
 {
 	return coordinates_;
 }
 
-Vector3 Atom::velocity()
+Vector3 Atom::velocity() const
 {
 	return velocity_;
 }
 
-Vector3 Atom::totalForce()
+Vector3 Atom::totalForce() const
 {
 	return force_;
 }
 
-Vector3 Atom::forcePreviousTimestep()
+Vector3 Atom::forcePreviousTimestep() const
 {
 	return forceprevioustimestep_;
 }

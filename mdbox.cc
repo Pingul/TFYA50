@@ -15,7 +15,7 @@ void MDBox::DEBUG_PRINT()
 
 	for (int i = 0; i < 1; i++)
 	{
-		std::cout << i << " - atom:\n\t at " << atoms[i]->at() << "\n\t v " << atoms[i]->velocity() << std::endl;
+		std::cout << i << " - atom:\n\t at " << atoms[i]->at() << "\n\t v " << atoms[i]->velocity() << "\n\t F " << atoms[i]->totalForce() << std::endl;
 	}
 }
 
@@ -91,6 +91,26 @@ void MDBox::updateVerletList()
 
 void MDBox::updateForces(const Material& material)
 {
+	for (auto& atom : atoms)
+	{
+		atom->setForce({ 0.0, 0.0, 0.0 });
+	}
+
+	int atomIndex = 0;
+	for (auto& interactionList : verletList)
+	{
+		Atom* atom{ atoms[atomIndex] };
+
+		for (auto& interactingAtom : interactionList)
+		{
+			Vector3 totalForceAtom = atom->totalForce() - simulation.material->potential->interaction(*atom, *interactingAtom);
+			Vector3 totalForceInteractingAtom = interactingAtom->totalForce() + simulation.material->potential->interaction(*atom, *interactingAtom);
+
+			atom->setForce (totalForceAtom);
+			interactingAtom->setForce(totalForceInteractingAtom);
+		}
+		atomIndex++;
+	}
 	
 }
 
@@ -102,8 +122,24 @@ void MDBox::updatePositions()
 		Vector3 oldVelocity = atom->velocity();
 		Vector3 oldForce = atom->totalForce();
 		double  deltatime = simulation.timestepLength;
-		double mass = simulation.material->mass;
+		double mass = simulation.material->mass/ PHConstants::amuToefA;
 		Vector3 newPosition = oldPosition + oldVelocity * deltatime + (oldForce / mass)*(deltatime / 2)*deltatime;
+
+		if (newPosition.x < 0.0)
+			newPosition.x = newPosition.x + simulation.lattice->latticeConstant*dimensions.x;
+		else if (newPosition.x >= simulation.lattice->latticeConstant*dimensions.x)
+			newPosition.x = newPosition.x - simulation.lattice->latticeConstant*dimensions.x;
+
+		if (newPosition.y < 0.0)
+			newPosition.y = newPosition.y+ simulation.lattice->latticeConstant*dimensions.y;
+		else if (newPosition.y >= simulation.lattice->latticeConstant*dimensions.y)
+			newPosition.y = newPosition.y - simulation.lattice->latticeConstant*dimensions.y;
+
+		if (newPosition.z < 0.0)
+			newPosition.z = newPosition.z + simulation.lattice->latticeConstant*dimensions.z;
+		else if (newPosition.z >= simulation.lattice->latticeConstant*dimensions.z)
+			newPosition.z = newPosition.z - simulation.lattice->latticeConstant*dimensions.z;
+
 		atom->setPosition(newPosition);
 		atom->setForcePreviousTimestep(oldForce);
 	}
@@ -118,7 +154,7 @@ void MDBox::updateVelocities()
 		Vector3 oldVelocity = atom->velocity();
 		Vector3 newForce = atom->totalForce();
 		Vector3 oldForce = atom->forcePreviousTimestep();
-		double mass = simulation.material->mass;
+		double mass = simulation.material->mass/ PHConstants::amuToefA;
 		double  deltatime = simulation.timestepLength;
 		Vector3 newVelocity = oldVelocity + (deltatime / 2)*(oldForce + newForce) / mass;
 		atom->setVelocity(newVelocity);

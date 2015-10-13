@@ -21,5 +21,6 @@ dimensions.y = 2
 dimensions.z = 2
 
 lattice = FCC
-latticeConstant = 1.0 # Ångström
+latticeConstant = 5.256 # Ångström
 material = X
+material.mass = 
