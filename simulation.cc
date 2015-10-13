@@ -3,7 +3,8 @@
 #include "material.h"
 #include "mdbox.h"
 #include "random.h"
-#include "SETFileReader.h"
+#include "fileIO.h"
+#include "measure.h"
 
 #include <cmath>
 #include <map>
@@ -22,10 +23,11 @@ Simulation::Simulation(const char* setFile)
 
 void Simulation::initSettings(const char* setFile)
 {
-	SETFileReader reader{};
+	//SETFileReader reader{};
 	std::map<std::string, double> nbrSettings;
 	std::map<std::string, std::string> strSettings;
-	reader.readFile(setFile, nbrSettings, strSettings);
+	fileIO::SET::read(setFile, nbrSettings, strSettings);
+	//reader.readFile(setFile, nbrSettings, strSettings);
 
 	for (auto& strSetting : strSettings)
 	{
@@ -147,21 +149,24 @@ void Simulation::validateSettings()
 
 void Simulation::run()
 {
+	Measure* measure = new KineticEnergy();
 	for (int i = 0; i < timesteps; ++i)
 	{
 		double t = i*timestepLength;
 		if (i % verletListUpdateFrequency == 0)
 			box->updateVerletList();
-		box->DEBUG_PRINT();
+		//box->DEBUG_PRINT();
 		box->updatePositions();
 		box->updateForces(*material);
 		box->updateVelocities();
+		measure->calculate(t, *box);
 		if (i % 10 == 0)
 		{
 			double percentFinished = ((double)i/(double)timesteps)*100.0;
 			std::cout << "completed " << i << " out of " << timesteps << " steps (" << percentFinished << "%)." << std::endl;
 		}
 	}
+	measure->saveToFile("test.mdf");
 }
 
 Simulation::~Simulation()
