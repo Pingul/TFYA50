@@ -123,6 +123,7 @@
     <ClCompile Include="..\..\main.cc" />
     <ClCompile Include="..\..\material.cc" />
     <ClCompile Include="..\..\mdbox.cc" />
+    <ClCompile Include="..\..\measure.cc" />
     <ClCompile Include="..\..\potential.cc" />
     <ClCompile Include="..\..\random.cc" />
     <ClCompile Include="..\..\SETFileReader.cc" />
@@ -134,6 +135,7 @@
     <ClInclude Include="..\..\lattice.h" />
     <ClInclude Include="..\..\material.h" />
     <ClInclude Include="..\..\mdbox.h" />
+    <ClInclude Include="..\..\measure.h" />
     <ClInclude Include="..\..\physicalConstants.h" />
     <ClInclude Include="..\..\potential.h" />
     <ClInclude Include="..\..\random.h" />
