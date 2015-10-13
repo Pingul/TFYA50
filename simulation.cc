@@ -155,7 +155,13 @@ void Simulation::run()
 		double t = i*timestepLength;
 		if (i % verletListUpdateFrequency == 0)
 			box->updateVerletList();
-		//box->DEBUG_PRINT();
+		//box->DEBUG_PRINT
+		//if (i % verletListUpdateFrequency == 0)
+		//{
+			//box->updateVerletList();
+			//box->DEBUG_VERLET_LIST();
+		//}
+		box->DEBUG_PRINT();
 		box->updatePositions();
 		box->updateForces(*material);
 		box->updateVelocities();

@@ -4,11 +4,13 @@
 #include "atom.h"
 #include <vector>
 
+typedef std::vector<std::vector<std::pair<Atom*, Vector3>>> VerletList;
+
 class Lattice;
-class Vector3;
 class Simulation;
 class Material;
 class Measure;
+class Vector3;
 
 class MDBox
 {
@@ -24,12 +26,13 @@ class MDBox
 		void updatePositions();
 		void updateVelocities();
 		void DEBUG_PRINT();
+		void DEBUG_VERLET_LIST();
 
 	private:
 		const Simulation& simulation; // We will need to access a lot of Simulation variables
 		Vector3 dimensions;
 		std::vector<Atom*> atoms;
-		std::vector<std::vector<Atom*>> verletList;
+		VerletList verletList;
 
 		void createInitialAtoms(const Lattice&);
 		void setInitialVelocities(double temperature);

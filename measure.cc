@@ -1,6 +1,7 @@
 #include "measure.h"
 #include "mdbox.h"
 #include "fileIO.h"
+#include "vector.h"
 
 #include "random.h"
 
@@ -9,7 +10,7 @@ const std::vector<Atom*>& Measure::atoms(const MDBox& box)
 	return box.atoms;
 }
 
-const std::vector<std::vector<Atom*>>& Measure::verletList(const MDBox& box)
+const std::vector<std::vector<std::pair<Atom*, Vector3>>>& Measure::verletList(const MDBox& box)
 {
 	return box.verletList;
 }

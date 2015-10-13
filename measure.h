@@ -5,6 +5,7 @@
 
 class MDBox;
 class Atom;
+class Vector3;
 
 class Measure
 {
@@ -18,7 +19,8 @@ class Measure
 	protected:
 		// Accessor functions that are necessary in order to use the friendship property of the MDBox
 		const std::vector<Atom*>& atoms(const MDBox&);
-		const std::vector<std::vector<Atom*>>& verletList(const MDBox&);
+		// Cannot use the typedef VerletList here apparently
+		const std::vector<std::vector<std::pair<Atom*, Vector3>>>& verletList(const MDBox&);
 	
 		std::vector<double> timestamps;
 		std::vector<double> values;

@@ -6,7 +6,7 @@ int main()
 {
 	try
 	{
-		Simulation sim{};
+		Simulation sim;
 		sim.run();
 		std::cout << "simulation completed" << std::endl;
 	}
