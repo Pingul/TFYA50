@@ -8,9 +8,12 @@ class Lattice;
 class Vector3;
 class Simulation;
 class Material;
+class Measure;
 
 class MDBox
 {
+	friend Measure;
+
 	public:
 		MDBox() = delete;
 		MDBox(Simulation&);
