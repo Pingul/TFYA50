@@ -119,10 +119,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\atom.cc" />
+    <ClCompile Include="..\..\fileIO.cc" />
     <ClCompile Include="..\..\lattice.cc" />
     <ClCompile Include="..\..\main.cc" />
     <ClCompile Include="..\..\material.cc" />
     <ClCompile Include="..\..\mdbox.cc" />
+    <ClCompile Include="..\..\MDFFileWriter.cc" />
     <ClCompile Include="..\..\measure.cc" />
     <ClCompile Include="..\..\potential.cc" />
     <ClCompile Include="..\..\random.cc" />
@@ -132,9 +134,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\atom.h" />
+    <ClInclude Include="..\..\fileIO.h" />
     <ClInclude Include="..\..\lattice.h" />
     <ClInclude Include="..\..\material.h" />
     <ClInclude Include="..\..\mdbox.h" />
+    <ClInclude Include="..\..\MDFFileWriter.h" />
     <ClInclude Include="..\..\measure.h" />
     <ClInclude Include="..\..\physicalConstants.h" />
     <ClInclude Include="..\..\potential.h" />
