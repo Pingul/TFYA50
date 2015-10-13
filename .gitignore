@@ -7,8 +7,9 @@ Debug
 *.user
 *.opensdf
 .vs
-*.mdf
 
 x86
 x64
 x32
+
+*.mdf
