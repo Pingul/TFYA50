@@ -2,6 +2,7 @@
 #define _FILE_IO_
 
 #include <map>
+#include <vector>
 
 namespace fileIO
 {
@@ -12,7 +13,7 @@ namespace fileIO
 
 	namespace MDF
 	{
-		void write(const std::string&, const std::vector<double>&, const std::vector<double>&);
+		void write(const std::string& file, const std::vector<double>& timestamps, const std::vector<double>& values);
 	}
 }
 

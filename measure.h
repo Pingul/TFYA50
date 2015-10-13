@@ -13,7 +13,7 @@ class Measure
 		virtual ~Measure() = default;
 
 		virtual void calculate(double t, const MDBox&) = 0;
-		//virtual void writeToFile(const std::string&) = 0;
+		virtual void saveToFile(const std::string&);
 
 	protected:
 		// Accessor functions that are necessary in order to use the friendship property of the MDBox
