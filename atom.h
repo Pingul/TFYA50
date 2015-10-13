@@ -11,10 +11,10 @@ class Atom
 		// 	: coordinates_{coordinates}, velocity_{velocity}, force_{force} {}
 		~Atom() = default;
 
-		Vector3 at();
-		Vector3 velocity();
-		Vector3 totalForce();
-		Vector3 forcePreviousTimestep();
+		Vector3 at() const;
+		Vector3 velocity() const;
+		Vector3 totalForce() const;
+		Vector3 forcePreviousTimestep() const;
 		void setPosition(const Vector3&);
 		void setVelocity(const Vector3&);
 		void setForce(const Vector3&);
