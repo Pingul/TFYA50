@@ -6,6 +6,7 @@
 #include "atom.h"
 
 #include <iostream>
+#include <math.h>
 
 MDBox::MDBox(Simulation& sim) : simulation{sim}
 {
@@ -55,8 +56,8 @@ void MDBox::updateVerletList()
 			Atom* nextAtom = atoms[j];
 			Vector3 vectorBetween = atom->at() - nextAtom->at();
 			double dotprod = vectorBetween*vectorBetween;
-
-			if (close enough)
+			double distance = sqrt(dotprod);
+			if (distance < simulation.cutoffDistance)
 				interactionList.push_back(nextAtom);
 		}
 		verletList.push_back(interactionList);
