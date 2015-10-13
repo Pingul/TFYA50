@@ -150,15 +150,15 @@ void Simulation::run()
 	for (int i = 0; i < timesteps; ++i)
 	{
 		double t = i*timestepLength;
-		if (i % verletListUpdateFrequency == 0)
-		{
-			box->updateVerletList();
-			box->DEBUG_VERLET_LIST();
-		}
-		//box->DEBUG_PRINT();
-		//box->updatePositions();
-		//box->updateForces(*material);
-		//box->updateVelocities();
+		//if (i % verletListUpdateFrequency == 0)
+		//{
+			//box->updateVerletList();
+			//box->DEBUG_VERLET_LIST();
+		//}
+		box->DEBUG_PRINT();
+		box->updatePositions();
+		box->updateForces(*material);
+		box->updateVelocities();
 		if (i % 10 == 0)
 		{
 			double percentFinished = ((double)i/(double)timesteps)*100.0;

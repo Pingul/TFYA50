@@ -16,6 +16,7 @@ public:
 
 	// shall return a Vector3 that indicates by what force the first Atom affects the second
 	virtual Vector3 interaction(const Atom&, const Atom&) = 0;
+	virtual Vector3 interaction(const Vector3&, const Vector3&) = 0;
 };
 
 class LJPotential : public AtomicPotential
@@ -25,6 +26,7 @@ public:
 	virtual ~LJPotential() = default;
 
 	virtual Vector3 interaction(const Atom&, const Atom&);
+	virtual Vector3 interaction(const Vector3&, const Vector3&);
 
 private:
 	double epsilon{ 1.67e-3 };	//in eV

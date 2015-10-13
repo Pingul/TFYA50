@@ -12,7 +12,7 @@
 void MDBox::DEBUG_PRINT()
 {
 	// Testing purpose // just adding text
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		std::cout << i << " - atom:\n\t at " << atoms[i]->at() << "\n\t v " << atoms[i]->velocity() << "\n\t F " << atoms[i]->totalForce() << std::endl;
 	}
@@ -158,13 +158,15 @@ void MDBox::updateForces(const Material& material)
 	{
 		Atom* atom{ atoms[atomIndex] };
 
-		for (auto& interactingAtom : interactionList)
+		for (auto& atomTranslationPair : interactionList)
 		{
-			Vector3 totalForceAtom = atom->totalForce() - simulation.material->potential->interaction(*atom, *interactingAtom);
-			Vector3 totalForceInteractingAtom = interactingAtom->totalForce() + simulation.material->potential->interaction(*atom, *interactingAtom);
+			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
 
+			Atom* interactingAtom;
+			Vector3 totalForceAtom = atom->totalForce() - simulation.material->potential->interaction(atom->at(), translatedInteractingAtomPosition);
+			Vector3 totalForceInteractingAtom = atomTranslationPair.first->totalForce() + simulation.material->potential->interaction(atom->at(), translatedInteractingAtomPosition);
 			atom->setForce (totalForceAtom);
-			interactingAtom->setForce(totalForceInteractingAtom);
+			atomTranslationPair.first->setForce(totalForceInteractingAtom);
 		}
 		atomIndex++;
 	}

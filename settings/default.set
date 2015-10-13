@@ -1,7 +1,7 @@
 # definition of a settingsfile
 
 # Number of timesteps
-timesteps = 1
+timesteps = 10
 timestepLength = 1 # The timestep is measured in femtoseconds
 
 # Visualization
@@ -23,4 +23,3 @@ dimensions.z = 2
 lattice = FCC
 latticeConstant = 5.256 # Ångström
 material = X
-material.mass = 

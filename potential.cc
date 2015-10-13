@@ -20,3 +20,20 @@ Vector3 LJPotential::interaction(const Atom& atom1, const Atom& atom2)
 
 	return force;
 }
+
+Vector3 LJPotential::interaction(const Vector3& vector1, const Vector3& vector2)
+{
+	double dis2 = (vector2 - vector1)*(vector2 - vector1);
+
+	double dis8 = pow(dis2, 4);
+	double dis6 = pow(dis2, 3);
+
+	double sigma6 = pow(sigma, 6);
+	double sigma12 = pow(sigma, 12);
+
+	double constant = ((24 * epsilon) / dis8) * (2 * sigma12 / dis6 - sigma6);
+	
+	Vector3 force = constant * (vector2 - vector1);
+
+	return force;
+}
