@@ -91,7 +91,6 @@ void MDBox::updateVerletList()
 
 void MDBox::updateForces(const Material& material)
 {
-	
 }
 
 void MDBox::updatePositions()
