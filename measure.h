@@ -12,16 +12,16 @@ class Measure
 		Measure() = default;
 		virtual ~Measure() = default;
 
-		virtual void calculate(const MDBox&) = 0;
+		virtual void calculate(double t, const MDBox&) = 0;
 		//virtual void writeToFile(const std::string&) = 0;
-		virtual double measureValue() { return value; }
 
 	protected:
 		// Accessor functions that are necessary in order to use the friendship property of the MDBox
 		const std::vector<Atom*>& atoms(const MDBox&);
 		const std::vector<std::vector<Atom*>>& verletList(const MDBox&);
-
-		double value;
+	
+		std::vector<double> timestamps;
+		std::vector<double> values;
 };
 
 class KineticEnergy : public Measure
@@ -30,9 +30,8 @@ class KineticEnergy : public Measure
 		KineticEnergy() = default;
 		virtual ~KineticEnergy() = default;
 
-		virtual void calculate(const MDBox&);
+		virtual void calculate(double, const MDBox&);
 	private:
-		std::vector<double> values;
 };
 
 #endif

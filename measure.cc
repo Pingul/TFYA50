@@ -11,7 +11,7 @@ const std::vector<std::vector<Atom*>>& Measure::verletList(const MDBox& box)
 	return box.verletList;
 }
 
-void KineticEnergy::calculate(const MDBox& box)
+void KineticEnergy::calculate(double t, const MDBox& box)
 {
 	double energy = 0;
 	for (auto& atom : atoms(box))
@@ -19,5 +19,6 @@ void KineticEnergy::calculate(const MDBox& box)
 		// This is just nonsense atm
 		energy += atom->velocity()*atom->velocity();
 	}
+	timestamps.push_back(t);
 	values.push_back(energy);
 }
