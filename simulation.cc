@@ -150,22 +150,18 @@ void Simulation::validateSettings()
 void Simulation::run()
 {
 	Measure* measure = new KineticEnergy();
+	fileIO::VIS::writeSettings("test.vis", *this);
 	for (int i = 0; i < timesteps; ++i)
 	{
 		double t = i*timestepLength;
 		if (i % verletListUpdateFrequency == 0)
 			box->updateVerletList();
-		//box->DEBUG_PRINT
-		//if (i % verletListUpdateFrequency == 0)
-		//{
-			//box->updateVerletList();
-			//box->DEBUG_VERLET_LIST();
-		//}
 		box->DEBUG_PRINT();
 		box->updatePositions();
 		box->updateForces(*material);
 		box->updateVelocities();
 		measure->calculate(t, *box);
+		fileIO::VIS::writeSimulationInstant("test.vis", t, box->atomSnapshot());
 		if (i % 10 == 0)
 		{
 			double percentFinished = ((double)i/(double)timesteps)*100.0;

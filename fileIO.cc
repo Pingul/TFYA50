@@ -1,4 +1,6 @@
 #include "fileIO.h"
+#include "simulation.h"
+#include "atom.h"
 #include <iostream>
 #include <fstream>
 #include <regex>
@@ -114,6 +116,43 @@ namespace fileIO
 			}
 			else
 				throw std::runtime_error{ "Could not create mdf-file '" + file + "'" };
+		}
+	}
+
+	//
+	// VIS
+	//
+	namespace VIS
+	{
+		void writeSettings(const std::string& file, const Simulation& sim)
+		{
+			std::ofstream visFile{ file }; // will overwrite
+			if (visFile.is_open())
+			{
+				std::string timeDelta{ "timeDelta = " + std::to_string(sim.timestepLength) + "\n" };
+				visFile.write(timeDelta.c_str(), timeDelta.size());
+			}
+			else
+				throw std::runtime_error{"Could not write settings to '" + file + "'"};
+		}
+
+		void writeSimulationInstant(const std::string& file, double t, const std::vector<Atom*>& atoms)
+		{
+			std::ofstream visFile{ file, std::ofstream::app };
+			std::cout << "size: " << atoms.size() << std::endl;
+			if (visFile.is_open())
+			{
+				std::string tString{ "t = " + std::to_string(t) + "\n" };
+				visFile.write(tString.c_str(), tString.size());
+				for (auto& atom : atoms)
+				{
+					Vector3& pos{ atom->at() };
+					std::string posString{ std::to_string(pos.x) + " " + std::to_string(pos.y) + " " + std::to_string(pos.z) + "\n" };
+					visFile.write(posString.c_str(), posString.size());
+				}
+			}
+			else
+				throw std::runtime_error{ "Could not write the simulation instant to '" + file + "'" };
 		}
 	}
 }

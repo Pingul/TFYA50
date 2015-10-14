@@ -28,6 +28,9 @@ class MDBox
 		void DEBUG_PRINT();
 		void DEBUG_VERLET_LIST();
 
+		// Gives an unmodifiable reference to atoms, for statistical usage
+		const std::vector<Atom*>& atomSnapshot() const { return atoms; }
+
 	private:
 		const Simulation& simulation; // We will need to access a lot of Simulation variables
 		Vector3 dimensions;

@@ -4,6 +4,9 @@
 #include <map>
 #include <vector>
 
+class Atom;
+class Simulation;
+
 namespace fileIO
 {
 	namespace SET
@@ -13,7 +16,14 @@ namespace fileIO
 
 	namespace MDF
 	{
+		// Will overwrite old file
 		void write(const std::string& file, const std::vector<double>& timestamps, const std::vector<double>& values);
+	}
+
+	namespace VIS
+	{
+		void writeSettings(const std::string& file, const Simulation&);
+		void writeSimulationInstant(const std::string& file, double t, const std::vector<Atom*>& atoms);
 	}
 }
 

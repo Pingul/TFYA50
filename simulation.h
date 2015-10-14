@@ -2,6 +2,7 @@
 #define _SIMULATION_
 
 #include "vector.h"
+#include "fileIO.h"
 #include <string>
 
 class Lattice;
@@ -11,6 +12,7 @@ class Material;
 class Simulation
 {
 	friend MDBox;
+	friend void fileIO::VIS::writeSettings(const std::string& file, const Simulation&);
 
 	public:
 		Simulation(const char* setFile = "../../settings/default.set");

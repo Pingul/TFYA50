@@ -12,4 +12,6 @@ x86
 x64
 x32
 
+# project files
 *.mdf
+*.vis
