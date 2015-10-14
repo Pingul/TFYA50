@@ -2,6 +2,7 @@
 #include "mdbox.h"
 #include "fileIO.h"
 #include "vector.h"
+#include "physicalConstants.h"
 
 #include "random.h"
 
@@ -22,12 +23,13 @@ void Measure::saveToFile(const std::string& file)
 
 void KineticEnergy::calculate(double t, const MDBox& box)
 {
-	double energy = 0;
+	double mass = 39.948/PHConstants::amuToefA;
+	double energy = 0;	
 	for (auto& atom : atoms(box))
 	{
-		// This is just nonsense atm
-		energy += atom->velocity()*atom->velocity() + Random::next();
+		energy += atom->velocity()*atom->velocity();
 	}
+	energy = 0.5*energy / mass;
 	timestamps.push_back(t);
 	values.push_back(energy);
 }

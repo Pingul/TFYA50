@@ -9,12 +9,12 @@ saveVisualizationData = 0 # boolean
 visualizationLogRate = 100 # Save data every x femtosecond
 
 measureDataLogRate = 10 # every x femtosecond
-cutoffDistance = 1 # in Ångström
+cutoffDistance = 6.4 # in Ångström
 
 thermostat = 0 # boolean
-goalTemperature = 200 # Kelvin
+goalTemperature = 40 # Kelvin
 
-initialTemperature = 150 # Kelvin
+initialTemperature = 40 # Kelvin
 
 dimensions.x = 2 # in Unit cells
 dimensions.y = 2
