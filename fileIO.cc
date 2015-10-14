@@ -145,7 +145,7 @@ namespace fileIO
 				visFile.write(tString.c_str(), tString.size());
 				for (auto& atom : atoms)
 				{
-					Vector3& pos{ atom->at() };
+					Vector3&& pos{ atom->at() };
 					std::string posString{ std::to_string(pos.x) + " " + std::to_string(pos.y) + " " + std::to_string(pos.z) + "\n" };
 					visFile.write(posString.c_str(), posString.size());
 				}
