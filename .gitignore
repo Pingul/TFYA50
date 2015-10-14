@@ -11,3 +11,5 @@ Debug
 x86
 x64
 x32
+
+*.mdf

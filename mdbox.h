@@ -9,10 +9,13 @@ typedef std::vector<std::vector<std::pair<Atom*, Vector3>>> VerletList;
 class Lattice;
 class Simulation;
 class Material;
+class Measure;
 class Vector3;
 
 class MDBox
 {
+	friend Measure;
+
 	public:
 		MDBox() = delete;
 		MDBox(Simulation&);
