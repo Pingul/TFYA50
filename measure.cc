@@ -20,7 +20,7 @@ void Measure::saveToFile(const std::string& file)
 	fileIO::MDF::write(file, timestamps, values);
 }
 
-void KineticEnergy::calculate(double t, const MDBox& box)
+void KineticEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
 	double energy = 0;
 	for (auto& atom : atoms(box))

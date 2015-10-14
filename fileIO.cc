@@ -124,12 +124,12 @@ namespace fileIO
 	//
 	namespace VIS
 	{
-		void writeSettings(const std::string& file, const Simulation& sim)
+		void writeSettings(const std::string& file, const SimulationParams& params)
 		{
 			std::ofstream visFile{ file }; // will overwrite
 			if (visFile.is_open())
 			{
-				std::string timeDelta{ "timeDelta = " + std::to_string(sim.timestepLength) + "\n" };
+				std::string timeDelta{ "timeDelta = " + std::to_string(params.timestepLength) + "\n" };
 				visFile.write(timeDelta.c_str(), timeDelta.size());
 			}
 			else

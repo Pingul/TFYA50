@@ -5,7 +5,7 @@
 #include <vector>
 
 class Atom;
-class Simulation;
+class SimulationParams;
 
 namespace fileIO
 {
@@ -22,7 +22,7 @@ namespace fileIO
 
 	namespace VIS
 	{
-		void writeSettings(const std::string& file, const Simulation&);
+		void writeSettings(const std::string& file, const SimulationParams&);
 		void writeSimulationInstant(const std::string& file, double t, const std::vector<Atom*>& atoms);
 	}
 }

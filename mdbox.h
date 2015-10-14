@@ -8,6 +8,7 @@ typedef std::vector<std::vector<std::pair<Atom*, Vector3>>> VerletList;
 
 class Lattice;
 class Simulation;
+class SimulationParams;
 class Material;
 class Measure;
 class Vector3;
@@ -18,7 +19,7 @@ class MDBox
 
 	public:
 		MDBox() = delete;
-		MDBox(Simulation&);
+		MDBox(const SimulationParams& params);
 		~MDBox();
 
 		void updateVerletList();
@@ -32,7 +33,7 @@ class MDBox
 		const std::vector<Atom*>& atomSnapshot() const { return atoms; }
 
 	private:
-		const Simulation& simulation; // We will need to access a lot of Simulation variables
+		const SimulationParams& simulationParams;
 		Vector3 dimensions;
 		std::vector<Atom*> atoms;
 		VerletList verletList;

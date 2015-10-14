@@ -6,6 +6,7 @@
 class MDBox;
 class Atom;
 class Vector3;
+class SimulationParams;
 
 class Measure
 {
@@ -13,7 +14,7 @@ class Measure
 		Measure() = default;
 		virtual ~Measure() = default;
 
-		virtual void calculate(double t, const MDBox&) = 0;
+		virtual void calculate(double t, const SimulationParams&, const MDBox&) = 0;
 		virtual void saveToFile(const std::string&);
 
 	protected:
@@ -32,7 +33,7 @@ class KineticEnergy : public Measure
 		KineticEnergy() = default;
 		virtual ~KineticEnergy() = default;
 
-		virtual void calculate(double, const MDBox&);
+		virtual void calculate(double t, const SimulationParams&, const MDBox&);
 	private:
 };
 
