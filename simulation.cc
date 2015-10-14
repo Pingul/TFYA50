@@ -156,13 +156,12 @@ void Simulation::run()
 		double t = i*timestepLength;
 		if (i % verletListUpdateFrequency == 0)
 			box->updateVerletList();
-		box->DEBUG_PRINT();
 		box->updatePositions();
 		box->updateForces(*material);
 		box->updateVelocities();
 		measure->calculate(t, *box);
 		fileIO::VIS::writeSimulationInstant("test.vis", t, box->atomSnapshot());
-		if (i % 10 == 0)
+		if ((100*i)/timesteps % 10 == 0)
 		{
 			double percentFinished = ((double)i/(double)timesteps)*100.0;
 			std::cout << "completed " << i << " out of " << timesteps << " steps (" << percentFinished << "%)." << std::endl;

@@ -139,7 +139,6 @@ namespace fileIO
 		void writeSimulationInstant(const std::string& file, double t, const std::vector<Atom*>& atoms)
 		{
 			std::ofstream visFile{ file, std::ofstream::app };
-			std::cout << "size: " << atoms.size() << std::endl;
 			if (visFile.is_open())
 			{
 				std::string tString{ "t = " + std::to_string(t) + "\n" };
