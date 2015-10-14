@@ -130,10 +130,11 @@ void MDBox::setInitialVelocities(double temperature)
 		sumVelocity2 = sumVelocity2 + velocity*velocity;
 	}
 
+	double mass = simulation.material->mass / PHConstants::amuToefA;
 	sumVelocity = sumVelocity / (double)nbrAtoms; 	//center of mass velocity
 	sumVelocity2 = sumVelocity2 / (double)nbrAtoms;	//mean squared velocity
 	double scaleFactor = 1.0;
-	scaleFactor = sqrt(3.0*(temperature / sumVelocity2)*(PHConstants::boltzmann / simulation.material->mass));
+	scaleFactor = sqrt(3.0*(temperature / sumVelocity2)*(PHConstants::boltzmann / mass));
 	std::cout << "center of mass velocity = " << sumVelocity << std::endl;
 	std::cout << "mean squared velocity = " << sumVelocity2 << std::endl;
 	std::cout << "temperature = " << temperature << std::endl;
@@ -157,12 +158,10 @@ void MDBox::updateForces(const Material& material)
 	for (auto& interactionList : verletList)
 	{
 		Atom* atom{ atoms[atomIndex] };
-
 		for (auto& atomTranslationPair : interactionList)
 		{
 			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
 
-			Atom* interactingAtom;
 			Vector3 totalForceAtom = atom->totalForce() - simulation.material->potential->interaction(atom->at(), translatedInteractingAtomPosition);
 			Vector3 totalForceInteractingAtom = atomTranslationPair.first->totalForce() + simulation.material->potential->interaction(atom->at(), translatedInteractingAtomPosition);
 			atom->setForce (totalForceAtom);
@@ -170,7 +169,7 @@ void MDBox::updateForces(const Material& material)
 		}
 		atomIndex++;
 	}
-	
+
 }
 
 void MDBox::updatePositions()
@@ -220,6 +219,7 @@ void MDBox::updateVelocities()
 		sumVelocity = sumVelocity + newVelocity;
 		sumVelocity2 = sumVelocity2 + newVelocity*newVelocity;
 	}
+
 }
 
 MDBox::~MDBox()
