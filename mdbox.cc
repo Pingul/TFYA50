@@ -130,7 +130,7 @@ void MDBox::setInitialVelocities(double temperature)
 		sumVelocity2 = sumVelocity2 + velocity*velocity;
 	}
 
-	double mass = simulation.material->mass / PHConstants::amuToefA;
+	double mass = simulation.material->mass* PHConstants::amuToefA;
 	sumVelocity = sumVelocity / (double)nbrAtoms; 	//center of mass velocity
 	sumVelocity2 = sumVelocity2 / (double)nbrAtoms;	//mean squared velocity
 	double scaleFactor = 1.0;
@@ -180,7 +180,7 @@ void MDBox::updatePositions()
 		Vector3 oldVelocity = atom->velocity();
 		Vector3 oldForce = atom->totalForce();
 		double  deltatime = simulation.timestepLength;
-		double mass = simulation.material->mass/ PHConstants::amuToefA;
+		double mass = simulation.material->mass* PHConstants::amuToefA;
 		Vector3 newPosition = oldPosition + oldVelocity * deltatime + (oldForce / mass)*(deltatime / 2)*deltatime;
 
 		if (newPosition.x < 0.0)
@@ -207,19 +207,19 @@ void MDBox::updateVelocities()
 {
 	Vector3 sumVelocity = { 0.0, 0.0, 0.0 };
 	double sumVelocity2 = 0.0;
+	double mass = simulation.material->mass* PHConstants::amuToefA;
+
 	for (auto& atom : atoms)
 	{
 		Vector3 oldVelocity = atom->velocity();
 		Vector3 newForce = atom->totalForce();
 		Vector3 oldForce = atom->forcePreviousTimestep();
-		double mass = simulation.material->mass/ PHConstants::amuToefA;
 		double  deltatime = simulation.timestepLength;
 		Vector3 newVelocity = oldVelocity + (deltatime / 2)*(oldForce + newForce) / mass;
 		atom->setVelocity(newVelocity);
 		sumVelocity = sumVelocity + newVelocity;
 		sumVelocity2 = sumVelocity2 + newVelocity*newVelocity;
 	}
-
 }
 
 MDBox::~MDBox()

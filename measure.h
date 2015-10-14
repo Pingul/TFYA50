@@ -36,4 +36,14 @@ class KineticEnergy : public Measure
 	private:
 };
 
+class PotentialEnergy : public Measure
+{
+public:
+	PotentialEnergy() = default;
+	virtual ~PotentialEnergy() = default;
+
+	virtual void calculate(double, const MDBox&);
+private:
+};
+
 #endif

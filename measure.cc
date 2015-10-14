@@ -2,6 +2,9 @@
 #include "mdbox.h"
 #include "fileIO.h"
 #include "vector.h"
+#include "physicalConstants.h"
+#include <iostream>
+#include <math.h>
 
 #include "random.h"
 
@@ -22,12 +25,42 @@ void Measure::saveToFile(const std::string& file)
 
 void KineticEnergy::calculate(double t, const MDBox& box)
 {
-	double energy = 0;
+	double mass = 39.948*PHConstants::amuToefA;
+	double energy = 0;	
 	for (auto& atom : atoms(box))
 	{
-		// This is just nonsense atm
-		energy += atom->velocity()*atom->velocity() + Random::next();
+		energy += atom->velocity()*atom->velocity();
 	}
+	energy = 0.5*energy * mass;
+	timestamps.push_back(t);
+	values.push_back(energy);
+}
+
+void PotentialEnergy::calculate(double t, const MDBox& box)
+{
+	double energy = 0;
+	int atomIndex = 0;
+
+	for (auto& interactionList : verletList(box))
+	{
+		double energyPerAtom = 0;
+		Atom* atom{ atoms(box)[atomIndex] };
+		for (auto& atomTranslationPair : interactionList)
+		{
+			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
+			Vector3 currentAtomPosition = atom->at();
+
+			double r = sqrt((currentAtomPosition - translatedInteractingAtomPosition)*(currentAtomPosition - translatedInteractingAtomPosition));
+			double epsilon = 1.67e-3;
+			double sigma = 3.40;
+
+			energyPerAtom += 4 * epsilon*(pow((sigma / r), 12) - pow((sigma / r), 6));
+		}
+		atomIndex++;
+		std::cout << "Potential energy per atom: " << energyPerAtom << std::endl;
+		energy += energyPerAtom;
+	}
+
 	timestamps.push_back(t);
 	values.push_back(energy);
 }
