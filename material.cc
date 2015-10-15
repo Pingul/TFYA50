@@ -7,7 +7,7 @@ Material* Material::TESTMaterial()
 
 Material* Material::Argon()
 {
-	return new Material(39.948, 1, new LJPotential{ 3.67e-3, 3.40 });
+	return new Material(39.948, 1, new LJPotential{ 0.010423316, 3.40 });
 }
 
 Material::~Material()

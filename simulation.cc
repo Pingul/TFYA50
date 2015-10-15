@@ -42,6 +42,7 @@ std::string Simulation::filePath()
 void Simulation::setupMeasures()
 {
 	measures.push_back(new KineticEnergy());
+	measures.push_back(new PotentialEnergy());
 }
 
 void Simulation::calculateMeasures(double t)
