@@ -10,27 +10,31 @@ Cannot be instatiated.
 */
 class AtomicPotential
 {
-public:
-	AtomicPotential() = default;
-	virtual ~AtomicPotential() = default;
+	public:
+		AtomicPotential() = default;
+		virtual ~AtomicPotential() = default;
 
-	// shall return a Vector3 that indicates by what force the first Atom affects the second
-	virtual Vector3 interaction(const Atom&, const Atom&) = 0;
-	virtual Vector3 interaction(const Vector3&, const Vector3&) = 0;
+		// shall return a Vector3 that indicates by what force the first Atom affects the second
+		virtual Vector3 interaction(const Atom&, const Atom&) = 0;
+		virtual Vector3 interaction(const Vector3&, const Vector3&) = 0;
+		virtual double potentialEnergy(const Vector3&, const Vector3&) = 0;
 };
 
 class LJPotential : public AtomicPotential
 {
-public:
-	LJPotential() = default;
-	virtual ~LJPotential() = default;
+	public:
+		LJPotential() = delete;
+		LJPotential(double eps, double sig) 
+			: epsilon{eps}, sigma{sig} {}
+		virtual ~LJPotential() = default;
 
-	virtual Vector3 interaction(const Atom&, const Atom&);
-	virtual Vector3 interaction(const Vector3&, const Vector3&);
+		virtual Vector3 interaction(const Atom&, const Atom&);
+		virtual Vector3 interaction(const Vector3&, const Vector3&);
+		virtual double potentialEnergy(const Vector3&, const Vector3&);
 
-private:
-	double epsilon{ 1.67e-3 };	//in eV
-	double sigma{ 3.40 };	//in Angstrom
+	private:
+		double epsilon;	//in eV
+		double sigma;	//in Angstrom
 };
 
 #endif

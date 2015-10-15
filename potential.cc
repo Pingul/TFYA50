@@ -37,3 +37,10 @@ Vector3 LJPotential::interaction(const Vector3& vector1, const Vector3& vector2)
 
 	return force;
 }
+
+double LJPotential::potentialEnergy(const Vector3& vector1, const Vector3& vector2)
+{
+	double r = sqrt((vector1 - vector2)*(vector1 - vector2));
+
+	return 4 * epsilon*(pow((sigma / r), 12) - pow((sigma / r), 6));
+}

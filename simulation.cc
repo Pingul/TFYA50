@@ -11,23 +11,106 @@
 #include <iostream>
 #include <string>
 #include <exception>
+#include <ctime>
+#include <chrono>
+#include <iomanip>
+#include <sstream>
 
+
+const std::string getCurrentDateAndTime()
+{
+	auto timepoint = std::chrono::system_clock::now();
+	const std::time_t t = std::chrono::system_clock::to_time_t(timepoint);
+	std::stringstream ss;
+	ss << std::put_time(std::localtime(&t), "%Y-%m-%d.%X");
+	return ss.str();
+}
 
 Simulation::Simulation(const char* setFile)
 {
 	Random::setup();
-	initSettings(setFile);
-	validateSettings();
-	box = new MDBox(*this);
+	params = new SimulationParams{setFile};
+	box = new MDBox{ *params };
+	//filePrefix = getCurrentDateAndTime() + " | ";
 }
 
-void Simulation::initSettings(const char* setFile)
+std::string Simulation::filePath()
 {
-	//SETFileReader reader{};
+	return params->outputDirectory + "/" + filePrefix;
+}
+
+void Simulation::setupMeasures()
+{
+	measures.push_back(new KineticEnergy());
+	measures.push_back(new PotentialEnergy());
+}
+
+void Simulation::calculateMeasures(double t)
+{
+	for (auto& measure : measures)
+	{
+		measure->calculate(t, *params, *box);
+	}
+}
+
+void Simulation::saveMeasures()
+{
+	for (auto& measure : measures)
+	{
+		measure->saveToFile(filePath() + measure->name() + ".mdf");
+	}
+}
+
+
+void Simulation::run()
+{
+	setupMeasures();
+	if (params->saveVisualizationData)
+		fileIO::VIS::writeSettings(filePath() + visFile, *params);
+
+	for (int i = 0; i < params->timesteps; ++i)
+	{
+		double t = i*params->timestepLength;
+		if (i % params->verletListUpdateFrequency == 0)
+			box->updateVerletList();
+		box->updatePositions();
+		box->updateForces(*params->material);
+		box->updateVelocities();
+
+		if (i % params->measureDataLogRate == 0)
+			calculateMeasures(t);
+
+		if (params->saveVisualizationData && i % params->visualizationLogRate == 0)
+			fileIO::VIS::writeSimulationInstant(filePath() + visFile, t, box->atomSnapshot());
+		if ((100*(i + 1))/params->timesteps % 10 == 0)
+		{
+			double percentFinished = ((double)(i + 1)/(double)params->timesteps)*100.0;
+			std::cout << "completed " << i + 1 << " out of " << params->timesteps << " steps (" << percentFinished << "%)." << std::endl;
+		}
+	}
+	saveMeasures();
+}
+
+Simulation::~Simulation()
+{
+	delete box;
+	delete params;
+	
+}
+
+
+
+SimulationParams::SimulationParams(const char* file)
+{
+	initSettings(file);
+	validateSettings();
+}
+
+void SimulationParams::initSettings(const char* setFile)
+{
 	std::map<std::string, double> nbrSettings;
 	std::map<std::string, std::string> strSettings;
 	fileIO::SET::read(setFile, nbrSettings, strSettings);
-	//reader.readFile(setFile, nbrSettings, strSettings);
 
 	for (auto& strSetting : strSettings)
 	{
@@ -35,16 +118,22 @@ void Simulation::initSettings(const char* setFile)
 		std::string value = strSetting.second;
 		if (variable.compare("lattice") == 0)
 		{
-			if (value.compare("FCC") == 0)
+			if (value.compare("fcc") == 0)
 				lattice = Lattice::createFCCLattice();
 			else
 				throw std::runtime_error{ "Lattice '" + value + "' does not exist" };
 		}
 		else if (variable.compare("material") == 0)
 		{
-			// We have no special materials atm
-			material = Material::TESTMaterial();
+			if (value.compare("argon") == 0)
+				material = Material::Argon();
+			else
+				throw std::runtime_error{ "Material '" + value + "' does not exist" };
 		}
+		else if (variable.compare("outputDirectory") == 0)
+			outputDirectory = value;
+		else
+			throw std::runtime_error{ "Could not find a match for setting '" + variable + "'" };
 	}
 
 	for (auto& nbrSetting : nbrSettings)
@@ -78,11 +167,11 @@ void Simulation::initSettings(const char* setFile)
 		else if (variable.compare("latticeConstant") == 0)
 			lattice->latticeConstant = value; // Dependent on the lattice that we create earlier
 		else
-			throw std::runtime_error{"Could not find a match for setting '" + variable + "'"};
+			throw std::runtime_error{ "Could not find a match for setting '" + variable + "'" };
 	}
 }
 
-void Simulation::validateSettings()
+void SimulationParams::validateSettings()
 {
 	int errors = 0;
 	std::vector<std::string> variables;
@@ -119,9 +208,9 @@ void Simulation::validateSettings()
 	if (lattice == nullptr)
 	{
 		errors++;
-		variables.push_back("lattice");	
+		variables.push_back("lattice");
 	}
-	else if (lattice->latticeConstant <= 0.0) 
+	else if (lattice->latticeConstant <= 0.0)
 	{
 		errors++;
 		variables.push_back("latticeConstant");
@@ -129,7 +218,7 @@ void Simulation::validateSettings()
 	if (material == nullptr)
 	{
 		errors++;
-		variables.push_back("material");	
+		variables.push_back("material");
 	}
 
 	if (errors > 0)
@@ -139,7 +228,7 @@ void Simulation::validateSettings()
 		{
 			std::cout << "error: '" << str << "' was not properly initialized" << std::endl;
 		}
-		throw std::runtime_error{"too many initialization errors"};
+		throw std::runtime_error{ "too many initialization errors" };
 	}
 	else
 	{
@@ -147,32 +236,8 @@ void Simulation::validateSettings()
 	}
 }
 
-void Simulation::run()
+SimulationParams::~SimulationParams()
 {
-	Measure* measure = new KineticEnergy();
-	fileIO::VIS::writeSettings("test.vis", *this);
-	for (int i = 0; i < timesteps; ++i)
-	{
-		double t = i*timestepLength;
-		if (i % verletListUpdateFrequency == 0)
-			box->updateVerletList();
-		box->updatePositions();
-		box->updateForces(*material);
-		box->updateVelocities();
-		measure->calculate(t, *box);
-		fileIO::VIS::writeSimulationInstant("test.vis", t, box->atomSnapshot());
-		if ((100*i)/timesteps % 10 == 0)
-		{
-			double percentFinished = ((double)i/(double)timesteps)*100.0;
-			std::cout << "completed " << i << " out of " << timesteps << " steps (" << percentFinished << "%)." << std::endl;
-		}
-	}
-	measure->saveToFile("test.mdf");
-}
-
-Simulation::~Simulation()
-{
-	delete lattice;
-	delete box;
 	delete material;
+	delete lattice;
 }
