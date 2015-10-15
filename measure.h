@@ -2,6 +2,7 @@
 #define _MEASURE_
 
 #include <vector>
+#include <string>
 
 class MDBox;
 class Atom;
@@ -14,6 +15,7 @@ class Measure
 		Measure() = default;
 		virtual ~Measure() = default;
 
+		virtual std::string name() { return "UNDEFINED"; }
 		virtual void calculate(double t, const SimulationParams&, const MDBox&) = 0;
 		virtual void saveToFile(const std::string&);
 
@@ -33,6 +35,7 @@ class KineticEnergy : public Measure
 		KineticEnergy() = default;
 		virtual ~KineticEnergy() = default;
 
+		virtual std::string name() { return "kinetic"; }
 		virtual void calculate(double t, const SimulationParams&, const MDBox&);
 	private:
 };

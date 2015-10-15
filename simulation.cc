@@ -11,19 +11,62 @@
 #include <iostream>
 #include <string>
 #include <exception>
+#include <ctime>
+#include <chrono>
+#include <iomanip>
+#include <sstream>
 
+
+const std::string getCurrentDateAndTime()
+{
+	auto timepoint = std::chrono::system_clock::now();
+	const std::time_t t = std::chrono::system_clock::to_time_t(timepoint);
+	std::stringstream ss;
+	ss << std::put_time(std::localtime(&t), "%Y-%m-%d.%X");
+	return ss.str();
+}
 
 Simulation::Simulation(const char* setFile)
 {
 	Random::setup();
 	params = new SimulationParams{setFile};
 	box = new MDBox{ *params };
+	//filePrefix = getCurrentDateAndTime() + " | ";
 }
+
+std::string Simulation::filePath()
+{
+	return params->outputDirectory + "/" + filePrefix;
+}
+
+void Simulation::setupMeasures()
+{
+	measures.push_back(new KineticEnergy());
+}
+
+void Simulation::calculateMeasures(double t)
+{
+	for (auto& measure : measures)
+	{
+		measure->calculate(t, *params, *box);
+	}
+}
+
+void Simulation::saveMeasures()
+{
+	for (auto& measure : measures)
+	{
+		measure->saveToFile(filePath() + measure->name() + ".mdf");
+	}
+}
+
 
 void Simulation::run()
 {
-	Measure* measure = new KineticEnergy();
-	fileIO::VIS::writeSettings("test.vis", *params);
+	setupMeasures();
+	if (params->saveVisualizationData)
+		fileIO::VIS::writeSettings(filePath() + visFile, *params);
+
 	for (int i = 0; i < params->timesteps; ++i)
 	{
 		double t = i*params->timestepLength;
@@ -32,15 +75,19 @@ void Simulation::run()
 		box->updatePositions();
 		box->updateForces(*params->material);
 		box->updateVelocities();
-		measure->calculate(t, *params, *box);
-		fileIO::VIS::writeSimulationInstant("test.vis", t, box->atomSnapshot());
+
+		if (i % params->measureDataLogRate == 0)
+			calculateMeasures(t);
+
+		if (params->saveVisualizationData && i % params->visualizationLogRate == 0)
+			fileIO::VIS::writeSimulationInstant(filePath() + visFile, t, box->atomSnapshot());
 		if ((100*(i + 1))/params->timesteps % 10 == 0)
 		{
 			double percentFinished = ((double)(i + 1)/(double)params->timesteps)*100.0;
 			std::cout << "completed " << i + 1 << " out of " << params->timesteps << " steps (" << percentFinished << "%)." << std::endl;
 		}
 	}
-	measure->saveToFile("test.mdf");
+	saveMeasures();
 }
 
 Simulation::~Simulation()
@@ -82,6 +129,10 @@ void SimulationParams::initSettings(const char* setFile)
 			else
 				throw std::runtime_error{ "Material '" + value + "' does not exist" };
 		}
+		else if (variable.compare("outputDirectory") == 0)
+			outputDirectory = value;
+		else
+			throw std::runtime_error{ "Could not find a match for setting '" + variable + "'" };
 	}
 
 	for (auto& nbrSetting : nbrSettings)

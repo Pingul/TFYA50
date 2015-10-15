@@ -5,10 +5,12 @@ timesteps = 10
 timestepLength = 1 # The timestep is measured in femtoseconds
 
 # Visualization
-saveVisualizationData = 0 # boolean
-visualizationLogRate = 100 # Save data every x femtosecond
+saveVisualizationData = 1 # boolean
+visualizationLogRate = 5 # Save data every x femtosecond
 
-measureDataLogRate = 10 # every x femtosecond
+outputDirectory = ../../data
+
+measureDataLogRate = 2 # every x femtosecond
 cutoffDistance = 6.40 # in Ångström
 
 thermostat = 0 # boolean

@@ -8,6 +8,7 @@
 class Lattice;
 class MDBox;
 class Material;
+class Measure;
 class SimulationParams;
 
 class Simulation
@@ -23,6 +24,15 @@ class Simulation
 	private:
 		SimulationParams* params;
 		MDBox* box;
+		std::vector<Measure*> measures;
+
+		std::string filePrefix{ "" };
+		std::string visFile{ "md.vis" };
+
+		void setupMeasures();
+		void calculateMeasures(double t);
+		void saveMeasures();
+		std::string filePath();
 };
 
 class SimulationParams
@@ -46,6 +56,8 @@ class SimulationParams
 		// Internal parameters
 		//int currentTimestep{-1};
 		int verletListUpdateFrequency{ 50 };
+
+		std::string outputDirectory{ "" };
 
 		Lattice* lattice{ nullptr };
 		Material* material{ nullptr };
