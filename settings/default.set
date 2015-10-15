@@ -20,6 +20,6 @@ dimensions.x = 2 # in Unit cells
 dimensions.y = 2
 dimensions.z = 2
 
-lattice = FCC
+lattice = fcc
 latticeConstant = 5.256 # Ångström
-material = X
+material = argon

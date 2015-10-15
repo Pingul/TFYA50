@@ -12,6 +12,7 @@ class Material
 		~Material();
 
 		static Material* TESTMaterial();
+		static Material* Argon();
 
 		double mass; // kg
 		double radius; // Ångström

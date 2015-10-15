@@ -32,12 +32,12 @@ void Simulation::run()
 		box->updatePositions();
 		box->updateForces(*params->material);
 		box->updateVelocities();
-		measure->calculate(t, *box);
+		measure->calculate(t, *params, *box);
 		fileIO::VIS::writeSimulationInstant("test.vis", t, box->atomSnapshot());
-		if ((100*i)/params->timesteps % 10 == 0)
+		if ((100*(i + 1))/params->timesteps % 10 == 0)
 		{
-			double percentFinished = ((double)i/(double)params->timesteps)*100.0;
-			std::cout << "completed " << i << " out of " << params->timesteps << " steps (" << percentFinished << "%)." << std::endl;
+			double percentFinished = ((double)(i + 1)/(double)params->timesteps)*100.0;
+			std::cout << "completed " << i + 1 << " out of " << params->timesteps << " steps (" << percentFinished << "%)." << std::endl;
 		}
 	}
 	measure->saveToFile("test.mdf");
@@ -70,15 +70,17 @@ void SimulationParams::initSettings(const char* setFile)
 		std::string value = strSetting.second;
 		if (variable.compare("lattice") == 0)
 		{
-			if (value.compare("FCC") == 0)
+			if (value.compare("fcc") == 0)
 				lattice = Lattice::createFCCLattice();
 			else
 				throw std::runtime_error{ "Lattice '" + value + "' does not exist" };
 		}
 		else if (variable.compare("material") == 0)
 		{
-			// We have no special materials atm
-			material = Material::TESTMaterial();
+			if (value.compare("argon") == 0)
+				material = Material::Argon();
+			else
+				throw std::runtime_error{ "Material '" + value + "' does not exist" };
 		}
 	}
 

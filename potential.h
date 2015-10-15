@@ -22,15 +22,17 @@ public:
 class LJPotential : public AtomicPotential
 {
 public:
-	LJPotential() = default;
+	LJPotential() = delete;
+	LJPotential(double eps, double sig) 
+		: epsilon{eps}, sigma{sig} {}
 	virtual ~LJPotential() = default;
 
 	virtual Vector3 interaction(const Atom&, const Atom&);
 	virtual Vector3 interaction(const Vector3&, const Vector3&);
 
 private:
-	double epsilon{ 1.67e-3 };	//in eV
-	double sigma{ 3.40 };	//in Angstrom
+	double epsilon;	//in eV
+	double sigma;	//in Angstrom
 };
 
 #endif
