@@ -46,4 +46,14 @@ public:
 private:
 };
 
+class TotalEnergy : public Measure
+{
+public:
+	TotalEnergy() = default;
+	virtual ~TotalEnergy() = default;
+
+	virtual void calculate(double, const MDBox&);
+private:
+};
+
 #endif

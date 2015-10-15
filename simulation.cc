@@ -156,27 +156,29 @@ void Simulation::run()
 		double t = i*timestepLength;
 		if (i % verletListUpdateFrequency == 0)
 			box->updateVerletList();
-		//box->DEBUG_PRINT
+		//box->DEBUG_PRINT();
 		//if (i % verletListUpdateFrequency == 0)
 		//{
-			//box->updateVerletList();
-			//box->DEBUG_VERLET_LIST();
+		//	box->updateVerletList();
+		//	//box->DEBUG_VERLET_LIST();
 		//}
-		box->DEBUG_PRINT();
-		//box->updatePositions();
+		//box->DEBUG_PRINT();
+		box->updatePositions();
 		box->updateForces(*material);
 		box->updateVelocities();
-		kineticEnergy->calculate(t, *box);
-		potentialEnergy->calculate(t, *box);
+		
 
 		if (i % 10 == 0)
 		{
 			double percentFinished = ((double)i/(double)timesteps)*100.0;
 			std::cout << "completed " << i << " out of " << timesteps << " steps (" << percentFinished << "%)." << std::endl;
+			kineticEnergy->calculate(t, *box);
+			potentialEnergy->calculate(t, *box);
+			kineticEnergy->saveToFile("Kinetic Energy.mdf");
+			potentialEnergy->saveToFile("Potential Energy.mdf");
 		}
 	}
-	kineticEnergy->saveToFile("Kinetic Energy.mdf");
-	potentialEnergy->saveToFile("Potential Energy.mdf");
+	
 }
 
 Simulation::~Simulation()

@@ -51,7 +51,7 @@ void PotentialEnergy::calculate(double t, const MDBox& box)
 			Vector3 currentAtomPosition = atom->at();
 
 			double r = sqrt((currentAtomPosition - translatedInteractingAtomPosition)*(currentAtomPosition - translatedInteractingAtomPosition));
-			double epsilon = 1.67e-3;
+			double epsilon = 0.010423316;
 			double sigma = 3.40;
 
 			energyPerAtom += 4 * epsilon*(pow((sigma / r), 12) - pow((sigma / r), 6));
@@ -61,6 +61,14 @@ void PotentialEnergy::calculate(double t, const MDBox& box)
 		energy += energyPerAtom;
 	}
 
+	timestamps.push_back(t);
+	values.push_back(energy);
+}
+
+void TotalEnergy::calculate(double t, const MDBox& box)
+{
+	double energy = 0;
+	
 	timestamps.push_back(t);
 	values.push_back(energy);
 }
