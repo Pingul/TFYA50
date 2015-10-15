@@ -57,7 +57,7 @@ void PotentialEnergy::calculate(double t, const MDBox& box)
 			energyPerAtom += 4 * epsilon*(pow((sigma / r), 12) - pow((sigma / r), 6));
 		}
 		atomIndex++;
-		std::cout << "Potential energy per atom: " << energyPerAtom << std::endl;
+		//std::cout << "Potential energy per atom: " << energyPerAtom << std::endl;
 		energy += energyPerAtom;
 	}
 

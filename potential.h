@@ -29,7 +29,7 @@ public:
 	virtual Vector3 interaction(const Vector3&, const Vector3&);
 
 private:
-	double epsilon{ 1.67e-3 };	//in eV
+	double epsilon{ 0.010423316 };	//in eV
 	double sigma{ 3.40 };	//in Angstrom
 };
 

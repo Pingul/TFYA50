@@ -62,15 +62,15 @@ void MDBox::updateVerletList()
 		for (int j = i + 1; j < atoms.size(); ++j)
 		{
 			Atom* nextAtom = atoms[j];
-			double xTranslation = nextAtom->at().x > atom->at().x ? -1 : 1;
-			double yTranslation = nextAtom->at().y > atom->at().y ? -1 : 1;
-			double zTranslation = nextAtom->at().z > atom->at().z ? -1 : 1;
+			double xTranslation = nextAtom->at().x > atom->at().x ? -simulation.lattice->latticeConstant : simulation.lattice->latticeConstant;
+			double yTranslation = nextAtom->at().y > atom->at().y ? -simulation.lattice->latticeConstant : simulation.lattice->latticeConstant;
+			double zTranslation = nextAtom->at().z > atom->at().z ? -simulation.lattice->latticeConstant : simulation.lattice->latticeConstant;
 
 			Vector3 translationArr[] =
 			{
 				Vector3{0, 0, 0},
 				Vector3{xTranslation*dimensions.x, 0, 0},
-				Vector3{0, xTranslation*dimensions.y, 0},
+				Vector3{0, yTranslation*dimensions.y, 0},
 				Vector3{0, 0, zTranslation*dimensions.z},
 				Vector3{xTranslation*dimensions.x, yTranslation*dimensions.y, 0},
 				Vector3{xTranslation*dimensions.x, 0, zTranslation*dimensions.z},
@@ -87,7 +87,7 @@ void MDBox::updateVerletList()
 				if (distance < simulation.cutoffDistance)
 				{
 					interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-					break; // no need to translate any other as we found one interaction
+					//break; // no need to translate any other as we found one interaction
 				}
 			}
 		}
@@ -158,14 +158,16 @@ void MDBox::updateForces(const Material& material)
 	for (auto& interactionList : verletList)
 	{
 		Atom* atom{ atoms[atomIndex] };
+		std::cout << "Atom " << atomIndex << std::endl;
 		for (auto& atomTranslationPair : interactionList)
 		{
 			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
-
+			std::cout << "translated interacting atom " << translatedInteractingAtomPosition << std::endl;
 			Vector3 totalForceAtom = atom->totalForce() - simulation.material->potential->interaction(atom->at(), translatedInteractingAtomPosition);
 			Vector3 totalForceInteractingAtom = atomTranslationPair.first->totalForce() + simulation.material->potential->interaction(atom->at(), translatedInteractingAtomPosition);
 			atom->setForce (totalForceAtom);
 			atomTranslationPair.first->setForce(totalForceInteractingAtom);
+			//std::cout << "total force atom " << atomIndex << ": " << totalForceAtom << std::endl;
 		}
 		atomIndex++;
 	}
