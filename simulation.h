@@ -28,7 +28,7 @@ class Simulation
 class SimulationParams
 {
 	public:
-		SimulationParams(const char* file = "../../settings/default.set");
+		SimulationParams(const char* file);
 		~SimulationParams();
 
 		// Parameters needing initialization
