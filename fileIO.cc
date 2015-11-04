@@ -1,5 +1,6 @@
 #include "fileIO.h"
 #include "simulation.h"
+#include "lattice.h"
 #include "atom.h"
 #include <iostream>
 #include <fstream>
@@ -131,6 +132,13 @@ namespace fileIO
 			{
 				std::string timeDelta{ "timeDelta = " + std::to_string(params.timestepLength) + "\n" };
 				visFile.write(timeDelta.c_str(), timeDelta.size());
+
+				std::string xDim{ "dimensions.x = " + std::to_string(params.dimensions.x*params.lattice->latticeConstant) + "\n" };
+				std::string yDim{ "dimensions.y = " + std::to_string(params.dimensions.y*params.lattice->latticeConstant) + "\n" };
+				std::string zDim{ "dimensions.z = " + std::to_string(params.dimensions.z*params.lattice->latticeConstant) + "\n" };
+				visFile.write(xDim.c_str(), xDim.size());
+				visFile.write(yDim.c_str(), yDim.size());
+				visFile.write(zDim.c_str(), zDim.size());
 			}
 			else
 				throw std::runtime_error{"Could not write settings to '" + file + "'"};
