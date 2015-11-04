@@ -68,6 +68,9 @@ void Simulation::run()
 	if (params->saveVisualizationData)
 		fileIO::VIS::writeSettings(filePath() + visFile, *params);
 
+	// Checking time
+	auto start = std::chrono::system_clock::now();
+
 	for (int i = 0; i < params->timesteps; ++i)
 	{
 		double t = i*params->timestepLength;
@@ -82,9 +85,16 @@ void Simulation::run()
 
 		if (params->saveVisualizationData && i % params->visualizationLogRate == 0)
 			fileIO::VIS::writeSimulationInstant(filePath() + visFile, t, box->atomSnapshot());
-		if ((100*(i + 1))/params->timesteps % 10 == 0)
+
+		double percentFinished = ((double)(i + 1)/(double)params->timesteps)*100.0;
+		int percentFinished_i = (int)percentFinished;
+
+		if (percentFinished_i % 10 == 0 && (percentFinished - percentFinished_i) == 0)
 		{
-			double percentFinished = ((double)(i + 1)/(double)params->timesteps)*100.0;
+			auto end = std::chrono::system_clock::now();
+			std::chrono::duration<double> elapsed{end - start};
+			std::cout << "elapsed time: " << elapsed.count() << std::endl;
+
 			std::cout << "completed " << i + 1 << " out of " << params->timesteps << " steps (" << percentFinished << "%)." << std::endl;
 		}
 	}
