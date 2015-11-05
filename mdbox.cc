@@ -62,31 +62,259 @@ void MDBox::updateVerletList()
 		for (int j = i + 1; j < atoms.size(); ++j)
 		{
 			Atom* nextAtom = atoms[j];
-			double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-			double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-			double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
-			Vector3 translationArr[] =
-			{
-				Vector3{0, 0, 0},
-				Vector3{xTranslation*dimensions.x, 0, 0},
-				Vector3{0, yTranslation*dimensions.y, 0},
-				Vector3{0, 0, zTranslation*dimensions.z},
-				Vector3{xTranslation*dimensions.x, yTranslation*dimensions.y, 0},
-				Vector3{xTranslation*dimensions.x, 0, zTranslation*dimensions.z},
-				Vector3{0, yTranslation*dimensions.y, zTranslation*dimensions.z},
-				Vector3{xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z},
-			};
 
-			for (int k = 0; k < 8; ++k)
+			// Translation of corners:
+			if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
+				&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
+				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
 			{
-				Vector3 translation = translationArr[k];
-				Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
+
+				for (int k = 0; k < 8; ++k)
+				{
+					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+
+					Vector3 translationArr[] =
+					{
+						Vector3{ 0, 0, 0 },
+						Vector3{ xTranslation*dimensions.x, 0, 0 },
+						Vector3{ 0, yTranslation*dimensions.y, 0 },
+						Vector3{ 0, 0, zTranslation*dimensions.z },
+						Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
+						Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
+						Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
+						Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
+					};
+
+					Vector3 translation = translationArr[k];
+					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
+					double dotprod = vectorBetween*vectorBetween;
+					double distance = sqrt(dotprod);
+					if (distance < simulationParams.cutoffDistance)
+					{
+						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
+						//break; // no need to translate any other as we found one interaction
+					}
+				}
+			}
+					//for the edges:
+			else if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
+					&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
+					&& (simulationParams.cutoffDistance < nextAtom->at().z < simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+				{
+
+					for (int k = 0; k < 4; ++k)
+					{
+						double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+						double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+						//double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+
+						Vector3 translationArr[] =
+						{
+							Vector3{ 0, 0, 0 },
+							Vector3{ xTranslation*dimensions.x, 0, 0 },
+							Vector3{ 0, yTranslation*dimensions.y, 0 },
+							//Vector3{ 0, 0, zTranslation*dimensions.z },
+							Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
+							//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
+							//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
+							//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
+						};
+
+						Vector3 translation = translationArr[k];
+						Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
+						double dotprod = vectorBetween*vectorBetween;
+						double distance = sqrt(dotprod);
+						if (distance < simulationParams.cutoffDistance)
+						{
+							interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
+							//break; // no need to translate any other as we found one interaction
+						}
+					}
+				}
+			else if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
+				&& (simulationParams.cutoffDistance < nextAtom->at().y < simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
+				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			{
+
+				for (int k = 0; k < 4; ++k)
+				{
+					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					//double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+
+					Vector3 translationArr[] =
+					{
+						Vector3{ 0, 0, 0 },
+						Vector3{ xTranslation*dimensions.x, 0, 0 },
+						//Vector3{ 0, yTranslation*dimensions.y, 0 },
+						Vector3{ 0, 0, zTranslation*dimensions.z },
+						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
+						Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
+						/*Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
+						Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },*/
+					};
+
+					Vector3 translation = translationArr[k];
+					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
+					double dotprod = vectorBetween*vectorBetween;
+					double distance = sqrt(dotprod);
+					if (distance < simulationParams.cutoffDistance)
+					{
+						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
+						//break; // no need to translate any other as we found one interaction
+					}
+				}
+			}
+
+			else if ((simulationParams.cutoffDistance < nextAtom->at().x < simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
+				&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
+				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			{
+
+				for (int k = 0; k < 4; ++k)
+				{
+					//double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+
+					Vector3 translationArr[] =
+					{
+						Vector3{ 0, 0, 0 },
+						//Vector3{ xTranslation*dimensions.x, 0, 0 },
+						Vector3{ 0, yTranslation*dimensions.y, 0 },
+						Vector3{ 0, 0, zTranslation*dimensions.z },
+						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
+						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
+						Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
+						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
+					};
+
+					Vector3 translation = translationArr[k];
+					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
+					double dotprod = vectorBetween*vectorBetween;
+					double distance = sqrt(dotprod);
+					if (distance < simulationParams.cutoffDistance)
+					{
+						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
+						//break; // no need to translate any other as we found one interaction
+					}
+				}
+			}
+
+					// faces:
+			else if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
+				&& (simulationParams.cutoffDistance < nextAtom->at().y < simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
+				&& (simulationParams.cutoffDistance < nextAtom->at().z < simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			{
+
+				for (int k = 0; k < 2; ++k)
+				{
+					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					//double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					//double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+
+					Vector3 translationArr[] =
+					{
+						Vector3{ 0, 0, 0 },
+						Vector3{ xTranslation*dimensions.x, 0, 0 },
+						//Vector3{ 0, yTranslation*dimensions.y, 0 },
+						//Vector3{ 0, 0, zTranslation*dimensions.z },
+						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
+						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
+						//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
+						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
+					};
+
+					Vector3 translation = translationArr[k];
+					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
+					double dotprod = vectorBetween*vectorBetween;
+					double distance = sqrt(dotprod);
+					if (distance < simulationParams.cutoffDistance)
+					{
+						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
+						//break; // no need to translate any other as we found one interaction
+					}
+				}
+			}
+			else if ((simulationParams.cutoffDistance < nextAtom->at().x < simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
+				&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
+				&& (simulationParams.cutoffDistance < nextAtom->at().z < simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			{
+
+				for (int k = 0; k < 2; ++k)
+				{
+					//double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					//double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+
+					Vector3 translationArr[] =
+					{
+						Vector3{ 0, 0, 0 },
+						//Vector3{ xTranslation*dimensions.x, 0, 0 },
+						Vector3{ 0, yTranslation*dimensions.y, 0 },
+						//Vector3{ 0, 0, zTranslation*dimensions.z },
+						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
+						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
+						//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
+						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
+					};
+
+					Vector3 translation = translationArr[k];
+					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
+					double dotprod = vectorBetween*vectorBetween;
+					double distance = sqrt(dotprod);
+					if (distance < simulationParams.cutoffDistance)
+					{
+						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
+						//break; // no need to translate any other as we found one interaction
+					}
+				}
+			}
+			else if ((simulationParams.cutoffDistance < nextAtom->at().x < simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
+				&& (simulationParams.cutoffDistance < nextAtom->at().y < simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
+				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			{
+
+				for (int k = 0; k < 2; ++k)
+				{
+					//double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					//double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+
+					Vector3 translationArr[] =
+					{
+						Vector3{ 0, 0, 0 },
+						//Vector3{ xTranslation*dimensions.x, 0, 0 },
+						//Vector3{ 0, yTranslation*dimensions.y, 0 },
+						Vector3{ 0, 0, zTranslation*dimensions.z },
+						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
+						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
+						//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
+						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
+					};
+
+					Vector3 translation = translationArr[k];
+					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
+					double dotprod = vectorBetween*vectorBetween;
+					double distance = sqrt(dotprod);
+					if (distance < simulationParams.cutoffDistance)
+					{
+						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
+						//break; // no need to translate any other as we found one interaction
+					}
+				}
+			}
+			else
+			{
+				Vector3 vectorBetween = atom->at() - nextAtom->at();
 				double dotprod = vectorBetween*vectorBetween;
 				double distance = sqrt(dotprod);
 				if (distance < simulationParams.cutoffDistance)
 				{
-					interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
+					interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, Vector3{ 0, 0, 0 } });
 					//break; // no need to translate any other as we found one interaction
 				}
 			}
