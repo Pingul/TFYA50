@@ -8,6 +8,8 @@
 #include "potential.h"
 #include <iostream>
 #include <math.h>
+#include <exception>
+#include <algorithm>
 
 const std::vector<Atom*>& Measure::atoms(const MDBox& box)
 {
@@ -23,6 +25,31 @@ void Measure::saveToFile(const std::string& file)
 {
 	fileIO::MDF::write(file, timestamps, values);
 }
+
+
+// void AggregateMeasure::addDependency(std::string name, const Measure& measure)
+// {
+// 	measures[name] = &measure;
+// }
+
+// double AggregateMeasure::dValue(std::string measureName, double t)
+// {
+// 	auto it = measures.find(measureName);
+// 	if (it == measures.end())
+// 		return 0.0; 
+
+// 	return 0.0;
+
+// }
+
+// void TotalEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)
+// {
+
+// 	double val = dValue()
+	
+// 	timestamps.push_back(t);
+// 	values.push_back(energy);
+// }
 
 void KineticEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
@@ -56,14 +83,6 @@ void PotentialEnergy::calculate(double t, const SimulationParams& params, const 
 		energy += energyPerAtom;
 	}
 
-	timestamps.push_back(t);
-	values.push_back(energy);
-}
-
-void TotalEnergy::calculate(double t, const MDBox& box)
-{
-	double energy = 0;
-	
 	timestamps.push_back(t);
 	values.push_back(energy);
 }

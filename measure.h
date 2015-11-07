@@ -2,6 +2,7 @@
 #define _MEASURE_
 
 #include <vector>
+#include <map>
 #include <string>
 
 class MDBox;
@@ -29,6 +30,31 @@ class Measure
 		std::vector<double> values;
 };
 
+class AggregateMeasure : public Measure
+{
+	public:
+		AggregateMeasure() = default;
+		virtual ~AggregateMeasure() = default;
+
+		virtual void addDependency(std::string, const Measure&);
+
+	protected:
+		virtual double dValue(std::string, double); // get value from dependency
+		std::map<std::string, const Measure*> dependencies;
+};
+
+class TotalEnergy : public AggregateMeasure
+{
+	public:
+		TotalEnergy() = default;
+		virtual ~TotalEnergy() = default;
+
+		virtual std::string name() { return "totalEnergy"; }
+		virtual std::vector<std::string> dependencies() { return std::vector<std::string>{"KineticEnergy", "PotentialEnergy"}; } 
+		virtual void calculate(double, const SimulationParams& params, const MDBox& box);
+};
+
+
 class KineticEnergy : public Measure
 {
 	public:
@@ -37,7 +63,6 @@ class KineticEnergy : public Measure
 
 		virtual std::string name() { return "kinetic"; }
 		virtual void calculate(double t, const SimulationParams&, const MDBox&);
-	private:
 };
 
 class PotentialEnergy : public Measure
@@ -48,17 +73,5 @@ class PotentialEnergy : public Measure
 
 		virtual std::string name() { return "potential"; }
 		virtual void calculate(double, const SimulationParams&, const MDBox&);
-	private:
 };
-
-class TotalEnergy : public Measure
-{
-	public:
-		TotalEnergy() = default;
-		virtual ~TotalEnergy() = default;
-
-		virtual void calculate(double, const MDBox&);
-	private:
-};
-
 #endif
