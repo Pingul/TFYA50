@@ -16,6 +16,7 @@ class Vector3;
 class MDBox
 {
 	friend Measure;
+	friend class Thermostat;
 
 	public:
 		MDBox() = delete;

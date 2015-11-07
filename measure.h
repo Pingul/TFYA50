@@ -13,9 +13,10 @@ class SimulationParams;
 class Measure
 {
 	public:
-		Measure() = default;
-		virtual ~Measure() = default;
+		// return value for timestep. Returns 0.0 if no value for the timestamp could be found
+		static double value(Measure* measure, double timestamp);
 
+		virtual ~Measure() = default;
 		virtual std::string name() { return "UNDEFINED"; }
 		virtual void calculate(double t, const SimulationParams&, const MDBox&) = 0;
 		virtual void saveToFile(const std::string&);
@@ -29,31 +30,6 @@ class Measure
 		std::vector<double> timestamps;
 		std::vector<double> values;
 };
-
-class AggregateMeasure : public Measure
-{
-	public:
-		AggregateMeasure() = default;
-		virtual ~AggregateMeasure() = default;
-
-		virtual void addDependency(std::string, const Measure&);
-
-	protected:
-		virtual double dValue(std::string, double); // get value from dependency
-		std::map<std::string, const Measure*> dependencies;
-};
-
-class TotalEnergy : public AggregateMeasure
-{
-	public:
-		TotalEnergy() = default;
-		virtual ~TotalEnergy() = default;
-
-		virtual std::string name() { return "totalEnergy"; }
-		virtual std::vector<std::string> dependencies() { return std::vector<std::string>{"KineticEnergy", "PotentialEnergy"}; } 
-		virtual void calculate(double, const SimulationParams& params, const MDBox& box);
-};
-
 
 class KineticEnergy : public Measure
 {
@@ -74,4 +50,34 @@ class PotentialEnergy : public Measure
 		virtual std::string name() { return "potential"; }
 		virtual void calculate(double, const SimulationParams&, const MDBox&);
 };
+
+class TotalEnergy : public Measure
+{
+	public:
+		TotalEnergy(KineticEnergy* kinetic, PotentialEnergy* potential) 
+			: kineticEnergy{kinetic}, potentialEnergy{potential} {}
+		TotalEnergy(PotentialEnergy* potential, KineticEnergy* kinetic) 
+			: kineticEnergy{kinetic}, potentialEnergy{potential} {}
+		virtual ~TotalEnergy() = default;
+
+		virtual std::string name() { return "totalEnergy"; }
+		virtual void calculate(double, const SimulationParams& params, const MDBox& box);
+
+	private:
+		KineticEnergy* kineticEnergy;
+		PotentialEnergy* potentialEnergy;
+};
+
+class Temperature : public Measure
+{
+	public:
+		Temperature() = default;
+		virtual ~Temperature() = default;
+
+		virtual std::string name() { return "temperature"; }
+		virtual void calculate(double, const SimulationParams&, const MDBox&);
+
+};
+
+
 #endif

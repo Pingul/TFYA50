@@ -26,30 +26,22 @@ void Measure::saveToFile(const std::string& file)
 	fileIO::MDF::write(file, timestamps, values);
 }
 
+double Measure::value(Measure* measure, double timestamp)
+{
+	auto lower = std::lower_bound(measure->timestamps.begin(), measure->timestamps.end(), timestamp);
+	bool found{lower != measure->timestamps.end() && *lower == timestamp};
+	if (!found)
+		return 0.0; // lets default to 0 instead of throwing an error
+	auto index = std::distance(measure->timestamps.begin(), lower);
+	return measure->values.at(index);
+}
 
-// void AggregateMeasure::addDependency(std::string name, const Measure& measure)
-// {
-// 	measures[name] = &measure;
-// }
-
-// double AggregateMeasure::dValue(std::string measureName, double t)
-// {
-// 	auto it = measures.find(measureName);
-// 	if (it == measures.end())
-// 		return 0.0; 
-
-// 	return 0.0;
-
-// }
-
-// void TotalEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)
-// {
-
-// 	double val = dValue()
-	
-// 	timestamps.push_back(t);
-// 	values.push_back(energy);
-// }
+void TotalEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)
+{
+	double energy{Measure::value(kineticEnergy, t) + Measure::value(potentialEnergy, t)};
+	timestamps.push_back(t);
+	values.push_back(energy);
+}
 
 void KineticEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
@@ -85,4 +77,10 @@ void PotentialEnergy::calculate(double t, const SimulationParams& params, const 
 
 	timestamps.push_back(t);
 	values.push_back(energy);
+}
+
+void Temperature::calculate(double t, const SimulationParams& params, const MDBox& box)
+{
+	timestamps.push_back(t);
+	values.push_back(0.0);	
 }

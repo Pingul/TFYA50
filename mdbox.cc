@@ -192,7 +192,7 @@ void MDBox::updatePositions()
 			newPosition.x = newPosition.x - simulationParams.lattice->latticeConstant*dimensions.x;
 
 		if (newPosition.y < 0.0)
-			newPosition.y = newPosition.y+ simulationParams.lattice->latticeConstant*dimensions.y;
+			newPosition.y = newPosition.y + simulationParams.lattice->latticeConstant*dimensions.y;
 		else if (newPosition.y >= simulationParams.lattice->latticeConstant*dimensions.y)
 			newPosition.y = newPosition.y - simulationParams.lattice->latticeConstant*dimensions.y;
 

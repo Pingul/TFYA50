@@ -1,19 +1,19 @@
 # definition of a settingsfile
 
 # Number of timesteps
-timesteps = 1000
+timesteps = 100
 timestepLength = 1 # The timestep is measured in femtoseconds
 
 # Visualization
-saveVisualizationData = 1 # boolean
+saveVisualizationData = 0 # boolean
 visualizationLogRate = 5 # Save data every x femtosecond
 
-outputDirectory = ../../data
+outputDirectory = data
 
-measureDataLogRate = 2 # every x femtosecond
+measureDataLogRate = 1 # every x femtosecond
 cutoffDistance = 6.40 # in Ångström
 
-thermostat = 0 # boolean
+thermostat = thermostatType # string
 goalTemperature = 40 # Kelvin
 
 initialTemperature = 40 # Kelvin
