@@ -13,7 +13,7 @@ outputDirectory = data
 measureDataLogRate = 50 # every x femtosecond
 cutoffDistance = 6.40 # in Ångström
 
-thermostat = 0 # boolean
+thermostat = thermostat # boolean
 goalTemperature = 40 # Kelvin
 
 initialTemperature = 40 # Kelvin

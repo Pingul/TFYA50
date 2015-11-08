@@ -7,10 +7,11 @@
 #include <regex>
 #include <exception>
 #include <sstream>
+#include <cctype>
 
 namespace fileIO
 {
-	std::string trim(const std::string& str, const std::string& whitespace = " \t")
+	std::string trim(const std::string& str, const std::string& whitespace = " \t\n\v\f\r")
 	{
 		size_t strBegin = str.find_first_not_of(whitespace);
 		if (strBegin == std::string::npos)
@@ -78,6 +79,7 @@ namespace fileIO
 				while (getline(simFile, line))
 				{
 					std::string trimmedLine{ trim(strip(line)) };
+
 					if (trimmedLine.empty())
 						continue;
 

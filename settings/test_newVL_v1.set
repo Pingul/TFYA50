@@ -1,21 +1,16 @@
-# definition of a settingsfile
-
-# Number of timesteps
 timesteps = 10000
 timestepLength = 1 # The timestep is measured in femtoseconds
 
 # Visualization
 saveVisualizationData = 1 # boolean
 visualizationLogRate = 50 # Save data every x femtosecond
-
 outputDirectory = data
-
 measureDataLogRate = 50 # every x femtosecond
+
 cutoffDistance = 6.40 # in Ångström
+thermostat = thermostat # boolean
 
-thermostat = 0 # boolean
 goalTemperature = 40 # Kelvin
-
 initialTemperature = 40 # Kelvin
 
 dimensions.x = 4 # in Unit cells
