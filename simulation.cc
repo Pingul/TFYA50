@@ -163,12 +163,15 @@ void SimulationParams::initSettings(const char* setFile)
 	{
 		std::string variable = strSetting.first;
 		std::string value = strSetting.second;
+		std::cout << variable << " = " << value << std::endl;
 		if (variable.compare("lattice") == 0)
 		{
 			if (value.compare("fcc") == 0)
 				lattice = Lattice::createFCCLattice();
 			else
+			{
 				throw std::runtime_error{ "Lattice '" + value + "' does not exist" };
+			}
 		}
 		else if (variable.compare("material") == 0)
 		{
