@@ -27,11 +27,34 @@ const std::string getCurrentDateAndTime()
 	return ss.str();
 }
 
+std::vector<std::string> split(const std::string& str, std::vector<std::string>& items, const char delimiter = ' ')
+{
+	std::stringstream stream{str};
+	std::string item;
+	while (std::getline(stream, item, delimiter))
+	{
+		items.push_back(item);
+	}
+	return items;
+}
+
+std::string fileName(std::string filePath)
+{
+	// Expecting file path of type 'path/to/file.ending'
+	std::vector<std::string> items;
+	split(filePath, items, '/');
+	std::string file{items.back()};
+	items.clear();
+	split(file, items, '.');
+	return items.front();
+}
+
 Simulation::Simulation(const char* setFile)
 {
 	Random::setup();
 	params = new SimulationParams{setFile};
 	box = new MDBox{ *params };
+	filePrefix = fileName(setFile) + "::";
 	//filePrefix = getCurrentDateAndTime() + " | ";
 }
 
