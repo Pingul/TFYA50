@@ -4,5 +4,5 @@
 
 void AndersonThermostat::scaleTemperature(double t, MDBox& box)
 {
-	std::cout << "Should scale velocities" << std::endl;
+	// std::cout << "Should scale velocities" << std::endl;
 }
