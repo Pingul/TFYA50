@@ -8,6 +8,8 @@
 #include "potential.h"
 #include <iostream>
 #include <math.h>
+#include <exception>
+#include <algorithm>
 
 const std::vector<Atom*>& Measure::atoms(const MDBox& box)
 {
@@ -22,6 +24,23 @@ const std::vector<std::vector<std::pair<Atom*, Vector3>>>& Measure::verletList(c
 void Measure::saveToFile(const std::string& file)
 {
 	fileIO::MDF::write(file, timestamps, values);
+}
+
+double Measure::value(Measure* measure, double timestamp)
+{
+	auto lower = std::lower_bound(measure->timestamps.begin(), measure->timestamps.end(), timestamp);
+	bool found{lower != measure->timestamps.end() && *lower == timestamp};
+	if (!found)
+		return 0.0; // lets default to 0 instead of throwing an error
+	auto index = std::distance(measure->timestamps.begin(), lower);
+	return measure->values.at(index);
+}
+
+void TotalEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)
+{
+	double energy{Measure::value(kineticEnergy, t) + Measure::value(potentialEnergy, t)};
+	timestamps.push_back(t);
+	values.push_back(energy);
 }
 
 void KineticEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)
@@ -60,10 +79,8 @@ void PotentialEnergy::calculate(double t, const SimulationParams& params, const 
 	values.push_back(energy);
 }
 
-void TotalEnergy::calculate(double t, const MDBox& box)
+void Temperature::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
-	double energy = 0;
-	
 	timestamps.push_back(t);
-	values.push_back(energy);
+	values.push_back(0.0);	
 }

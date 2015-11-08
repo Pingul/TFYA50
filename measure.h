@@ -2,6 +2,7 @@
 #define _MEASURE_
 
 #include <vector>
+#include <map>
 #include <string>
 
 class MDBox;
@@ -12,9 +13,10 @@ class SimulationParams;
 class Measure
 {
 	public:
-		Measure() = default;
-		virtual ~Measure() = default;
+		// return value for timestep. Returns 0.0 if no value for the timestamp could be found
+		static double value(Measure* measure, double timestamp);
 
+		virtual ~Measure() = default;
 		virtual std::string name() { return "UNDEFINED"; }
 		virtual void calculate(double t, const SimulationParams&, const MDBox&) = 0;
 		virtual void saveToFile(const std::string&);
@@ -37,7 +39,6 @@ class KineticEnergy : public Measure
 
 		virtual std::string name() { return "kinetic"; }
 		virtual void calculate(double t, const SimulationParams&, const MDBox&);
-	private:
 };
 
 class PotentialEnergy : public Measure
@@ -48,17 +49,35 @@ class PotentialEnergy : public Measure
 
 		virtual std::string name() { return "potential"; }
 		virtual void calculate(double, const SimulationParams&, const MDBox&);
-	private:
 };
 
 class TotalEnergy : public Measure
 {
 	public:
-		TotalEnergy() = default;
+		TotalEnergy(KineticEnergy* kinetic, PotentialEnergy* potential) 
+			: kineticEnergy{kinetic}, potentialEnergy{potential} {}
+		TotalEnergy(PotentialEnergy* potential, KineticEnergy* kinetic) 
+			: kineticEnergy{kinetic}, potentialEnergy{potential} {}
 		virtual ~TotalEnergy() = default;
 
-		virtual void calculate(double, const MDBox&);
+		virtual std::string name() { return "totalEnergy"; }
+		virtual void calculate(double, const SimulationParams& params, const MDBox& box);
+
 	private:
+		KineticEnergy* kineticEnergy;
+		PotentialEnergy* potentialEnergy;
 };
+
+class Temperature : public Measure
+{
+	public:
+		Temperature() = default;
+		virtual ~Temperature() = default;
+
+		virtual std::string name() { return "temperature"; }
+		virtual void calculate(double, const SimulationParams&, const MDBox&);
+
+};
+
 
 #endif

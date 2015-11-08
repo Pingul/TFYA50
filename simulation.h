@@ -16,7 +16,7 @@ class Simulation
 	friend MDBox;
 
 	public:
-		Simulation(const char* setFile = "../../settings/default.set");
+		Simulation(const char* setFile = "../../settings/default.set"); // To help for VS
 		~Simulation();
 
 		void run();
@@ -49,7 +49,6 @@ class SimulationParams
 		int measureDataLogRate; // every x femtosecond
 		double cutoffDistance{ -1.0 }; // in Ångström
 		double initialTemperature{ -1.0 }; // Kelvin
-		bool thermostat{ false };
 		double goalTemperature; // Kelvin
 		Vector3 dimensions{ -1, -1, -1 }; // in Unit cells
 
@@ -61,6 +60,14 @@ class SimulationParams
 
 		Lattice* lattice{ nullptr };
 		Material* material{ nullptr };
+
+		// Measures
+		class KineticEnergy* kineticEnergy{nullptr};
+		class PotentialEnergy* potentialEnergy{nullptr};
+		class TotalEnergy* totalEnergy{nullptr};
+		class Temperature* temperature{nullptr};
+
+		class Thermostat* thermostat{nullptr};
 		
 	private:
 		void initSettings(const char*);

@@ -2,12 +2,20 @@
 #include <iostream>
 #include <exception>
 
-int main()
+int main(int argc, char* argv[])
 {
 	try
 	{
-		Simulation sim;
-		sim.run();
+		if (argc == 2)
+		{
+			Simulation sim{argv[1]};
+			sim.run();
+		}
+		else
+		{
+			Simulation sim;
+			sim.run();
+		}
 		std::cout << "simulation completed" << std::endl;
 	}
 	catch (const std::exception& e)

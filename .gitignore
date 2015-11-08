@@ -15,3 +15,8 @@ x32
 # project files
 *.mdf
 *.vis
+
+# for mac
+a.out
+main
+.DS_store

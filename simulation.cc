@@ -5,6 +5,7 @@
 #include "random.h"
 #include "fileIO.h"
 #include "measure.h"
+#include "thermostat.h"
 
 #include <cmath>
 #include <map>
@@ -26,11 +27,34 @@ const std::string getCurrentDateAndTime()
 	return ss.str();
 }
 
+std::vector<std::string> split(const std::string& str, std::vector<std::string>& items, const char delimiter = ' ')
+{
+	std::stringstream stream{str};
+	std::string item;
+	while (std::getline(stream, item, delimiter))
+	{
+		items.push_back(item);
+	}
+	return items;
+}
+
+std::string fileName(std::string filePath)
+{
+	// Expecting file path of type 'path/to/file.ending'
+	std::vector<std::string> items;
+	split(filePath, items, '/');
+	std::string file{items.back()};
+	items.clear();
+	split(file, items, '.');
+	return items.front();
+}
+
 Simulation::Simulation(const char* setFile)
 {
 	Random::setup();
 	params = new SimulationParams{setFile};
 	box = new MDBox{ *params };
+	filePrefix = fileName(setFile) + "::";
 	//filePrefix = getCurrentDateAndTime() + " | ";
 }
 
@@ -41,8 +65,16 @@ std::string Simulation::filePath()
 
 void Simulation::setupMeasures()
 {
-	measures.push_back(new KineticEnergy());
-	measures.push_back(new PotentialEnergy());
+	params->kineticEnergy = new KineticEnergy();
+	params->potentialEnergy = new PotentialEnergy();
+	params->totalEnergy = new TotalEnergy(params->kineticEnergy, params->potentialEnergy);
+	params->temperature = new Temperature();
+
+	// This makes administration somewhat easier	
+	measures.push_back(params->kineticEnergy);
+	measures.push_back(params->potentialEnergy);
+	measures.push_back(params->totalEnergy);
+	measures.push_back(params->temperature);
 }
 
 void Simulation::calculateMeasures(double t)
@@ -68,6 +100,9 @@ void Simulation::run()
 	if (params->saveVisualizationData)
 		fileIO::VIS::writeSettings(filePath() + visFile, *params);
 
+	// Checking time
+	auto start = std::chrono::system_clock::now();
+
 	for (int i = 0; i < params->timesteps; ++i)
 	{
 		double t = i*params->timestepLength;
@@ -78,13 +113,25 @@ void Simulation::run()
 		box->updateVelocities();
 
 		if (i % params->measureDataLogRate == 0)
+		{
 			calculateMeasures(t);
+			// We can only apply the thermostat if we've calculated the temperature, so we do it in conjunction with the measures
+			params->thermostat->scaleTemperature(t, *box);
+		}
+
 
 		if (params->saveVisualizationData && i % params->visualizationLogRate == 0)
 			fileIO::VIS::writeSimulationInstant(filePath() + visFile, t, box->atomSnapshot());
-		if ((100*(i + 1))/params->timesteps % 10 == 0)
+
+		double percentFinished = ((double)(i + 1)/(double)params->timesteps)*100.0;
+		int percentFinished_i = (int)percentFinished;
+
+		if (percentFinished_i % 10 == 0 && (percentFinished - percentFinished_i) == 0)
 		{
-			double percentFinished = ((double)(i + 1)/(double)params->timesteps)*100.0;
+			auto end = std::chrono::system_clock::now();
+			std::chrono::duration<double> elapsed{end - start};
+			std::cout << "elapsed time: " << elapsed.count() << std::endl;
+
 			std::cout << "completed " << i + 1 << " out of " << params->timesteps << " steps (" << percentFinished << "%)." << std::endl;
 		}
 	}
@@ -130,6 +177,10 @@ void SimulationParams::initSettings(const char* setFile)
 			else
 				throw std::runtime_error{ "Material '" + value + "' does not exist" };
 		}
+		else if (variable.compare("thermostat") == 0)
+		{
+			thermostat = new AndersonThermostat{*this}; // Note that 'this' is not fully populated at this state. If the initialization does something funky here (as accessing certain SimulationParams values), it might break
+		}
 		else if (variable.compare("outputDirectory") == 0)
 			outputDirectory = value;
 		else
@@ -152,8 +203,6 @@ void SimulationParams::initSettings(const char* setFile)
 			measureDataLogRate = (int)std::round(value);
 		else if (variable.compare("cutoffDistance") == 0)
 			cutoffDistance = value;
-		else if (variable.compare("thermostat") == 0)
-			thermostat = (bool)value;
 		else if (variable.compare("goalTemperature") == 0)
 			goalTemperature = value;
 		else if (variable.compare("initialTemperature") == 0)
@@ -165,7 +214,7 @@ void SimulationParams::initSettings(const char* setFile)
 		else if (variable.compare("dimensions.z") == 0)
 			dimensions.z = std::round(value);
 		else if (variable.compare("latticeConstant") == 0)
-			lattice->latticeConstant = value; // Dependent on the lattice that we create earlier
+			lattice->latticeConstant = value; // Dependent on the lattice that we created earlier
 		else
 			throw std::runtime_error{ "Could not find a match for setting '" + variable + "'" };
 	}
