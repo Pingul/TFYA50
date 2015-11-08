@@ -16,7 +16,7 @@ class Simulation
 	friend MDBox;
 
 	public:
-		Simulation(const char* setFile = "../../settings/default.set");
+		Simulation(const char* setFile = "../../settings/default.set"); // To help for VS
 		~Simulation();
 
 		void run();
