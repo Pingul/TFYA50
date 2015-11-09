@@ -2,6 +2,7 @@
 
 #include "vector.h"
 #include "atom.h"
+#include "simulation.h"
 #include <math.h>
 
 Vector3 LJPotential::interaction(const Atom& atom1, const Atom& atom2)
@@ -44,12 +45,19 @@ Vector3 LJPotential::interaction(const Vector3& vector1, const Vector3& vector2)
 	return force;
 }
 
-double LJPotential::potentialEnergy(const Vector3& vector1, const Vector3& vector2)
+double LJPotential::potentialEnergy(const Vector3& vector1, const Vector3& vector2, const SimulationParams& params)
 {
 	double r = sqrt((vector1 - vector2)*(vector1 - vector2));
 
-	if (r > 6.0)
-		return  -0.0013347770494899366 * (6.4 - r);
+	double rcut = params.cutoffDistance;
+	double rin = 0.95*rcut;
 
-	return 4 * epsilon*(pow((sigma / r), 12) - pow((sigma / r), 6));
+	if (rin < r < rcut)
+		return  4 * epsilon*(pow((sigma / r), 12) - pow((sigma / r), 6))*pow((pow(rcut, 2) - pow(r, 2)), 2)*(pow(rcut, 2) + 2 * pow(r, 2) - 3 * pow(rin, 2)) / pow((pow(rcut, 2) - pow(rin, 2)), 3);
+	else if (r > rcut)
+		return 0;
+	else
+	{
+		return 4 * epsilon*(pow((sigma / r), 12) - pow((sigma / r), 6));
+	}
 }

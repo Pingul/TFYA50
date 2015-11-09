@@ -3,6 +3,7 @@
 
 class Atom;
 class Vector3;
+class SimulationParams;
 
 /* Base class for potential that will be used in the project
 
@@ -17,7 +18,7 @@ class AtomicPotential
 		// shall return a Vector3 that indicates by what force the first Atom affects the second
 		virtual Vector3 interaction(const Atom&, const Atom&) = 0;
 		virtual Vector3 interaction(const Vector3&, const Vector3&) = 0;
-		virtual double potentialEnergy(const Vector3&, const Vector3&) = 0;
+		virtual double potentialEnergy(const Vector3&, const Vector3&, const SimulationParams&) = 0;
 };
 
 class LJPotential : public AtomicPotential
@@ -30,7 +31,7 @@ class LJPotential : public AtomicPotential
 
 		virtual Vector3 interaction(const Atom&, const Atom&);
 		virtual Vector3 interaction(const Vector3&, const Vector3&);
-		virtual double potentialEnergy(const Vector3&, const Vector3&);
+		virtual double potentialEnergy(const Vector3&, const Vector3&, const SimulationParams&);
 
 	private:
 		double epsilon;	//in eV

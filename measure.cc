@@ -69,7 +69,7 @@ void PotentialEnergy::calculate(double t, const SimulationParams& params, const 
 		{
 			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
 			Vector3 currentAtomPosition = atom->at();
-			energyPerAtom += params.material->potential->potentialEnergy(currentAtomPosition, translatedInteractingAtomPosition);
+			energyPerAtom += params.material->potential->potentialEnergy(currentAtomPosition, translatedInteractingAtomPosition, params);
 		}
 		atomIndex++;
 		energy += energyPerAtom;
