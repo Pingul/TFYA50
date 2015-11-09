@@ -71,11 +71,15 @@ class TotalEnergy : public Measure
 class Temperature : public Measure
 {
 	public:
-		Temperature() = default;
+		Temperature(KineticEnergy* kinetic)
+			: kineticEnergy{kinetic} {}
 		virtual ~Temperature() = default;
 
 		virtual std::string name() { return "temperature"; }
 		virtual void calculate(double, const SimulationParams&, const MDBox&);
+
+	private:
+		KineticEnergy* kineticEnergy;
 
 };
 
