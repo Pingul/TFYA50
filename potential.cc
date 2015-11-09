@@ -32,8 +32,14 @@ Vector3 LJPotential::interaction(const Vector3& vector1, const Vector3& vector2)
 	double sigma12 = pow(sigma, 12);
 
 	double constant = ((24 * epsilon) / dis8) * (2 * sigma12 / dis6 - sigma6);
-	
-	Vector3 force = constant * (vector2 - vector1);
+
+	// hardcoded for test
+	Vector3 force;
+	double dis = sqrt(dis2);
+	if (dis > 6.0)
+		force = -0.00021484474200299757 * (6.4 - dis) * (vector2 - vector1);
+	else 
+		force = constant * (vector2 - vector1);
 
 	return force;
 }
@@ -41,6 +47,9 @@ Vector3 LJPotential::interaction(const Vector3& vector1, const Vector3& vector2)
 double LJPotential::potentialEnergy(const Vector3& vector1, const Vector3& vector2)
 {
 	double r = sqrt((vector1 - vector2)*(vector1 - vector2));
+
+	if (r > 6.0)
+		return  -0.0013347770494899366 * (6.4 - r);
 
 	return 4 * epsilon*(pow((sigma / r), 12) - pow((sigma / r), 6));
 }

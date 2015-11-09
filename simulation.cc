@@ -68,7 +68,7 @@ void Simulation::setupMeasures()
 	params->kineticEnergy = new KineticEnergy();
 	params->potentialEnergy = new PotentialEnergy();
 	params->totalEnergy = new TotalEnergy(params->kineticEnergy, params->potentialEnergy);
-	params->temperature = new Temperature();
+	params->temperature = new Temperature(params->kineticEnergy);
 
 	// This makes administration somewhat easier	
 	measures.push_back(params->kineticEnergy);

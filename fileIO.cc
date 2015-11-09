@@ -111,7 +111,7 @@ namespace fileIO
 			{
 				for (int i = 0; i < timestamps.size(); i++)
 				{
-					std::string timestamp{ "t = " + std::to_string(timestamps[i]) + "\n"};
+					std::string timestamp{ std::to_string(timestamps[i]) + "\t"};
 					mdfFile.write(timestamp.c_str(), timestamp.size());
 					std::string stringValue{ std::to_string(values[i]) + "\n"};
 					mdfFile.write(stringValue.c_str(), stringValue.size());

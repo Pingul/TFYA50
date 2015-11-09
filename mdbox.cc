@@ -414,19 +414,19 @@ void MDBox::updatePositions()
 		double mass = simulationParams.material->mass* PHConstants::amuToefA;
 		Vector3 newPosition = oldPosition + oldVelocity * deltatime + (oldForce / mass)*(deltatime / 2)*deltatime;
 
-		if (newPosition.x < 0.0)
+		if (newPosition.x < -1.0)
 			newPosition.x = newPosition.x + simulationParams.lattice->latticeConstant*dimensions.x;
-		else if (newPosition.x >= simulationParams.lattice->latticeConstant*dimensions.x)
+		else if (newPosition.x >= simulationParams.lattice->latticeConstant*dimensions.x + 1.0)
 			newPosition.x = newPosition.x - simulationParams.lattice->latticeConstant*dimensions.x;
 
-		if (newPosition.y < 0.0)
+		if (newPosition.y < -1.0)
 			newPosition.y = newPosition.y + simulationParams.lattice->latticeConstant*dimensions.y;
-		else if (newPosition.y >= simulationParams.lattice->latticeConstant*dimensions.y)
+		else if (newPosition.y >= simulationParams.lattice->latticeConstant*dimensions.y + 1.0)
 			newPosition.y = newPosition.y - simulationParams.lattice->latticeConstant*dimensions.y;
 
-		if (newPosition.z < 0.0)
+		if (newPosition.z < -1.0)
 			newPosition.z = newPosition.z + simulationParams.lattice->latticeConstant*dimensions.z;
-		else if (newPosition.z >= simulationParams.lattice->latticeConstant*dimensions.z)
+		else if (newPosition.z >= simulationParams.lattice->latticeConstant*dimensions.z + 1.0)
 			newPosition.z = newPosition.z - simulationParams.lattice->latticeConstant*dimensions.z;
 
 		atom->setPosition(newPosition);
