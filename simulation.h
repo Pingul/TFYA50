@@ -66,6 +66,7 @@ class SimulationParams
 		class PotentialEnergy* potentialEnergy{nullptr};
 		class TotalEnergy* totalEnergy{nullptr};
 		class Temperature* temperature{nullptr};
+		class MSD* msd{ nullptr };
 
 		class Thermostat* thermostat{nullptr};
 		

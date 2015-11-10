@@ -83,5 +83,15 @@ class Temperature : public Measure
 
 };
 
+class MSD : public Measure
+{
+public:
+	MSD() = default;
+	virtual ~MSD() = default;
+
+	virtual std::string name() { return "msd"; }
+	virtual void calculate(double, const SimulationParams&, const MDBox&);
+};
+
 
 #endif

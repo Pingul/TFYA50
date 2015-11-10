@@ -81,8 +81,38 @@ void PotentialEnergy::calculate(double t, const SimulationParams& params, const 
 
 void Temperature::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
-	double temperature = { Measure::value(kineticEnergy, t) * 2.0 / (3.0*PHConstants::boltzmann*params.dimensions.x*params.dimensions.y*params.dimensions.z*4.0) };
+	double temperature = { Measure::value(kineticEnergy, t) * 2.0 / atoms(box).size };  //(3.0*PHConstants::boltzmann*params.dimensions.x*params.dimensions.y*params.dimensions.z*4.0) };
 
 	timestamps.push_back(t);
-	values.push_back(0.0);	
+	values.push_back(temperature);	
+}
+
+void MSD::calculate(double t, const SimulationParams& params, const MDBox& box)
+{
+	double msd = 0;
+	int atomIndex = 0;
+	
+	for (int iii = 0; iii < params.dimensions.x; ++iii)
+	{
+		for (int jjj = 0; jjj < params.dimensions.y; ++jjj)
+		{
+			for (int kkk = 0; kkk < params.dimensions.z; ++kkk)
+			{
+				for (auto& position : params.lattice->atomPositions)
+				{
+
+					Atom* atom{ atoms(box)[atomIndex] };
+					Vector3 fccPosition=params.lattice->latticeConstant*position + params.lattice->latticeConstant*Vector3{ (double)iii, (double)jjj, (double)kkk });
+					msd += (atom->at() - fccPosition)*(atom->at() - fccPosition);
+
+					atomIndex++;
+				}
+			}
+		}
+	}
+
+	msd = msd / atoms(box).size;
+
+	timestamps.push_back(t);
+	values.push_back(msd);
 }
