@@ -81,6 +81,8 @@ void PotentialEnergy::calculate(double t, const SimulationParams& params, const 
 
 void Temperature::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
+	double temperature = { Measure::value(kineticEnergy, t) * 2.0 / (3.0*PHConstants::boltzmann*params.dimensions.x*params.dimensions.y*params.dimensions.z*4.0) };
+
 	timestamps.push_back(t);
 	values.push_back(0.0);	
 }
