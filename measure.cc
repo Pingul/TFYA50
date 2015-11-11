@@ -118,3 +118,16 @@ void MSD::calculate(double t, const SimulationParams& params, const MDBox& box)
 	timestamps.push_back(t);
 	values.push_back(msd);
 }
+
+void DebyeTemperature::calculate(double t, const SimulationParams& params, const MDBox& box)
+{
+	double mass = params.material->mass*PHConstants::amuToefA;
+	double instantT = { Measure::value(temperature,t) };
+	double meanSquareDisplacement = { Measure::value(mSD,t) };
+	double hBar2 = pow(PHConstants::planckConstant, 2);
+
+	double debyeTemperature = sqrt(3.0*hBar2*instantT / (mass*PHConstants::boltzmann*meanSquareDisplacement));
+
+	timestamps.push_back(t);
+	values.push_back(debyeTemperature);
+}

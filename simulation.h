@@ -67,6 +67,7 @@ class SimulationParams
 		class TotalEnergy* totalEnergy{nullptr};
 		class Temperature* temperature{nullptr};
 		class MSD* msd{ nullptr };
+		class DebyeTemperature* debyeTemperature{ nullptr };
 
 		class Thermostat* thermostat{nullptr};
 		

@@ -93,5 +93,21 @@ public:
 	virtual void calculate(double, const SimulationParams&, const MDBox&);
 };
 
+class DebyeTemperature : public Measure
+{
+public:
+	DebyeTemperature(Temperature* temp, MSD* msd)
+		: temperature{ temp }, mSD{ msd } {}
+	DebyeTemperature(MSD* msd, Temperature* temp)
+		: temperature{ temp }, mSD{ msd } {}
+	virtual ~DebyeTemperature() = default;
+
+	virtual std::string name() { return "Debye temperature"; }
+	virtual void calculate(double, const SimulationParams& params, const MDBox& box);
+
+private:
+	Temperature* temperature;
+	MSD* mSD;
+};
 
 #endif
