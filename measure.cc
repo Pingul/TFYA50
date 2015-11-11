@@ -6,6 +6,8 @@
 #include "simulation.h"
 #include "material.h"
 #include "potential.h"
+#include "lattice.h"
+
 #include <iostream>
 #include <math.h>
 #include <exception>
@@ -81,7 +83,7 @@ void PotentialEnergy::calculate(double t, const SimulationParams& params, const 
 
 void Temperature::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
-	double temperature = { Measure::value(kineticEnergy, t) * 2.0 / atoms(box).size };  //(3.0*PHConstants::boltzmann*params.dimensions.x*params.dimensions.y*params.dimensions.z*4.0) };
+	double temperature = { Measure::value(kineticEnergy, t) * 2.0 / double(atoms(box).size()) };  //(3.0*PHConstants::boltzmann*params.dimensions.x*params.dimensions.y*params.dimensions.z*4.0) };
 
 	timestamps.push_back(t);
 	values.push_back(temperature);	
@@ -102,7 +104,7 @@ void MSD::calculate(double t, const SimulationParams& params, const MDBox& box)
 				{
 
 					Atom* atom{ atoms(box)[atomIndex] };
-					Vector3 fccPosition=params.lattice->latticeConstant*position + params.lattice->latticeConstant*Vector3{ (double)iii, (double)jjj, (double)kkk });
+					Vector3 fccPosition=params.lattice->latticeConstant*position + params.lattice->latticeConstant*Vector3{ (double)iii, (double)jjj, (double)kkk };
 					msd += (atom->at() - fccPosition)*(atom->at() - fccPosition);
 
 					atomIndex++;
@@ -111,7 +113,7 @@ void MSD::calculate(double t, const SimulationParams& params, const MDBox& box)
 		}
 	}
 
-	msd = msd / atoms(box).size;
+	msd = msd / double(atoms(box).size());
 
 	timestamps.push_back(t);
 	values.push_back(msd);
