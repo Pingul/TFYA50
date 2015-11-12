@@ -14,7 +14,7 @@ class Material
 		static Material* TESTMaterial();
 		static Material* Argon();
 
-		double mass; // kg
+		double mass; // atomic mass units
 		double radius; // Ångström
 		AtomicPotential* potential{nullptr};
 };
