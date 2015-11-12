@@ -52,17 +52,17 @@ MDBox::MDBox(const SimulationParams& params) : simulationParams{params}
 
 bool MDBox::atCorner(const Atom&)
 {
-
+	return false;
 }
 
 bool MDBox::atEdge(const Atom&)
 {
-
+	return false;
 }
 
 bool MDBox::atFace(const Atom&)
 {
-
+	return false;
 }
 
 
