@@ -50,6 +50,22 @@ MDBox::MDBox(const SimulationParams& params) : simulationParams{params}
 	//updateVelocities();
 }
 
+bool MDBox::atCorner(const Atom&)
+{
+
+}
+
+bool MDBox::atEdge(const Atom&)
+{
+
+}
+
+bool MDBox::atFace(const Atom&)
+{
+
+}
+
+
 void MDBox::updateVerletList()
 {
 	verletList.clear();
