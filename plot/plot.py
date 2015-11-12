@@ -27,7 +27,7 @@ def main(directory, simulation_name):
 		plot_mdf(directory + "/" + simulation_name)
 		plt.show()
 		return
-	elif simulation_name.split(".")[-1] != "sim":
+	elif simulation_name.split(".")[-1] != "sim": # if we havn't written the file ending, append ".sim"
 		simulation_name += ".sim"
 
 	files = []
