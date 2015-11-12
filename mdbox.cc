@@ -280,7 +280,6 @@ void MDBox::createInitialAtoms(const Lattice& lattice)
 				{
 					Atom* atom = new Atom();
 					atom->setPosition(lattice.latticeConstant*position + lattice.latticeConstant*Vector3{ (double)iii, (double)jjj, (double)kkk });
-					//atom->setForce(Vector3{ 1, 1, 1 });
 					atoms.push_back(atom);
 				}
 			}
@@ -360,7 +359,7 @@ void MDBox::updatePositions()
 		double mass = simulationParams.material->mass* PHConstants::amuToefA;
 		Vector3 newPosition = oldPosition + oldVelocity * deltatime + (oldForce / mass)*(deltatime / 2)*deltatime;
 
-		static const double offset = 1.0;
+		static const double offset = 1.0; // 0 seems like a bad number, but I do not know why
 		if (newPosition.x < -offset)
 			newPosition.x = newPosition.x + simulationParams.lattice->latticeConstant*dimensions.x;
 		else if (newPosition.x >= simulationParams.lattice->latticeConstant*dimensions.x + offset)
