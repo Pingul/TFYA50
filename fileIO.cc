@@ -176,7 +176,6 @@ namespace fileIO
 	{
 		void write(const std::string& path, const std::string& file, const Simulation& sim)
 		{
-			std::cout << path + file + ".sim" << std::endl;
 			std::ofstream simFile{path + "/" + file + ".sim"};
 			if (simFile.is_open())
 			{
