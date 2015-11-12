@@ -1,8 +1,9 @@
 #include "thermostat.h"
 #include "mdbox.h"
-#include <iostream>
 #include "measure.h"
 #include "simulation.h"
+#include <iostream>
+#include <math.h>
 
 const std::vector<Atom*>& Thermostat::atoms(const MDBox& box)
 {
