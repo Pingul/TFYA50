@@ -45,9 +45,6 @@ MDBox::MDBox(const SimulationParams& params) : simulationParams{params}
 	createInitialAtoms(*simulationParams.lattice);
 	setInitialVelocities(simulationParams.initialTemperature);
 	updateVerletList();
-	//DEBUG_PRINT_ATOMS(atoms);
-	//updatePositions();
-	//updateVelocities();
 }
 
 bool MDBox::atCorner(const Atom&)
@@ -111,7 +108,6 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
@@ -125,18 +121,13 @@ void MDBox::updateVerletList()
 					{
 						double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 						double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-						//double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 						Vector3 translationArr[] =
 						{
 							Vector3{ 0, 0, 0 },
 							Vector3{ xTranslation*dimensions.x, 0, 0 },
 							Vector3{ 0, yTranslation*dimensions.y, 0 },
-							//Vector3{ 0, 0, zTranslation*dimensions.z },
 							Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
-							//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
-							//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-							//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
 						};
 
 						Vector3 translation = translationArr[k];
@@ -146,7 +137,6 @@ void MDBox::updateVerletList()
 						if (distance < simulationParams.cutoffDistance)
 						{
 							interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-							//break; // no need to translate any other as we found one interaction
 						}
 					}
 				}
@@ -158,19 +148,14 @@ void MDBox::updateVerletList()
 				for (int k = 0; k < 4; ++k)
 				{
 					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					//double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
 						Vector3{ 0, 0, 0 },
 						Vector3{ xTranslation*dimensions.x, 0, 0 },
-						//Vector3{ 0, yTranslation*dimensions.y, 0 },
 						Vector3{ 0, 0, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
 						Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
-						/*Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-						Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },*/
 					};
 
 					Vector3 translation = translationArr[k];
@@ -180,7 +165,6 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
@@ -192,20 +176,15 @@ void MDBox::updateVerletList()
 
 				for (int k = 0; k < 4; ++k)
 				{
-					//double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
 						Vector3{ 0, 0, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, 0 },
 						Vector3{ 0, yTranslation*dimensions.y, 0 },
 						Vector3{ 0, 0, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
 						Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
 					};
 
 					Vector3 translation = translationArr[k];
@@ -215,7 +194,6 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
@@ -229,19 +207,11 @@ void MDBox::updateVerletList()
 				for (int k = 0; k < 2; ++k)
 				{
 					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					//double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					//double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
 						Vector3{ 0, 0, 0 },
 						Vector3{ xTranslation*dimensions.x, 0, 0 },
-						//Vector3{ 0, yTranslation*dimensions.y, 0 },
-						//Vector3{ 0, 0, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
-						//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
 					};
 
 					Vector3 translation = translationArr[k];
@@ -251,7 +221,6 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
@@ -262,20 +231,12 @@ void MDBox::updateVerletList()
 
 				for (int k = 0; k < 2; ++k)
 				{
-					//double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					//double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
 						Vector3{ 0, 0, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, 0 },
 						Vector3{ 0, yTranslation*dimensions.y, 0 },
-						//Vector3{ 0, 0, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
-						//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
 					};
 
 					Vector3 translation = translationArr[k];
@@ -285,7 +246,6 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
@@ -296,20 +256,12 @@ void MDBox::updateVerletList()
 
 				for (int k = 0; k < 2; ++k)
 				{
-					//double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					//double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
 						Vector3{ 0, 0, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, 0 },
-						//Vector3{ 0, yTranslation*dimensions.y, 0 },
 						Vector3{ 0, 0, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
-						//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
 					};
 
 					Vector3 translation = translationArr[k];
@@ -319,7 +271,6 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
@@ -331,7 +282,6 @@ void MDBox::updateVerletList()
 				if (distance < simulationParams.cutoffDistance)
 				{
 					interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, Vector3{ 0, 0, 0 } });
-					//break; // no need to translate any other as we found one interaction
 				}
 			}
 		}
@@ -380,9 +330,9 @@ void MDBox::setInitialVelocities(double temperature)
 	sumVelocity2 = sumVelocity2 / (double)nbrAtoms;	//mean squared velocity
 	double scaleFactor = 1.0;
 	scaleFactor = sqrt(3.0*(temperature / sumVelocity2)*(PHConstants::boltzmann / mass));
-	std::cout << "center of mass velocity = " << sumVelocity << std::endl;
-	std::cout << "mean squared velocity = " << sumVelocity2 << std::endl;
-	std::cout << "temperature = " << temperature << std::endl;
+	// std::cout << "center of mass velocity = " << sumVelocity << std::endl;
+	// std::cout << "mean squared velocity = " << sumVelocity2 << std::endl;
+	// std::cout << "temperature = " << temperature << std::endl;
 
 	for (auto& atom : atoms)
 	{

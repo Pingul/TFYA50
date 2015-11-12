@@ -126,7 +126,10 @@ void Simulation::run()
 		{
 			calculateMeasures(t);
 			// We can only apply the thermostat if we've calculated the temperature, so we do it in conjunction with the measures
-			params->thermostat->scaleTemperature(t, *box);
+			if (params->thermostat != nullptr)
+			{
+				params->thermostat->scaleTemperature(t, *box);
+			}
 		}
 
 
@@ -193,7 +196,10 @@ void SimulationParams::initSettings(const char* setFile)
 		}
 		else if (variable.compare("thermostat") == 0)
 		{
-			thermostat = new AndersonThermostat{*this}; // Note that 'this' is not fully populated at this state. If the initialization does something funky here (as accessing certain SimulationParams values), it might break
+			if (value.compare("berendsen") == 0)
+				thermostat = new BerendsenThermostat{*this}; // Note that 'this' is not fully populated at this state. If the initialization does something funky here (as accessing certain SimulationParams values), it might break
+			else
+				throw std::runtime_error{ "Thermostat of type '" + value + "' does not exist"};
 		}
 		else if (variable.compare("outputDirectory") == 0)
 			outputDirectory = value;
