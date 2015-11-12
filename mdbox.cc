@@ -45,21 +45,16 @@ MDBox::MDBox(const SimulationParams& params) : simulationParams{params}
 	createInitialAtoms(*simulationParams.lattice);
 	setInitialVelocities(simulationParams.initialTemperature);
 	updateVerletList();
+	//DEBUG_PRINT_ATOMS(atoms);
+	//updatePositions();
+	//updateVelocities();
 }
 
-bool MDBox::atCorner(const Atom&)
+bool MDBox::atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge)
 {
-	return false;
-}
-
-bool MDBox::atEdge(const Atom&)
-{
-	return false;
-}
-
-bool MDBox::atFace(const Atom&)
-{
-	return false;
+	return (!xEdge || (atom.at().x < simulationParams.cutoffDistance || atom.at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance))
+		&& (!yEdge || (atom.at().y < simulationParams.cutoffDistance || atom.at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance))
+		&& (!zEdge || (atom.at().z < simulationParams.cutoffDistance || atom.at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance));
 }
 
 
@@ -78,9 +73,7 @@ void MDBox::updateVerletList()
 
 
 			// Translation of corners:
-			if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			if (atEdge(*nextAtom, true, true, true))
 			{
 
 				for (int k = 0; k < 8; ++k)
@@ -111,38 +104,34 @@ void MDBox::updateVerletList()
 					}
 				}
 			}
-					//for the edges:
-			else if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-					&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-					&& (simulationParams.cutoffDistance < nextAtom->at().z < simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			//for the edges:
+			else if (atEdge(*nextAtom, true, true, false))
+			{
+
+				for (int k = 0; k < 4; ++k)
 				{
+					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
-					for (int k = 0; k < 4; ++k)
+					Vector3 translationArr[] =
 					{
-						double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-						double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+						Vector3{ 0, 0, 0 },
+						Vector3{ xTranslation*dimensions.x, 0, 0 },
+						Vector3{ 0, yTranslation*dimensions.y, 0 },
+						Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
+					};
 
-						Vector3 translationArr[] =
-						{
-							Vector3{ 0, 0, 0 },
-							Vector3{ xTranslation*dimensions.x, 0, 0 },
-							Vector3{ 0, yTranslation*dimensions.y, 0 },
-							Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
-						};
-
-						Vector3 translation = translationArr[k];
-						Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
-						double dotprod = vectorBetween*vectorBetween;
-						double distance = sqrt(dotprod);
-						if (distance < simulationParams.cutoffDistance)
-						{
-							interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						}
+					Vector3 translation = translationArr[k];
+					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
+					double dotprod = vectorBetween*vectorBetween;
+					double distance = sqrt(dotprod);
+					if (distance < simulationParams.cutoffDistance)
+					{
+						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
 				}
-			else if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (simulationParams.cutoffDistance < nextAtom->at().y < simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			}
+			else if (atEdge(*nextAtom, true, false, true))
 			{
 
 				for (int k = 0; k < 4; ++k)
@@ -168,10 +157,7 @@ void MDBox::updateVerletList()
 					}
 				}
 			}
-
-			else if ((simulationParams.cutoffDistance < nextAtom->at().x < simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			else if (atEdge(*nextAtom, false, true, true))
 			{
 
 				for (int k = 0; k < 4; ++k)
@@ -197,11 +183,8 @@ void MDBox::updateVerletList()
 					}
 				}
 			}
-
-					// faces:
-			else if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (simulationParams.cutoffDistance < nextAtom->at().y < simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (simulationParams.cutoffDistance < nextAtom->at().z < simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			// faces:
+			else if (atEdge(*nextAtom, true, false, false))
 			{
 
 				for (int k = 0; k < 2; ++k)
@@ -224,9 +207,7 @@ void MDBox::updateVerletList()
 					}
 				}
 			}
-			else if ((simulationParams.cutoffDistance < nextAtom->at().x < simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (simulationParams.cutoffDistance < nextAtom->at().z < simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			else if (atEdge(*nextAtom, false, true, false))
 			{
 
 				for (int k = 0; k < 2; ++k)
@@ -249,9 +230,7 @@ void MDBox::updateVerletList()
 					}
 				}
 			}
-			else if ((simulationParams.cutoffDistance < nextAtom->at().x < simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (simulationParams.cutoffDistance < nextAtom->at().y < simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			else if (atEdge(*nextAtom, false, false, true))
 			{
 
 				for (int k = 0; k < 2; ++k)
@@ -381,19 +360,20 @@ void MDBox::updatePositions()
 		double mass = simulationParams.material->mass* PHConstants::amuToefA;
 		Vector3 newPosition = oldPosition + oldVelocity * deltatime + (oldForce / mass)*(deltatime / 2)*deltatime;
 
-		if (newPosition.x < -1.0)
+		static const double offset = 1.0;
+		if (newPosition.x < -offset)
 			newPosition.x = newPosition.x + simulationParams.lattice->latticeConstant*dimensions.x;
-		else if (newPosition.x >= simulationParams.lattice->latticeConstant*dimensions.x + 1.0)
+		else if (newPosition.x >= simulationParams.lattice->latticeConstant*dimensions.x + offset)
 			newPosition.x = newPosition.x - simulationParams.lattice->latticeConstant*dimensions.x;
 
-		if (newPosition.y < -1.0)
+		if (newPosition.y < -offset)
 			newPosition.y = newPosition.y + simulationParams.lattice->latticeConstant*dimensions.y;
-		else if (newPosition.y >= simulationParams.lattice->latticeConstant*dimensions.y + 1.0)
+		else if (newPosition.y >= simulationParams.lattice->latticeConstant*dimensions.y + offset)
 			newPosition.y = newPosition.y - simulationParams.lattice->latticeConstant*dimensions.y;
 
-		if (newPosition.z < -1.0)
+		if (newPosition.z < -offset)
 			newPosition.z = newPosition.z + simulationParams.lattice->latticeConstant*dimensions.z;
-		else if (newPosition.z >= simulationParams.lattice->latticeConstant*dimensions.z + 1.0)
+		else if (newPosition.z >= simulationParams.lattice->latticeConstant*dimensions.z + offset)
 			newPosition.z = newPosition.z - simulationParams.lattice->latticeConstant*dimensions.z;
 
 		atom->setPosition(newPosition);

@@ -43,9 +43,7 @@ class MDBox
 		void setInitialVelocities(double temperature);
 
 		// Helper functions for the verlet list
-		bool atCorner(const Atom&);
-		bool atEdge(const Atom&);
-		bool atFace(const Atom&);
+		bool atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge);
 };
 
 #endif
