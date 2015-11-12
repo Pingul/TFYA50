@@ -58,9 +58,9 @@ Simulation::Simulation(const char* setFile)
 	//filePrefix = getCurrentDateAndTime() + " | ";
 }
 
-std::string Simulation::filePath()
+std::string Simulation::filePath(bool withPrefix)
 {
-	return params->outputDirectory + "/" + filePrefix;
+	return params->outputDirectory + "/" + (withPrefix ? filePrefix : "");
 }
 
 void Simulation::setupMeasures()
@@ -95,6 +95,12 @@ void Simulation::saveMeasures()
 	{
 		measure->saveToFile(filePath() + measure->name() + ".mdf");
 	}
+}
+
+void Simulation::saveMetaData()
+{
+	std::string fName{fileName(params->settingsFileName)};
+	fileIO::SIM::write(filePath(false), fName, *this);
 }
 
 
@@ -140,6 +146,7 @@ void Simulation::run()
 		}
 	}
 	saveMeasures();
+	saveMetaData();
 }
 
 Simulation::~Simulation()
@@ -153,6 +160,7 @@ Simulation::~Simulation()
 
 SimulationParams::SimulationParams(const char* file)
 {
+	settingsFileName = file;
 	initSettings(file);
 	validateSettings();
 }
@@ -167,7 +175,6 @@ void SimulationParams::initSettings(const char* setFile)
 	{
 		std::string variable = strSetting.first;
 		std::string value = strSetting.second;
-		std::cout << variable << " = " << value << std::endl;
 		if (variable.compare("lattice") == 0)
 		{
 			if (value.compare("fcc") == 0)
