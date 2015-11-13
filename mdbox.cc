@@ -67,16 +67,17 @@ void MDBox::updateVerletList()
 		for (int j = i + 1; j < atoms.size(); ++j)
 		{
 			Atom* nextAtom = atoms[j];
-			
+
+			double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+			double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+			double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+
 			// Translation of corners:
 			if (atEdge(*nextAtom, true, true, true))
 			{
 
 				for (int k = 0; k < 8; ++k)
 				{
-					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
@@ -106,8 +107,6 @@ void MDBox::updateVerletList()
 
 				for (int k = 0; k < 4; ++k)
 				{
-					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
@@ -132,8 +131,6 @@ void MDBox::updateVerletList()
 
 				for (int k = 0; k < 4; ++k)
 				{
-					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
@@ -158,8 +155,6 @@ void MDBox::updateVerletList()
 
 				for (int k = 0; k < 4; ++k)
 				{
-					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
@@ -185,7 +180,6 @@ void MDBox::updateVerletList()
 
 				for (int k = 0; k < 2; ++k)
 				{
-					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
@@ -208,7 +202,6 @@ void MDBox::updateVerletList()
 
 				for (int k = 0; k < 2; ++k)
 				{
-					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
@@ -231,7 +224,6 @@ void MDBox::updateVerletList()
 
 				for (int k = 0; k < 2; ++k)
 				{
-					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
