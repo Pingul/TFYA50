@@ -75,9 +75,6 @@ void PotentialEnergy::calculate(double t, const SimulationParams& params, const 
 		{
 			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
 			Vector3 currentAtomPosition = atom->at();
-			Atom* otherAtom = atomTranslationPair.first;
-			Vector3 distBetween = otherAtom->at() - atom->at();
-			Vector3 forceBetween = params.material->potential->interaction(*atom, *otherAtom);
 			energyPerAtom += params.material->potential->potentialEnergy(currentAtomPosition, translatedInteractingAtomPosition, params);
 		}
 		atomIndex++;
@@ -172,5 +169,4 @@ void Pressure::calculate(double t, const SimulationParams& params, const MDBox& 
 
 	timestamps.push_back(t);
 	values.push_back(pressure);
-
 }

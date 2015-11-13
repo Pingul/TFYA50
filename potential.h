@@ -16,7 +16,7 @@ class AtomicPotential
 		virtual ~AtomicPotential() = default;
 
 		// shall return a Vector3 that indicates by what force the first Atom affects the second
-		virtual Vector3 interaction(const Atom&, const Atom&, const SimulationParams&) = 0;
+		virtual Vector3 interaction(const Atom&, const Atom&, const SimulationParams&);
 		virtual Vector3 interaction(const Vector3&, const Vector3&, const SimulationParams&) = 0;
 		virtual double potentialEnergy(const Vector3&, const Vector3&, const SimulationParams&) = 0;
 };
@@ -29,7 +29,6 @@ class LJPotential : public AtomicPotential
 			: epsilon{eps}, sigma{sig} {}
 		virtual ~LJPotential() = default;
 
-		virtual Vector3 interaction(const Atom&, const Atom&, const SimulationParams&);
 		virtual Vector3 interaction(const Vector3&, const Vector3&, const SimulationParams&);
 		virtual double potentialEnergy(const Vector3&, const Vector3&, const SimulationParams&);
 
