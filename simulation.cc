@@ -54,7 +54,7 @@ Simulation::Simulation(const char* setFile)
 	Random::setup();
 	params = new SimulationParams{setFile};
 	box = new MDBox{ *params };
-	filePrefix = fileName(setFile) + "::";
+	filePrefix = fileName(setFile) + "_";
 	//filePrefix = getCurrentDateAndTime() + " | ";
 }
 
