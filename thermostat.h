@@ -17,6 +17,7 @@ class Thermostat
 		Thermostat(const SimulationParams& p) 
 			: params{p} {}
 		const SimulationParams& params;
+		const std::vector<Atom*>& atoms(const MDBox&);
 };
 
 class AndersonThermostat : public Thermostat

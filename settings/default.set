@@ -8,7 +8,7 @@ timestepLength = 1 # The timestep is measured in femtoseconds
 saveVisualizationData = 0 # boolean
 visualizationLogRate = 5 # Save data every x femtosecond
 
-outputDirectory = data
+outputDirectory = ../../data
 
 measureDataLogRate = 1 # every x femtosecond
 cutoffDistance = 6.40 # in Ångström

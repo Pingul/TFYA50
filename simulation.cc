@@ -23,7 +23,7 @@ const std::string getCurrentDateAndTime()
 	auto timepoint = std::chrono::system_clock::now();
 	const std::time_t t = std::chrono::system_clock::to_time_t(timepoint);
 	std::stringstream ss;
-//	ss << std::put_time(std::localtime(&t), "%Y-%m-%d.%X");
+	ss << std::put_time(std::localtime(&t), "%Y-%m-%d.%X");
 	return ss.str();
 }
 
