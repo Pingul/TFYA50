@@ -18,7 +18,7 @@ class Measure
 
 		virtual ~Measure() = default;
 		virtual std::string name() { return "UNDEFINED"; }
-		virtual void calculate(double t, const SimulationParams&, const MDBox&) = 0;
+		virtual void calculate(double, const SimulationParams&, const MDBox&) = 0;
 		virtual void saveToFile(const std::string&);
 
 	protected:
@@ -38,7 +38,7 @@ class KineticEnergy : public Measure
 		virtual ~KineticEnergy() = default;
 
 		virtual std::string name() { return "kinetic"; }
-		virtual void calculate(double t, const SimulationParams&, const MDBox&);
+		virtual void calculate(double, const SimulationParams&, const MDBox&);
 };
 
 class PotentialEnergy : public Measure
@@ -108,6 +108,20 @@ public:
 private:
 	Temperature* temperature;
 	MSD* mSD;
+};
+
+class Pressure : public Measure
+{
+public:
+	Pressure(Temperature* temp)
+		: temperature{ temp } {}
+	virtual ~Pressure() = default;
+
+	virtual std::string name() { return "pressure"; }
+	virtual void calculate(double, const SimulationParams&, const MDBox&);
+
+private:
+	Temperature* temperature;
 };
 
 #endif
