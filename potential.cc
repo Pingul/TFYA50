@@ -40,12 +40,12 @@ Vector3 LJPotential::interaction(const Vector3& vector1, const Vector3& vector2,
 	double dljrin = -48.0*epsilon / rin*(pow((sigma / rin), 12) - 0.5*pow((sigma / rin), 6));
 
 	Vector3 force; /*= (constant - dljcutoff)* (vector2 - vector1) / dis;*/
-	if (dis < rin)
+	//if (dis < rin)
 		return force= constant* (vector2 - vector1) / dis;
-	else if (dis>rcut)
-		return{ 0, 0, 0 };
-	else
-		return force = dljrin / (rin - rcut)*(dis - rcut)*(vector2 - vector1)/dis;
+	//else if (dis>rcut)
+	//	return{ 0, 0, 0 };
+	//else
+	//	return force = dljrin / (rin - rcut)*(dis - rcut)*(vector2 - vector1)/dis;
 }
 
 double LJPotential::potentialEnergy(const Vector3& vector1, const Vector3& vector2, const SimulationParams& params)
@@ -62,6 +62,9 @@ double LJPotential::potentialEnergy(const Vector3& vector1, const Vector3& vecto
 	else
 	{
 		static double ljin = 4 * epsilon*(pow((sigma / rin), 12) - pow((sigma / rin), 6));
-		return ljin / (rin - rcut)*(r - rcut);
+		double dljrin = -48.0*epsilon / rin*(pow((sigma / rin), 12) - 0.5*pow((sigma / rin), 6));
+		double t = (r - rcut) / (rin - rcut);
+		double b = -dljrin*(rin - rcut) + ljin;
+		return t*ljin+t*(1-t)*(-ljin*(1-t)+b*t);
 	}
 }
