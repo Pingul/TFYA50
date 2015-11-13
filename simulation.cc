@@ -103,7 +103,6 @@ void Simulation::saveMetaData()
 	fileIO::SIM::write(filePath(false), fName, *this);
 }
 
-
 void Simulation::run()
 {
 	setupMeasures();
@@ -143,9 +142,18 @@ void Simulation::run()
 		{
 			auto end = std::chrono::system_clock::now();
 			std::chrono::duration<double> elapsed{end - start};
-			std::cout << "elapsed time: " << elapsed.count() << std::endl;
-
-			std::cout << "completed " << i + 1 << " out of " << params->timesteps << " steps (" << percentFinished << "%)." << std::endl;
+			int seconds = (int)elapsed.count();
+			double decimals = elapsed.count() - seconds;
+			int hours = seconds/3600;
+			int minutes = seconds/60;
+			seconds -= (3600*hours + 60*minutes);
+			std::ios::fmtflags fl(std::cout.flags());
+			std::cout << "elapsed time: " 
+				<< std::setfill('0') << std::setw(1) << hours << ":" 
+				<< std::setfill('0') << std::setw(1) << minutes << ":" 
+				<< std::fixed << std::setprecision(4) << (seconds + decimals) << std::endl;
+			std::cout.flags(fl); // Restore the flags
+			std::cout << "completed " << i + 1 << " out of " << params->timesteps << " steps (" << percentFinished_i << "%)." << std::endl;
 		}
 	}
 	saveMeasures();
