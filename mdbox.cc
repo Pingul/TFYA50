@@ -45,9 +45,6 @@ MDBox::MDBox(const SimulationParams& params) : simulationParams{params}
 	createInitialAtoms(*simulationParams.lattice);
 	setInitialVelocities(simulationParams.initialTemperature);
 	updateVerletList();
-	//DEBUG_PRINT_ATOMS(atoms);
-	//updatePositions();
-	//updateVelocities();
 }
 
 bool MDBox::atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge)
@@ -70,8 +67,7 @@ void MDBox::updateVerletList()
 		for (int j = i + 1; j < atoms.size(); ++j)
 		{
 			Atom* nextAtom = atoms[j];
-
-
+			
 			// Translation of corners:
 			if (atEdge(*nextAtom, true, true, true))
 			{
