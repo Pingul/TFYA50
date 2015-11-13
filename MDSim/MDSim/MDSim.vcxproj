@@ -84,6 +84,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -128,6 +129,7 @@
     <ClCompile Include="..\..\potential.cc" />
     <ClCompile Include="..\..\random.cc" />
     <ClCompile Include="..\..\simulation.cc" />
+    <ClCompile Include="..\..\thermostat.cc" />
     <ClCompile Include="..\..\vector.cc" />
   </ItemGroup>
   <ItemGroup>
@@ -141,6 +143,7 @@
     <ClInclude Include="..\..\potential.h" />
     <ClInclude Include="..\..\random.h" />
     <ClInclude Include="..\..\simulation.h" />
+    <ClInclude Include="..\..\thermostat.h" />
     <ClInclude Include="..\..\vector.h" />
   </ItemGroup>
   <ItemGroup>
