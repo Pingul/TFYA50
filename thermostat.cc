@@ -1,15 +1,16 @@
 #include "thermostat.h"
 #include "mdbox.h"
-#include <iostream>
 #include "measure.h"
 #include "simulation.h"
+#include <iostream>
+#include <math.h>
 
 const std::vector<Atom*>& Thermostat::atoms(const MDBox& box)
 {
 	return box.atoms;
 }
 
-void AndersonThermostat::scaleTemperature(double t, MDBox& box)
+void BerendsenThermostat::scaleTemperature(double t, MDBox& box)
 {
 	double currentTemp = Measure::value(params.temperature, t);
 	double goalTemp = params.goalTemperature;

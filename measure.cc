@@ -41,7 +41,6 @@ double Measure::value(Measure* measure, double timestamp)
 void TotalEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
 	double energy{Measure::value(kineticEnergy, t) + Measure::value(potentialEnergy, t)};
-	std::cout << "Total energy = " << energy << std::endl;
 
 	timestamps.push_back(t);
 	values.push_back(energy);
@@ -58,7 +57,6 @@ void KineticEnergy::calculate(double t, const SimulationParams& params, const MD
 		energy += atom->velocity()*atom->velocity();
 	}
 	energy = 0.5*energy * mass;
-	std::cout << "Kinetic energy = " << energy << std::endl;
 
 	timestamps.push_back(t);
 	values.push_back(energy);
@@ -85,8 +83,6 @@ void PotentialEnergy::calculate(double t, const SimulationParams& params, const 
 		atomIndex++;
 		energy += energyPerAtom;
 	}
-	std::cout << "Potential energy = " << energy << std::endl;
-	//std::cout << " " << params.material->potential->potentialEnergy({ 0,0,0 }, { 6.1,0,0 }, params);
 
 	timestamps.push_back(t);
 	values.push_back(energy);

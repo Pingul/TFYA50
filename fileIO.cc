@@ -1,5 +1,6 @@
 #include "fileIO.h"
 #include "simulation.h"
+#include "measure.h"
 #include "lattice.h"
 #include "atom.h"
 #include <iostream>
@@ -67,6 +68,7 @@ namespace fileIO
 
 	//
 	// SET namespace
+	// Settings file
 	//
 	namespace SET
 	{
@@ -98,6 +100,7 @@ namespace fileIO
 
 	// 
 	// MDF
+	// Measure Data File
 	//
 	namespace MDF
 	{
@@ -124,6 +127,7 @@ namespace fileIO
 
 	//
 	// VIS
+	// Visualization file
 	//
 	namespace VIS
 	{
@@ -162,6 +166,27 @@ namespace fileIO
 			}
 			else
 				throw std::runtime_error{ "Could not write the simulation instant to '" + file + "'" };
+		}
+	}
+
+	//
+	// SIM
+	// Simulation meta data
+	namespace SIM
+	{
+		void write(const std::string& path, const std::string& file, const Simulation& sim)
+		{
+			std::ofstream simFile{path + "/" + file + ".sim"};
+			if (simFile.is_open())
+			{
+				for (auto& measure : sim.measures)
+				{
+					std::string s{sim.filePrefix + measure->name() + ".mdf\n"};
+					simFile.write(s.c_str(), s.size());
+				}
+			}
+			else 
+				throw std::runtime_error{ "Could not write meta data to '" + file + "'" };
 		}
 	}
 }

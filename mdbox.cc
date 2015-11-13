@@ -45,10 +45,15 @@ MDBox::MDBox(const SimulationParams& params) : simulationParams{params}
 	createInitialAtoms(*simulationParams.lattice);
 	setInitialVelocities(simulationParams.initialTemperature);
 	updateVerletList();
-	//DEBUG_PRINT_ATOMS(atoms);
-	//updatePositions();
-	//updateVelocities();
 }
+
+bool MDBox::atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge)
+{
+	return (!xEdge || (atom.at().x < simulationParams.cutoffDistance || atom.at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance))
+		&& (!yEdge || (atom.at().y < simulationParams.cutoffDistance || atom.at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance))
+		&& (!zEdge || (atom.at().z < simulationParams.cutoffDistance || atom.at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance));
+}
+
 
 void MDBox::updateVerletList()
 {
@@ -63,18 +68,16 @@ void MDBox::updateVerletList()
 		{
 			Atom* nextAtom = atoms[j];
 
+			double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+			double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
+			double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 			// Translation of corners:
-			if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			if (atEdge(*nextAtom, true, true, true))
 			{
 
 				for (int k = 0; k < 8; ++k)
 				{
-					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
@@ -95,66 +98,46 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
-					//for the edges:
-			else if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-					&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-					&& (simulationParams.cutoffDistance < nextAtom->at().z < simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
-				{
-
-					for (int k = 0; k < 4; ++k)
-					{
-						double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-						double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-						//double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-
-						Vector3 translationArr[] =
-						{
-							Vector3{ 0, 0, 0 },
-							Vector3{ xTranslation*dimensions.x, 0, 0 },
-							Vector3{ 0, yTranslation*dimensions.y, 0 },
-							//Vector3{ 0, 0, zTranslation*dimensions.z },
-							Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
-							//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
-							//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-							//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
-						};
-
-						Vector3 translation = translationArr[k];
-						Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
-						double dotprod = vectorBetween*vectorBetween;
-						double distance = sqrt(dotprod);
-						if (distance < simulationParams.cutoffDistance)
-						{
-							interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-							//break; // no need to translate any other as we found one interaction
-						}
-					}
-				}
-			else if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (simulationParams.cutoffDistance < nextAtom->at().y < simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			//for the edges:
+			else if (atEdge(*nextAtom, true, true, false))
 			{
 
 				for (int k = 0; k < 4; ++k)
 				{
-					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					//double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
 						Vector3{ 0, 0, 0 },
 						Vector3{ xTranslation*dimensions.x, 0, 0 },
-						//Vector3{ 0, yTranslation*dimensions.y, 0 },
+						Vector3{ 0, yTranslation*dimensions.y, 0 },
+						Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
+					};
+
+					Vector3 translation = translationArr[k];
+					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
+					double dotprod = vectorBetween*vectorBetween;
+					double distance = sqrt(dotprod);
+					if (distance < simulationParams.cutoffDistance)
+					{
+						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
+					}
+				}
+			}
+			else if (atEdge(*nextAtom, true, false, true))
+			{
+
+				for (int k = 0; k < 4; ++k)
+				{
+
+					Vector3 translationArr[] =
+					{
+						Vector3{ 0, 0, 0 },
+						Vector3{ xTranslation*dimensions.x, 0, 0 },
 						Vector3{ 0, 0, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
 						Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
-						/*Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-						Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },*/
 					};
 
 					Vector3 translation = translationArr[k];
@@ -164,32 +147,21 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
-
-			else if ((simulationParams.cutoffDistance < nextAtom->at().x < simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			else if (atEdge(*nextAtom, false, true, true))
 			{
 
 				for (int k = 0; k < 4; ++k)
 				{
-					//double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
 						Vector3{ 0, 0, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, 0 },
 						Vector3{ 0, yTranslation*dimensions.y, 0 },
 						Vector3{ 0, 0, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
 						Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
 					};
 
 					Vector3 translation = translationArr[k];
@@ -199,33 +171,20 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
-
-					// faces:
-			else if ((nextAtom->at().x < simulationParams.cutoffDistance || nextAtom->at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (simulationParams.cutoffDistance < nextAtom->at().y < simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (simulationParams.cutoffDistance < nextAtom->at().z < simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			// faces:
+			else if (atEdge(*nextAtom, true, false, false))
 			{
 
 				for (int k = 0; k < 2; ++k)
 				{
-					double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					//double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					//double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
 						Vector3{ 0, 0, 0 },
 						Vector3{ xTranslation*dimensions.x, 0, 0 },
-						//Vector3{ 0, yTranslation*dimensions.y, 0 },
-						//Vector3{ 0, 0, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
-						//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
 					};
 
 					Vector3 translation = translationArr[k];
@@ -235,31 +194,19 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
-			else if ((simulationParams.cutoffDistance < nextAtom->at().x < simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (nextAtom->at().y < simulationParams.cutoffDistance || nextAtom->at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (simulationParams.cutoffDistance < nextAtom->at().z < simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			else if (atEdge(*nextAtom, false, true, false))
 			{
 
 				for (int k = 0; k < 2; ++k)
 				{
-					//double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					//double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
 						Vector3{ 0, 0, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, 0 },
 						Vector3{ 0, yTranslation*dimensions.y, 0 },
-						//Vector3{ 0, 0, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
-						//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
 					};
 
 					Vector3 translation = translationArr[k];
@@ -269,31 +216,19 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
-			else if ((simulationParams.cutoffDistance < nextAtom->at().x < simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance)
-				&& (simulationParams.cutoffDistance < nextAtom->at().y < simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance)
-				&& (nextAtom->at().z < simulationParams.cutoffDistance || nextAtom->at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance))
+			else if (atEdge(*nextAtom, false, false, true))
 			{
 
 				for (int k = 0; k < 2; ++k)
 				{
-					//double xTranslation = nextAtom->at().x > atom->at().x ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					//double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
-					double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
 					Vector3 translationArr[] =
 					{
 						Vector3{ 0, 0, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, 0 },
-						//Vector3{ 0, yTranslation*dimensions.y, 0 },
 						Vector3{ 0, 0, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, 0 },
-						//Vector3{ xTranslation*dimensions.x, 0, zTranslation*dimensions.z },
-						//Vector3{ 0, yTranslation*dimensions.y, zTranslation*dimensions.z },
-						//Vector3{ xTranslation*dimensions.x, yTranslation*dimensions.y, zTranslation*dimensions.z },
 					};
 
 					Vector3 translation = translationArr[k];
@@ -303,7 +238,6 @@ void MDBox::updateVerletList()
 					if (distance < simulationParams.cutoffDistance)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
-						//break; // no need to translate any other as we found one interaction
 					}
 				}
 			}
@@ -315,7 +249,6 @@ void MDBox::updateVerletList()
 				if (distance < simulationParams.cutoffDistance)
 				{
 					interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, Vector3{ 0, 0, 0 } });
-					//break; // no need to translate any other as we found one interaction
 				}
 			}
 		}
@@ -335,7 +268,6 @@ void MDBox::createInitialAtoms(const Lattice& lattice)
 				{
 					Atom* atom = new Atom();
 					atom->setPosition(lattice.latticeConstant*position + lattice.latticeConstant*Vector3{ (double)iii, (double)jjj, (double)kkk });
-					//atom->setForce(Vector3{ 1, 1, 1 });
 					atoms.push_back(atom);
 				}
 			}
@@ -364,9 +296,9 @@ void MDBox::setInitialVelocities(double temperature)
 	sumVelocity2 = sumVelocity2 / (double)nbrAtoms;	//mean squared velocity
 	double scaleFactor = 1.0;
 	scaleFactor = sqrt(3.0*(temperature / sumVelocity2)*(PHConstants::boltzmann / mass));
-	std::cout << "center of mass velocity = " << sumVelocity << std::endl;
-	std::cout << "mean squared velocity = " << sumVelocity2 << std::endl;
-	std::cout << "temperature = " << temperature << std::endl;
+	// std::cout << "center of mass velocity = " << sumVelocity << std::endl;
+	// std::cout << "mean squared velocity = " << sumVelocity2 << std::endl;
+	// std::cout << "temperature = " << temperature << std::endl;
 
 	for (auto& atom : atoms)
 	{
@@ -415,19 +347,20 @@ void MDBox::updatePositions()
 		double mass = simulationParams.material->mass* PHConstants::amuToefA;
 		Vector3 newPosition = oldPosition + oldVelocity * deltatime + (oldForce / mass)*(deltatime / 2)*deltatime;
 
-		if (newPosition.x < -1.0)
+		static const double offset = 1.0; // 0 seems like a bad number, but I do not know why
+		if (newPosition.x < -offset)
 			newPosition.x = newPosition.x + simulationParams.lattice->latticeConstant*dimensions.x;
-		else if (newPosition.x >= simulationParams.lattice->latticeConstant*dimensions.x + 1.0)
+		else if (newPosition.x >= simulationParams.lattice->latticeConstant*dimensions.x + offset)
 			newPosition.x = newPosition.x - simulationParams.lattice->latticeConstant*dimensions.x;
 
-		if (newPosition.y < -1.0)
+		if (newPosition.y < -offset)
 			newPosition.y = newPosition.y + simulationParams.lattice->latticeConstant*dimensions.y;
-		else if (newPosition.y >= simulationParams.lattice->latticeConstant*dimensions.y + 1.0)
+		else if (newPosition.y >= simulationParams.lattice->latticeConstant*dimensions.y + offset)
 			newPosition.y = newPosition.y - simulationParams.lattice->latticeConstant*dimensions.y;
 
-		if (newPosition.z < -1.0)
+		if (newPosition.z < -offset)
 			newPosition.z = newPosition.z + simulationParams.lattice->latticeConstant*dimensions.z;
-		else if (newPosition.z >= simulationParams.lattice->latticeConstant*dimensions.z + 1.0)
+		else if (newPosition.z >= simulationParams.lattice->latticeConstant*dimensions.z + offset)
 			newPosition.z = newPosition.z - simulationParams.lattice->latticeConstant*dimensions.z;
 
 		atom->setPosition(newPosition);

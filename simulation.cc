@@ -58,9 +58,9 @@ Simulation::Simulation(const char* setFile)
 	//filePrefix = getCurrentDateAndTime() + " | ";
 }
 
-std::string Simulation::filePath()
+std::string Simulation::filePath(bool withPrefix)
 {
-	return params->outputDirectory + "/" + filePrefix;
+	return params->outputDirectory + "/" + (withPrefix ? filePrefix : "");
 }
 
 void Simulation::setupMeasures()
@@ -97,6 +97,12 @@ void Simulation::saveMeasures()
 	}
 }
 
+void Simulation::saveMetaData()
+{
+	std::string fName{fileName(params->settingsFileName)};
+	fileIO::SIM::write(filePath(false), fName, *this);
+}
+
 
 void Simulation::run()
 {
@@ -120,7 +126,10 @@ void Simulation::run()
 		{
 			calculateMeasures(t);
 			// We can only apply the thermostat if we've calculated the temperature, so we do it in conjunction with the measures
-			params->thermostat->scaleTemperature(t, *box);
+			if (params->thermostat != nullptr)
+			{
+				params->thermostat->scaleTemperature(t, *box);
+			}
 		}
 
 
@@ -140,6 +149,7 @@ void Simulation::run()
 		}
 	}
 	saveMeasures();
+	saveMetaData();
 }
 
 Simulation::~Simulation()
@@ -153,6 +163,7 @@ Simulation::~Simulation()
 
 SimulationParams::SimulationParams(const char* file)
 {
+	settingsFileName = file;
 	initSettings(file);
 	validateSettings();
 }
@@ -167,7 +178,6 @@ void SimulationParams::initSettings(const char* setFile)
 	{
 		std::string variable = strSetting.first;
 		std::string value = strSetting.second;
-		std::cout << variable << " = " << value << std::endl;
 		if (variable.compare("lattice") == 0)
 		{
 			if (value.compare("fcc") == 0)
@@ -186,7 +196,10 @@ void SimulationParams::initSettings(const char* setFile)
 		}
 		else if (variable.compare("thermostat") == 0)
 		{
-			thermostat = new AndersonThermostat{*this}; // Note that 'this' is not fully populated at this state. If the initialization does something funky here (as accessing certain SimulationParams values), it might break
+			if (value.compare("berendsen") == 0)
+				thermostat = new BerendsenThermostat{*this}; // Note that 'this' is not fully populated at this state. If the initialization does something funky here (as accessing certain SimulationParams values), it might break
+			else
+				throw std::runtime_error{ "Thermostat of type '" + value + "' does not exist"};
 		}
 		else if (variable.compare("outputDirectory") == 0)
 			outputDirectory = value;

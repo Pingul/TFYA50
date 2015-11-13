@@ -6,6 +6,7 @@
 
 class Atom;
 class SimulationParams;
+class Simulation;
 
 namespace fileIO
 {
@@ -24,6 +25,11 @@ namespace fileIO
 	{
 		void writeSettings(const std::string& file, const SimulationParams&);
 		void writeSimulationInstant(const std::string& file, double t, const std::vector<Atom*>& atoms);
+	}
+
+	namespace SIM
+	{
+		void write(const std::string& path, const std::string& file, const Simulation& sim);
 	}
 }
 

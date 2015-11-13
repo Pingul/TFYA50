@@ -41,6 +41,9 @@ class MDBox
 
 		void createInitialAtoms(const Lattice&);
 		void setInitialVelocities(double temperature);
+
+		// Helper functions for the verlet list
+		bool atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge);
 };
 
 #endif

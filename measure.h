@@ -102,7 +102,7 @@ public:
 		: temperature{ temp }, mSD{ msd } {}
 	virtual ~DebyeTemperature() = default;
 
-	virtual std::string name() { return "Debye temperature"; }
+	virtual std::string name() { return "debyeTemp"; }
 	virtual void calculate(double, const SimulationParams& params, const MDBox& box);
 
 private:

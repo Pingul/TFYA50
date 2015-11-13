@@ -14,6 +14,7 @@ class SimulationParams;
 class Simulation
 {
 	friend MDBox;
+	friend void fileIO::SIM::write(const std::string& path, const std::string& file, const Simulation& sim);
 
 	public:
 		Simulation(const char* setFile = "../../settings/default.set"); // To help for VS
@@ -32,7 +33,8 @@ class Simulation
 		void setupMeasures();
 		void calculateMeasures(double t);
 		void saveMeasures();
-		std::string filePath();
+		void saveMetaData();
+		std::string filePath(bool withPrefix = true);
 };
 
 class SimulationParams
@@ -57,6 +59,7 @@ class SimulationParams
 		int verletListUpdateFrequency{ 50 };
 
 		std::string outputDirectory{ "" };
+		std::string settingsFileName;
 
 		Lattice* lattice{ nullptr };
 		Material* material{ nullptr };

@@ -20,10 +20,10 @@ class Thermostat
 		const std::vector<Atom*>& atoms(const MDBox&);
 };
 
-class AndersonThermostat : public Thermostat
+class BerendsenThermostat : public Thermostat
 {
 	public:
-		AndersonThermostat(const SimulationParams& p) 
+		BerendsenThermostat(const SimulationParams& p) 
 			: Thermostat{p} {}
 
 		void scaleTemperature(double t, MDBox& box);
