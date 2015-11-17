@@ -45,13 +45,14 @@ MDBox::MDBox(const SimulationParams& params) : simulationParams{params}
 	createInitialAtoms(*simulationParams.lattice);
 	setInitialVelocities(simulationParams.initialTemperature);
 	updateVerletList();
+	vCutoff = simulationParams.cutoffDistance*1.1; // We increase this a little to take a little too many atoms in the verlet initially
 }
 
 bool MDBox::atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge)
 {
-	return (!xEdge || (atom.at().x < simulationParams.cutoffDistance || atom.at().x > simulationParams.lattice->latticeConstant * dimensions.x - simulationParams.cutoffDistance))
-		&& (!yEdge || (atom.at().y < simulationParams.cutoffDistance || atom.at().y > simulationParams.lattice->latticeConstant * dimensions.y - simulationParams.cutoffDistance))
-		&& (!zEdge || (atom.at().z < simulationParams.cutoffDistance || atom.at().z > simulationParams.lattice->latticeConstant * dimensions.z - simulationParams.cutoffDistance));
+	return (!xEdge || (atom.at().x < vCutoff || atom.at().x > simulationParams.lattice->latticeConstant * dimensions.x - vCutoff))
+		&& (!yEdge || (atom.at().y < vCutoff || atom.at().y > simulationParams.lattice->latticeConstant * dimensions.y - vCutoff))
+		&& (!zEdge || (atom.at().z < vCutoff || atom.at().z > simulationParams.lattice->latticeConstant * dimensions.z - vCutoff));
 }
 
 
@@ -95,7 +96,7 @@ void MDBox::updateVerletList()
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < simulationParams.cutoffDistance)
+					if (distance < vCutoff)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -120,7 +121,7 @@ void MDBox::updateVerletList()
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < simulationParams.cutoffDistance)
+					if (distance < vCutoff)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -144,7 +145,7 @@ void MDBox::updateVerletList()
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < simulationParams.cutoffDistance)
+					if (distance < vCutoff)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -168,7 +169,7 @@ void MDBox::updateVerletList()
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < simulationParams.cutoffDistance)
+					if (distance < vCutoff)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -191,7 +192,7 @@ void MDBox::updateVerletList()
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < simulationParams.cutoffDistance)
+					if (distance < vCutoff)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -213,7 +214,7 @@ void MDBox::updateVerletList()
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < simulationParams.cutoffDistance)
+					if (distance < vCutoff)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -235,7 +236,7 @@ void MDBox::updateVerletList()
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < simulationParams.cutoffDistance)
+					if (distance < vCutoff)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -246,7 +247,7 @@ void MDBox::updateVerletList()
 				Vector3 vectorBetween = atom->at() - nextAtom->at();
 				double dotprod = vectorBetween*vectorBetween;
 				double distance = sqrt(dotprod);
-				if (distance < simulationParams.cutoffDistance)
+				if (distance < vCutoff)
 				{
 					interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, Vector3{ 0, 0, 0 } });
 				}
@@ -324,9 +325,12 @@ void MDBox::updateForces(const Material& material)
 		for (auto& atomTranslationPair : interactionList)
 		{
 			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
-
-			Vector3 totalForceAtom = atom->totalForce() - simulationParams.material->potential->interaction(atom->at(), translatedInteractingAtomPosition, simulationParams);
-			Vector3 totalForceInteractingAtom = atomTranslationPair.first->totalForce() + simulationParams.material->potential->interaction(atom->at(), translatedInteractingAtomPosition, simulationParams);
+			Vector3 diff{translatedInteractingAtomPosition - atom->at()};
+			if (sqrt(diff*diff) > simulationParams.cutoffDistance)
+				continue;
+			Vector3 interaction = simulationParams.material->potential->interaction(atom->at(), translatedInteractingAtomPosition, simulationParams);
+			Vector3 totalForceAtom = atom->totalForce() - interaction;
+			Vector3 totalForceInteractingAtom = atomTranslationPair.first->totalForce() + interaction;
 			atom->setForce (totalForceAtom);
 			atomTranslationPair.first->setForce(totalForceInteractingAtom);
 			//std::cout << "total force atom " << atomIndex << ": " << totalForceAtom << std::endl;

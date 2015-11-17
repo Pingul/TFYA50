@@ -17,7 +17,7 @@ Vector3 LJPotential::interaction(const Vector3& vector1, const Vector3& vector2,
 	double dis7 = pow(dis, 7);
 	double dis6 = pow(dis2, 3);
 
-	double sigma6 = pow(sigma, 6);
+	static double sigma6 = pow(sigma, 6);
 
 	double constant = ((24 * epsilon*sigma6) / dis7) * (2 * sigma6 / dis6 - 1.0);
 

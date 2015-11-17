@@ -69,16 +69,16 @@ void Simulation::setupMeasures()
 	params->potentialEnergy = new PotentialEnergy();
 	params->totalEnergy = new TotalEnergy(params->kineticEnergy, params->potentialEnergy);
 	params->temperature = new Temperature(params->kineticEnergy);
-	params->msd = new MSD();
-	params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
+	// params->msd = new MSD();
+	// params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
 
 	// This makes administration somewhat easier	
 	measures.push_back(params->kineticEnergy);
 	measures.push_back(params->potentialEnergy);
 	measures.push_back(params->totalEnergy);
 	measures.push_back(params->temperature);
-	measures.push_back(params->msd);
-	measures.push_back(params->debyeTemperature);
+	// measures.push_back(params->msd);
+	// measures.push_back(params->debyeTemperature);
 }
 
 void Simulation::calculateMeasures(double t)
@@ -215,6 +215,8 @@ void SimulationParams::initSettings(const char* setFile)
 			timesteps = (int)std::round(value);
 		else if (variable.compare("timestepLength") == 0)
 			timestepLength = (int)std::round(value);
+		else if (variable.compare("verletListUpdateFrequency") == 0)
+			verletListUpdateFrequency = (int)std::round(value);
 		else if (variable.compare("saveVisualizationData") == 0)
 			saveVisualizationData = (bool)value;
 		else if (variable.compare("visualizationLogRate") == 0)

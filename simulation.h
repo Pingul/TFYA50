@@ -56,7 +56,7 @@ class SimulationParams
 
 		// Internal parameters
 		//int currentTimestep{-1};
-		int verletListUpdateFrequency{ 50 };
+		int verletListUpdateFrequency{ 10 };
 
 		std::string outputDirectory{ "" };
 		std::string settingsFileName;
