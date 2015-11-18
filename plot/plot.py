@@ -41,5 +41,4 @@ def main(directory, simulation_name):
 		plot_mdf(directory + "/" + file)
 	plt.show()
 
-
 main(sys.argv[1], sys.argv[2])
