@@ -191,6 +191,8 @@ void SimulationParams::initSettings(const char* setFile)
 		{
 			if (value.compare("argon") == 0)
 				material = Material::Argon();
+			else if (value.compare("silver") == 0)
+				material = Material::Silver();
 			else
 				throw std::runtime_error{ "Material '" + value + "' does not exist" };
 		}

@@ -13,6 +13,7 @@ class Material
 
 		static Material* TESTMaterial();
 		static Material* Argon();
+		static Material* Silver();
 
 		double mass; // atomic mass units
 		double radius; // Ångström

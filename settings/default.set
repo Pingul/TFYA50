@@ -1,7 +1,7 @@
 # definition of a settingsfile
 
 # Number of timesteps
-timesteps = 100
+timesteps = 10000
 timestepLength = 1 # The timestep is measured in femtoseconds
 
 # Visualization
@@ -13,15 +13,19 @@ outputDirectory = ../../data
 measureDataLogRate = 1 # every x femtosecond
 cutoffDistance = 6.40 # in Ångström
 
-thermostat = thermostatType # string
+#thermostat = thermostatType # string
 goalTemperature = 40 # Kelvin
 
 initialTemperature = 40 # Kelvin
 
-dimensions.x = 10 # in Unit cells
-dimensions.y = 10
-dimensions.z = 10
+pBCx=1 # 0 for removing PBC in one direction
+pBCy=1
+pBCz=0
+
+dimensions.x = 4 # in Unit cells
+dimensions.y = 4
+dimensions.z = 4
 
 lattice = fcc
-latticeConstant = 5.256 # Ångström
-material = argon
+latticeConstant = 4.090 # Ångström
+material = silver
