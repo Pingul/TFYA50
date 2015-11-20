@@ -54,7 +54,6 @@ double LJPotential::potentialEnergy(const Vector3& vector1, const Vector3& vecto
 		static double ljin = 4 * epsilon*(pow((sigma / rin), 12) - pow((sigma / rin), 6));
 		static double dljrin = -48.0*epsilon / rin*(pow((sigma / rin), 12) - 0.5*pow((sigma / rin), 6));
 		double t = (r - rcut) / (rin - rcut);
-		double b = -dljrin*(rin - rcut) + ljin;
-		return (dljrin*(rin-rcut)-2.0*ljin)*pow((r - rcut) / (rin - rcut),3)+(-dljrin*(rin-rcut)+3.0*ljin)*pow((r - rcut) / (rin - rcut), 2);
+		return (dljrin*(rin-rcut)-2.0*ljin)*pow(t,3)+(-dljrin*(rin-rcut)+3.0*ljin)*pow(t, 2);
 	}
 }

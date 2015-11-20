@@ -229,6 +229,12 @@ void SimulationParams::initSettings(const char* setFile)
 			goalTemperature = value;
 		else if (variable.compare("initialTemperature") == 0)
 			initialTemperature = value;
+		else if (variable.compare("pBCx") == 0)
+			pBCx = (bool)value;
+		else if (variable.compare("pBCy") == 0)
+			pBCy = (bool)value;
+		else if (variable.compare("pBCz") == 0)
+			pBCz = (bool)value;
 		else if (variable.compare("dimensions.x") == 0)
 			dimensions.x = std::round(value);
 		else if (variable.compare("dimensions.y") == 0)

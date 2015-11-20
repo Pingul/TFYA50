@@ -73,6 +73,14 @@ void MDBox::updateVerletList()
 			double yTranslation = nextAtom->at().y > atom->at().y ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 			double zTranslation = nextAtom->at().z > atom->at().z ? -simulationParams.lattice->latticeConstant : simulationParams.lattice->latticeConstant;
 
+			if (!simulationParams.pBCx)
+				xTranslation = 0.0;
+			if (!simulationParams.pBCy)
+				yTranslation = 0.0;
+			if (!simulationParams.pBCz)
+				zTranslation = 0.0;
+			
+	
 			// Translation of corners:
 			if (atEdge(*nextAtom, true, true, true))
 			{
@@ -93,10 +101,28 @@ void MDBox::updateVerletList()
 					};
 
 					Vector3 translation = translationArr[k];
+					bool switchPBC{ false };	// true if we don't have periodicity in a direction and we want to throw away a translation
+					int checkPBC;
+
+					if (!simulationParams.pBCx || !simulationParams.pBCy || !simulationParams.pBCz)
+					{
+
+						for (int l = 0; l < k; ++l)
+						{
+							checkPBC = (translation - translationArr[l])*(translation - translationArr[l]);
+
+							if (checkPBC < 1 && checkPBC > -1)
+							{
+								switchPBC = true;
+								break;
+							}
+						}
+					}
+
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < vCutoff)
+					if (distance < vCutoff && switchPBC == false)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -118,10 +144,28 @@ void MDBox::updateVerletList()
 					};
 
 					Vector3 translation = translationArr[k];
+					bool switchPBC{ false };	// true if we don't have periodicity in a direction and we want to throw away a translation
+					int checkPBC;
+
+					if (!simulationParams.pBCx || !simulationParams.pBCy || !simulationParams.pBCz)
+					{
+
+						for (int l = 0; l < k; ++l)
+						{
+							checkPBC = (translation - translationArr[l])*(translation - translationArr[l]);
+
+							if (checkPBC < 1 && checkPBC > -1)
+							{
+								switchPBC = true;
+								break;
+							}
+						}
+					}
+
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < vCutoff)
+					if (distance < vCutoff && switchPBC == false)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -142,10 +186,28 @@ void MDBox::updateVerletList()
 					};
 
 					Vector3 translation = translationArr[k];
+					bool switchPBC{ false };	// true if we don't have periodicity in a direction and we want to throw away a translation
+					int checkPBC;
+
+					if (!simulationParams.pBCx || !simulationParams.pBCy || !simulationParams.pBCz)
+					{
+
+						for (int l = 0; l < k; ++l)
+						{
+							checkPBC = (translation - translationArr[l])*(translation - translationArr[l]);
+
+							if (checkPBC < 1 && checkPBC > -1)
+							{
+								switchPBC = true;
+								break;
+							}
+						}
+					}
+
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < vCutoff)
+					if (distance < vCutoff && switchPBC == false)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -166,10 +228,28 @@ void MDBox::updateVerletList()
 					};
 
 					Vector3 translation = translationArr[k];
+					bool switchPBC{ false };	// true if we don't have periodicity in a direction and we want to throw away a translation
+					int checkPBC;
+
+					if (!simulationParams.pBCx || !simulationParams.pBCy || !simulationParams.pBCz)
+					{
+
+						for (int l = 0; l < k; ++l)
+						{
+							checkPBC = (translation - translationArr[l])*(translation - translationArr[l]);
+
+							if (checkPBC < 1 && checkPBC > -1)
+							{
+								switchPBC = true;
+								break;
+							}
+						}
+					}
+
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < vCutoff)
+					if (distance < vCutoff && switchPBC==false)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -189,10 +269,28 @@ void MDBox::updateVerletList()
 					};
 
 					Vector3 translation = translationArr[k];
+					bool switchPBC{ false };	// true if we don't have periodicity in a direction and we want to throw away a translation
+					int checkPBC;
+
+					if (!simulationParams.pBCx || !simulationParams.pBCy || !simulationParams.pBCz)
+					{
+
+						for (int l = 0; l < k; ++l)
+						{
+							checkPBC = (translation - translationArr[l])*(translation - translationArr[l]);
+
+							if (checkPBC < 1 && checkPBC > -1)
+							{
+								switchPBC = true;
+								break;
+							}
+						}
+					}
+
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < vCutoff)
+					if (distance < vCutoff && switchPBC == false)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -211,10 +309,28 @@ void MDBox::updateVerletList()
 					};
 
 					Vector3 translation = translationArr[k];
+					bool switchPBC{ false };	// true if we don't have periodicity in a direction and we want to throw away a translation
+					int checkPBC;
+
+					if (!simulationParams.pBCx || !simulationParams.pBCy || !simulationParams.pBCz)
+					{
+
+						for (int l = 0; l < k; ++l)
+						{
+							checkPBC = (translation - translationArr[l])*(translation - translationArr[l]);
+
+							if (checkPBC < 1 && checkPBC > -1)
+							{
+								switchPBC = true;
+								break;
+							}
+						}
+					}
+
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < vCutoff)
+					if (distance < vCutoff && switchPBC == false)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -233,10 +349,28 @@ void MDBox::updateVerletList()
 					};
 
 					Vector3 translation = translationArr[k];
+					bool switchPBC{ false };	// true if we don't have periodicity in a direction and we want to throw away a translation
+					int checkPBC;
+
+					if (!simulationParams.pBCx || !simulationParams.pBCy || !simulationParams.pBCz)
+					{
+
+						for (int l = 0; l < k; ++l)
+						{
+							checkPBC = (translation - translationArr[l])*(translation - translationArr[l]);
+
+							if (checkPBC < 1 && checkPBC > -1)
+							{
+								switchPBC = true;
+								break;
+							}
+						}
+					}
+
 					Vector3 vectorBetween = atom->at() - nextAtom->at() - translation;
 					double dotprod = vectorBetween*vectorBetween;
 					double distance = sqrt(dotprod);
-					if (distance < vCutoff)
+					if (distance < vCutoff && switchPBC == false)
 					{
 						interactionList.push_back(std::pair<Atom*, Vector3>{ nextAtom, translation });
 					}
@@ -352,19 +486,19 @@ void MDBox::updatePositions()
 		Vector3 newPosition = oldPosition + oldVelocity * deltatime + (oldForce / mass)*(deltatime / 2)*deltatime;
 
 		static const double offset = 1.0; // 0 seems like a bad number, but I do not know why
-		if (newPosition.x < -offset)
+		if (newPosition.x < -offset && simulationParams.pBCx)
 			newPosition.x = newPosition.x + simulationParams.lattice->latticeConstant*dimensions.x;
-		else if (newPosition.x >= simulationParams.lattice->latticeConstant*dimensions.x + offset)
+		else if (newPosition.x >= simulationParams.lattice->latticeConstant*dimensions.x + offset && simulationParams.pBCx)
 			newPosition.x = newPosition.x - simulationParams.lattice->latticeConstant*dimensions.x;
 
-		if (newPosition.y < -offset)
+		if (newPosition.y < -offset && simulationParams.pBCy)
 			newPosition.y = newPosition.y + simulationParams.lattice->latticeConstant*dimensions.y;
-		else if (newPosition.y >= simulationParams.lattice->latticeConstant*dimensions.y + offset)
+		else if (newPosition.y >= simulationParams.lattice->latticeConstant*dimensions.y + offset && simulationParams.pBCy)
 			newPosition.y = newPosition.y - simulationParams.lattice->latticeConstant*dimensions.y;
 
-		if (newPosition.z < -offset)
+		if (newPosition.z < -offset && simulationParams.pBCz)
 			newPosition.z = newPosition.z + simulationParams.lattice->latticeConstant*dimensions.z;
-		else if (newPosition.z >= simulationParams.lattice->latticeConstant*dimensions.z + offset)
+		else if (newPosition.z >= simulationParams.lattice->latticeConstant*dimensions.z + offset && simulationParams.pBCz)
 			newPosition.z = newPosition.z - simulationParams.lattice->latticeConstant*dimensions.z;
 
 		atom->setPosition(newPosition);
