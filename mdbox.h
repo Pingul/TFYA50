@@ -38,6 +38,7 @@ class MDBox
 		Vector3 dimensions;
 		std::vector<Atom*> atoms;
 		VerletList verletList;
+		double vCutoff;
 
 		void createInitialAtoms(const Lattice&);
 		void setInitialVelocities(double temperature);
