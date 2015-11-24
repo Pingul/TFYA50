@@ -5,7 +5,6 @@
 #include "atom.h"
 #include "material.h"
 #include "physicalConstants.h"
-#include "threadpool.h"
 
 #include <iostream>
 #include <math.h>
@@ -46,7 +45,7 @@ MDBox::MDBox(const SimulationParams& params) : simulationParams{params}
 	createInitialAtoms(*simulationParams.lattice);
 	setInitialVelocities(simulationParams.initialTemperature);
 	updateVerletList();
-	vCutoff = simulationParams.cutoffDistance*1.05; // We increase this a little to take a little too many atoms in the verlet initially
+	vCutoff = simulationParams.cutoffDistance*1.1; // We increase this a little to take a little too many atoms in the verlet initially
 }
 
 bool MDBox::atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge)
@@ -310,28 +309,32 @@ void MDBox::setInitialVelocities(double temperature)
 	}
 }
 
-class ForceTask : Task
-{
-public:
-	ForceTask(MDBox& box, int start, int end) = default;
-	~ForceTask() = default;
-
-	void execute();
-private:
-	MDBox
-}
+#include <thread>
 
 void MDBox::updateForces(const Material& material)
 {
-	for (auto& atom : atoms)
+	workArg arg1 = {0, atoms.size()/3};
+	workArg arg2 = {atoms.size()/3, atoms.size()};
+	std::thread t1{&MDBox::forceWork, this, arg1};
+	std::thread t2{&MDBox::forceWork, this, arg2};
+	t1.join();
+	t2.join();
+}
+
+void MDBox::forceWork(workArg arg) // what atoms to loop over
+{
+	for (int i = arg.start; i < arg.end; i++)
 	{
-		atom->setForce({ 0.0, 0.0, 0.0 });
+
+		atoms.at(i)->setForce({ 0.0, 0.0, 0.0 });
 	}
 
-	int atomIndex = 0;
-	for (auto& interactionList : verletList)
+	// for (auto& interactionList : verletList)
+	for (int i = arg.start; i < arg.end; i++)
 	{
-		Atom* atom{ atoms[atomIndex++] };
+		Atom* atom = atoms.at(i);
+		auto interactionList = verletList.at(i);
+		// Atom* atom{ atoms[atomIndex++] };
 		for (auto& atomTranslationPair : interactionList)
 		{
 			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
@@ -346,6 +349,33 @@ void MDBox::updateForces(const Material& material)
 		}
 	}
 }
+
+
+// void MDBox::updateForces(const Material& material)
+// {
+// 	for (auto& atom : atoms)
+// 	{
+// 		atom->setForce({ 0.0, 0.0, 0.0 });
+// 	}
+
+// 	int atomIndex = 0;
+// 	for (auto& interactionList : verletList)
+// 	{
+// 		Atom* atom{ atoms[atomIndex++] };
+// 		for (auto& atomTranslationPair : interactionList)
+// 		{
+// 			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
+// 			Vector3 diff{translatedInteractingAtomPosition - atom->at()};
+// 			if (sqrt(diff*diff) > simulationParams.cutoffDistance)
+// 				continue;
+// 			Vector3 interaction = simulationParams.material->potential->interaction(atom->at(), translatedInteractingAtomPosition, simulationParams);
+// 			Vector3 totalForceAtom = atom->totalForce() - interaction;
+// 			Vector3 totalForceInteractingAtom = atomTranslationPair.first->totalForce() + interaction;
+// 			atom->setForce (totalForceAtom);
+// 			atomTranslationPair.first->setForce(totalForceInteractingAtom);
+// 		}
+// 	}
+// }
 
 void MDBox::updatePositions()
 {
