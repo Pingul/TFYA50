@@ -13,6 +13,11 @@ class Material;
 class Measure;
 class Vector3;
 
+typedef struct workArg {
+	unsigned long start;
+	unsigned long end;
+} workArg;
+
 class MDBox
 {
 	friend Measure;
@@ -45,6 +50,9 @@ class MDBox
 
 		// Helper functions for the verlet list
 		bool atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge);
+
+		// Parallelization
+		void forceWork(workArg);
 };
 
 #endif
