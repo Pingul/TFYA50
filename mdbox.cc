@@ -45,7 +45,7 @@ MDBox::MDBox(const SimulationParams& params) : simulationParams{params}
 	createInitialAtoms(*simulationParams.lattice);
 	setInitialVelocities(simulationParams.initialTemperature);
 	updateVerletList();
-	vCutoff = simulationParams.cutoffDistance*1.1; // We increase this a little to take a little too many atoms in the verlet initially
+	vCutoff = simulationParams.cutoffDistance*1.05; // We increase this a little to take a little too many atoms in the verlet initially
 }
 
 bool MDBox::atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge)
