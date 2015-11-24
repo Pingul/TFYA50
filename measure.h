@@ -97,9 +97,9 @@ class DebyeTemperature : public Measure
 {
 public:
 	DebyeTemperature(Temperature* temp, MSD* msd)
-		: temperature{ temp }, mSD{ msd } {}
+		: temperature{temp}, mSD{msd} {}
 	DebyeTemperature(MSD* msd, Temperature* temp)
-		: temperature{ temp }, mSD{ msd } {}
+		: temperature{temp}, mSD{msd} {}
 	virtual ~DebyeTemperature() = default;
 
 	virtual std::string name() { return "debyeTemp"; }
@@ -114,7 +114,7 @@ class Pressure : public Measure
 {
 public:
 	Pressure(Temperature* temp)
-		: temperature{ temp } {}
+		: temperature{temp} {}
 	virtual ~Pressure() = default;
 
 	virtual std::string name() { return "pressure"; }

@@ -50,7 +50,7 @@ void TotalEnergy::calculate(double t, const SimulationParams& params, const MDBo
 
 void KineticEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
-	double mass = 39.948*PHConstants::amuToefA;
+	double mass = params.material->mass*PHConstants::amuToefA;
 	double energy = 0;	
 	for (auto& atom : atoms(box))
 	{
@@ -136,37 +136,37 @@ void DebyeTemperature::calculate(double t, const SimulationParams& params, const
 	values.push_back(debyeTemperature);
 }
 
-void Pressure::calculate(double t, const SimulationParams& params, const MDBox& box)
-{
-	int npart = atoms(box).size();
-	double instantT = { Measure::value(temperature,t) };
+// void Pressure::calculate(double t, const SimulationParams& params, const MDBox& box)
+// {
+// 	int npart = atoms(box).size();
+// 	double instantT = { Measure::value(temperature,t) };
 
-	double pressure = (npart*PHConstants::boltzmann*instantT)/pow(4000,3);
-	int atomIndex = 0;
+// 	double pressure = (npart*PHConstants::boltzmann*instantT)/pow(4000,3);
+// 	int atomIndex = 0;
 
-	for (auto& interactionList : verletList(box))
-	{
-		double energyPerAtom = 0;
-		Atom* atom{ atoms(box)[atomIndex] };
+// 	for (auto& interactionList : verletList(box))
+// 	{
+// 		double energyPerAtom = 0;
+// 		Atom* atom{ atoms(box)[atomIndex] };
 
-		for (auto& atomTranslationPair : interactionList)
-		{
-			//Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
-			Vector3 currentAtomPosition = atom->at();
+// 		for (auto& atomTranslationPair : interactionList)
+// 		{
+// 			//Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
+// 			Vector3 currentAtomPosition = atom->at();
 
-			Atom* otherAtom = atomTranslationPair.first;
+// 			Atom* otherAtom = atomTranslationPair.first;
 
-			Vector3 distBetween = otherAtom->at() - atom->at();
-			Vector3 forceBetween = params.material->potential->interaction(atom->at(), otherAtom->at(), params);
+// 			Vector3 distBetween = otherAtom->at() - atom->at();
+// 			Vector3 forceBetween = params.material->potential->interaction(atom->at(), otherAtom->at(), params);
 
-			pressure += pressure;
-		}
-		atomIndex++;
-		pressure += pressure;
-	}
-	std::cout << "Pressure = " << pressure << std::endl;
-	//std::cout << " " << params.material->potential->potentialEnergy({ 0,0,0 }, { 6.1,0,0 }, params);
+// 			pressure += pressure;
+// 		}
+// 		atomIndex++;
+// 		pressure += pressure;
+// 	}
+// 	std::cout << "Pressure = " << pressure << std::endl;
+// 	//std::cout << " " << params.material->potential->potentialEnergy({ 0,0,0 }, { 6.1,0,0 }, params);
 
-	timestamps.push_back(t);
-	values.push_back(pressure);
-}
+// 	timestamps.push_back(t);
+// 	values.push_back(pressure);
+// }
