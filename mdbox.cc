@@ -5,6 +5,7 @@
 #include "atom.h"
 #include "material.h"
 #include "physicalConstants.h"
+#include "threadpool.h"
 
 #include <iostream>
 #include <math.h>
@@ -307,6 +308,17 @@ void MDBox::setInitialVelocities(double temperature)
 		velocity = (velocity - sumVelocity)*scaleFactor;
 		atom->setVelocity(velocity);
 	}
+}
+
+class ForceTask : Task
+{
+public:
+	ForceTask(MDBox& box, int start, int end) = default;
+	~ForceTask() = default;
+
+	void execute();
+private:
+	MDBox
 }
 
 void MDBox::updateForces(const Material& material)
