@@ -44,8 +44,6 @@ void TotalEnergy::calculate(double t, const SimulationParams& params, const MDBo
 
 	timestamps.push_back(t);
 	values.push_back(energy);
-
-
 }
 
 void KineticEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)

@@ -72,7 +72,8 @@ void Simulation::setupMeasures()
 	// params->msd = new MSD();
 	// params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
 
-	// This makes administration somewhat easier	
+	// This makes administration somewhat easier
+	// Only add the measures you want to calculate independently
 	measures.push_back(params->kineticEnergy);
 	measures.push_back(params->potentialEnergy);
 	measures.push_back(params->totalEnergy);

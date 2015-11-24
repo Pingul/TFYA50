@@ -18,8 +18,8 @@ class Measure
 
 		virtual ~Measure() = default;
 		virtual std::string name() { return "UNDEFINED"; }
-		virtual void calculate(double, const SimulationParams&, const MDBox&) = 0;
 		virtual void saveToFile(const std::string&);
+		virtual void calculate(double, const SimulationParams&, const MDBox&) = 0;
 
 	protected:
 		// Accessor functions that are necessary in order to use the friendship property of the MDBox

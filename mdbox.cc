@@ -316,12 +316,10 @@ void MDBox::updateForces(const Material& material)
 		atom->setForce({ 0.0, 0.0, 0.0 });
 	}
 
-	
 	int atomIndex = 0;
 	for (auto& interactionList : verletList)
 	{
-		Atom* atom{ atoms[atomIndex] };
-
+		Atom* atom{ atoms[atomIndex++] };
 		for (auto& atomTranslationPair : interactionList)
 		{
 			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
@@ -333,11 +331,8 @@ void MDBox::updateForces(const Material& material)
 			Vector3 totalForceInteractingAtom = atomTranslationPair.first->totalForce() + interaction;
 			atom->setForce (totalForceAtom);
 			atomTranslationPair.first->setForce(totalForceInteractingAtom);
-			//std::cout << "total force atom " << atomIndex << ": " << totalForceAtom << std::endl;
 		}
-		atomIndex++;
 	}
-
 }
 
 void MDBox::updatePositions()
