@@ -16,7 +16,7 @@ class Material
 		static Material* Silver();
 		static Material* Helium();
 		static Material* Neon();
-		static Material* Kripton();
+		static Material* Krypton();
 		static Material* Xenon();
 		static Material* Nickel();
 		static Material* Rhodium();

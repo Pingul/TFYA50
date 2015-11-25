@@ -25,7 +25,7 @@ Material* Material::Neon()
 	return new Material(20.1797, 1, new LJPotential{ 0.003121 , 2.74 });	//lattice param = 4.429 Ang
 }
 
-Material* Material::Kripton()
+Material* Material::Krypton()
 {
 	return new Material(83.7980, 1, new LJPotential{ 0.01404 , 3.65 });	//lattice param = 5.706 Ang
 }

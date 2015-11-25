@@ -197,8 +197,8 @@ void SimulationParams::initSettings(const char* setFile)
 				material = Material::Helium();
 			else if (value.compare("neon") == 0)
 				material = Material::Neon();
-			else if (value.compare("kripton") == 0)
-				material = Material::Kripton();
+			else if (value.compare("krypton") == 0)
+				material = Material::Krypton();
 			else if (value.compare("xenon") == 0)
 				material = Material::Xenon();
 			else if (value.compare("nickel") == 0)
