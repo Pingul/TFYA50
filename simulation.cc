@@ -69,7 +69,7 @@ void Simulation::setupMeasures()
 	params->potentialEnergy = new PotentialEnergy();
 	params->totalEnergy = new TotalEnergy(params->kineticEnergy, params->potentialEnergy);
 	params->temperature = new Temperature(params->kineticEnergy);
-	// params->msd = new MSD();
+	 params->msd = new MSD();
 	// params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
 
 	// This makes administration somewhat easier	
@@ -77,7 +77,7 @@ void Simulation::setupMeasures()
 	measures.push_back(params->potentialEnergy);
 	measures.push_back(params->totalEnergy);
 	measures.push_back(params->temperature);
-	// measures.push_back(params->msd);
+	measures.push_back(params->msd);
 	// measures.push_back(params->debyeTemperature);
 }
 
@@ -193,6 +193,18 @@ void SimulationParams::initSettings(const char* setFile)
 				material = Material::Argon();
 			else if (value.compare("silver") == 0)
 				material = Material::Silver();
+			else if (value.compare("helium") == 0)
+				material = Material::Helium();
+			else if (value.compare("neon") == 0)
+				material = Material::Neon();
+			else if (value.compare("kripton") == 0)
+				material = Material::Kripton();
+			else if (value.compare("xenon") == 0)
+				material = Material::Xenon();
+			else if (value.compare("nickel") == 0)
+				material = Material::Nickel();
+			else if (value.compare("rhodium") == 0)
+				material = Material::Rhodium();
 			else
 				throw std::runtime_error{ "Material '" + value + "' does not exist" };
 		}
