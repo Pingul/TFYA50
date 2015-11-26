@@ -70,7 +70,7 @@ void Simulation::setupMeasures()
 	params->potentialEnergy = new PotentialEnergy();
 	params->totalEnergy = new TotalEnergy(params->kineticEnergy, params->potentialEnergy);
 	params->temperature = new Temperature(params->kineticEnergy);
-	 params->msd = new MSD();
+	params->msd = new MSD();
 	// params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
 
 	// This makes administration somewhat easier
@@ -172,8 +172,7 @@ void Simulation::run()
 Simulation::~Simulation()
 {
 	delete box;
-	delete params;
-	
+	delete params;	
 }
 
 
@@ -350,4 +349,11 @@ SimulationParams::~SimulationParams()
 {
 	delete material;
 	delete lattice;
+	delete kineticEnergy;
+	delete potentialEnergy;
+	delete totalEnergy;
+	delete temperature;
+	delete msd;
+	delete debyeTemperature;
+	delete thermostat;
 }
