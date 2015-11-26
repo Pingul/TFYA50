@@ -53,7 +53,10 @@ class SimulationParams
 		double initialTemperature{ -1.0 }; // Kelvin
 		double goalTemperature; // Kelvin
 		Vector3 dimensions{ -1, -1, -1 }; // in Unit cells
-
+		bool pBCx{ true };
+		bool pBCy{ true };
+		bool pBCz{ true };
+		
 		// Internal parameters
 		//int currentTimestep{-1};
 		int verletListUpdateFrequency{ 10 };

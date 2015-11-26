@@ -70,7 +70,7 @@ void Simulation::setupMeasures()
 	params->potentialEnergy = new PotentialEnergy();
 	params->totalEnergy = new TotalEnergy(params->kineticEnergy, params->potentialEnergy);
 	params->temperature = new Temperature(params->kineticEnergy);
-	// params->msd = new MSD();
+	 params->msd = new MSD();
 	// params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
 
 	// This makes administration somewhat easier
@@ -79,7 +79,7 @@ void Simulation::setupMeasures()
 	measures.push_back(params->potentialEnergy);
 	measures.push_back(params->totalEnergy);
 	measures.push_back(params->temperature);
-	// measures.push_back(params->msd);
+	measures.push_back(params->msd);
 	// measures.push_back(params->debyeTemperature);
 }
 
@@ -208,6 +208,20 @@ void SimulationParams::initSettings(const char* setFile)
 		{
 			if (value.compare("argon") == 0)
 				material = Material::Argon();
+			else if (value.compare("silver") == 0)
+				material = Material::Silver();
+			else if (value.compare("helium") == 0)
+				material = Material::Helium();
+			else if (value.compare("neon") == 0)
+				material = Material::Neon();
+			else if (value.compare("krypton") == 0)
+				material = Material::Krypton();
+			else if (value.compare("xenon") == 0)
+				material = Material::Xenon();
+			else if (value.compare("nickel") == 0)
+				material = Material::Nickel();
+			else if (value.compare("rhodium") == 0)
+				material = Material::Rhodium();
 			else
 				throw std::runtime_error{ "Material '" + value + "' does not exist" };
 		}
@@ -246,6 +260,12 @@ void SimulationParams::initSettings(const char* setFile)
 			goalTemperature = value;
 		else if (variable.compare("initialTemperature") == 0)
 			initialTemperature = value;
+		else if (variable.compare("pBCx") == 0)
+			pBCx = (bool)value;
+		else if (variable.compare("pBCy") == 0)
+			pBCy = (bool)value;
+		else if (variable.compare("pBCz") == 0)
+			pBCz = (bool)value;
 		else if (variable.compare("dimensions.x") == 0)
 			dimensions.x = std::round(value);
 		else if (variable.compare("dimensions.y") == 0)

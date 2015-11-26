@@ -13,6 +13,13 @@ class Material
 
 		static Material* TESTMaterial();
 		static Material* Argon();
+		static Material* Silver();
+		static Material* Helium();
+		static Material* Neon();
+		static Material* Krypton();
+		static Material* Xenon();
+		static Material* Nickel();
+		static Material* Rhodium();
 
 		double mass; // atomic mass units
 		double radius; // Ångström
