@@ -5,33 +5,88 @@
 #include "atom.h"
 #include "material.h"
 #include "physicalConstants.h"
+#include "threadpool.h"
 
 #include <iostream>
 #include <math.h>
 
-void MDBox::DEBUG_PRINT()
+// All of this is extremely ugly, but for parallelisation purposes
+class ForceTask : public Task
 {
-	// Testing purpose // just adding text
-	for (int i = 0; i < 2; i++)
-	{
-		std::cout << i << " - atom:\n\t at " << atoms[i]->at() << "\n\t v " << atoms[i]->velocity() << "\n\t F " << atoms[i]->totalForce() << std::endl;
-	}
-}
+public:
+	ForceTask(MDBox& box, int start, int end)
+		: box{box}, start{start}, end{end} {}
 
-void MDBox::DEBUG_VERLET_LIST()
+	void execute() { box.forceWork(start, end); }
+private:
+	MDBox& box;
+	int start;
+	int end;
+};
+
+class ZeroTask : public Task
 {
-	int index{ 0 };
-	for (auto& interactionList : verletList)
-	{
-		std::cout << "atom " << index++ << " interacts with " << interactionList.size() << " atoms" << std::endl;
-	}
+public:
+	ZeroTask(MDBox& box, int start, int end)
+		: box{box}, start{start}, end{end} {}
 
-	std::cout << "atom 0: " << atoms[0]->at() << std::endl;
-	std::cout << "interacts with: " << std::endl;
-	index = 0;
-	for (auto& atomTranslationPair : verletList[0])
+	void execute() { box.zeroForce(start, end); }
+private:
+	MDBox& box;
+	int start;
+	int end;
+};
+
+class PosTask : public Task
+{
+public:
+	PosTask(MDBox& box, int start, int end)
+		: box{box}, start{start}, end{end} {}
+
+	void execute() { box.positionWork(start, end); }
+private:
+	MDBox& box;
+	int start;
+	int end;
+};
+
+class VelTask : public Task
+{
+public:
+	VelTask(MDBox& box, int start, int end)
+		: box{box}, start{start}, end{end} {}
+
+	void execute() { box.velocityWork(start, end); }
+private:
+	MDBox& box;
+	int start;
+	int end;
+};
+
+std::vector<ForceTask> ftasks;
+std::vector<ZeroTask> ztasks;
+std::vector<VelTask> vtasks;
+std::vector<PosTask> ptasks;
+
+void MDBox::createTasks()
+{
+	int index = 0;
+	int chunk = 200;
+	while (index < atoms.size())
 	{
-		std::cout << "\t" << index++ << ": " << atomTranslationPair.first->at() + atomTranslationPair.second << std::endl;
+		if ((index + chunk) >= atoms.size())
+		{
+			ztasks.push_back(ZeroTask{*this, index, (int)atoms.size()});
+			ftasks.push_back(ForceTask{*this, index, (int)atoms.size()});
+			ptasks.push_back(PosTask{*this, index, (int)atoms.size()});
+			vtasks.push_back(VelTask{*this, index, (int)atoms.size()});
+			break;
+		}
+		ztasks.push_back(ZeroTask{*this, index, index + chunk});
+		ftasks.push_back(ForceTask{*this, index, index + chunk});
+		ptasks.push_back(PosTask{*this, index, index + chunk});
+		vtasks.push_back(VelTask{*this, index, index + chunk});
+		index += chunk;
 	}
 }
 
@@ -46,6 +101,7 @@ MDBox::MDBox(const SimulationParams& params) : simulationParams{params}
 	setInitialVelocities(simulationParams.initialTemperature);
 	updateVerletList();
 	vCutoff = simulationParams.cutoffDistance*1.1; // We increase this a little to take a little too many atoms in the verlet initially
+	createTasks();
 }
 
 bool MDBox::atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge)
@@ -309,28 +365,34 @@ void MDBox::setInitialVelocities(double temperature)
 	}
 }
 
-#include <thread>
+
 
 void MDBox::updateForces(const Material& material)
 {
-	workArg arg1 = {0, atoms.size()/3};
-	workArg arg2 = {atoms.size()/3, atoms.size()};
-	std::thread t1{&MDBox::forceWork, this, arg1};
-	std::thread t2{&MDBox::forceWork, this, arg2};
-	t1.join();
-	t2.join();
+	for (auto& t : ztasks)
+	{
+		Threadpool::shared().addTask(&t);
+	}
+	Threadpool::shared().sync();
+	for (auto& t : ftasks)
+	{
+		Threadpool::shared().addTask(&t);
+	}
+	Threadpool::shared().sync();
 }
 
-void MDBox::forceWork(workArg arg) // what atoms to loop over
+void MDBox::zeroForce(int start, int end)
 {
-	for (int i = arg.start; i < arg.end; i++)
+	for (int i = start; i < end; i++)
 	{
-
 		atoms.at(i)->setForce({ 0.0, 0.0, 0.0 });
 	}
+}
 
+void MDBox::forceWork(int start, int end) // what atoms to loop over
+{
 	// for (auto& interactionList : verletList)
-	for (int i = arg.start; i < arg.end; i++)
+	for (int i = start; i < end; i++)
 	{
 		Atom* atom = atoms.at(i);
 		auto interactionList = verletList.at(i);
@@ -377,10 +439,52 @@ void MDBox::forceWork(workArg arg) // what atoms to loop over
 // 	}
 // }
 
+// void MDBox::updatePositions()
+// {
+// 	for (auto& atom : atoms)
+// 	{
+// 		Vector3 oldPosition = atom->at();
+// 		Vector3 oldVelocity = atom->velocity();
+// 		Vector3 oldForce = atom->totalForce();
+// 		double  deltatime = simulationParams.timestepLength;
+// 		double mass = simulationParams.material->mass* PHConstants::amuToefA;
+// 		Vector3 newPosition = oldPosition + oldVelocity * deltatime + (oldForce / mass)*(deltatime / 2)*deltatime;
+
+// 		static const double offset = 1.0; // 0 seems like a bad number, but I do not know why
+// 		if (newPosition.x < -offset)
+// 			newPosition.x = newPosition.x + simulationParams.lattice->latticeConstant*dimensions.x;
+// 		else if (newPosition.x >= simulationParams.lattice->latticeConstant*dimensions.x + offset)
+// 			newPosition.x = newPosition.x - simulationParams.lattice->latticeConstant*dimensions.x;
+
+// 		if (newPosition.y < -offset)
+// 			newPosition.y = newPosition.y + simulationParams.lattice->latticeConstant*dimensions.y;
+// 		else if (newPosition.y >= simulationParams.lattice->latticeConstant*dimensions.y + offset)
+// 			newPosition.y = newPosition.y - simulationParams.lattice->latticeConstant*dimensions.y;
+
+// 		if (newPosition.z < -offset)
+// 			newPosition.z = newPosition.z + simulationParams.lattice->latticeConstant*dimensions.z;
+// 		else if (newPosition.z >= simulationParams.lattice->latticeConstant*dimensions.z + offset)
+// 			newPosition.z = newPosition.z - simulationParams.lattice->latticeConstant*dimensions.z;
+
+// 		atom->setPosition(newPosition);
+// 		atom->setForcePreviousTimestep(oldForce);
+// 	}
+// }
+
 void MDBox::updatePositions()
 {
-	for (auto& atom : atoms)
+	for (auto& t : ptasks)
 	{
+		Threadpool::shared().addTask(&t);
+	}
+	Threadpool::shared().sync();
+}
+
+void MDBox::positionWork(int start, int end)
+{
+	for (int i = start; i < end; i++)
+	{	
+		Atom* atom = atoms.at(i);
 		Vector3 oldPosition = atom->at();
 		Vector3 oldVelocity = atom->velocity();
 		Vector3 oldForce = atom->totalForce();
@@ -411,22 +515,51 @@ void MDBox::updatePositions()
 
 void MDBox::updateVelocities()
 {
-	Vector3 sumVelocity = { 0.0, 0.0, 0.0 };
-	double sumVelocity2 = 0.0;
+	for (auto& t : vtasks)
+	{
+		Threadpool::shared().addTask(&t);
+	}
+	Threadpool::shared().sync();
+}
+
+void MDBox::velocityWork(int start, int end)
+{
+	// Vector3 sumVelocity = { 0.0, 0.0, 0.0 };
+	// double sumVelocity2 = 0.0;
 	double mass = simulationParams.material->mass* PHConstants::amuToefA;
 
-	for (auto& atom : atoms)
+	for (int i = start; i < end; i++)
 	{
+		Atom* atom = atoms.at(i);
 		Vector3 oldVelocity = atom->velocity();
 		Vector3 newForce = atom->totalForce();
 		Vector3 oldForce = atom->forcePreviousTimestep();
 		double  deltatime = simulationParams.timestepLength;
 		Vector3 newVelocity = oldVelocity + (deltatime / 2)*(oldForce + newForce) / mass;
 		atom->setVelocity(newVelocity);
-		sumVelocity = sumVelocity + newVelocity;
-		sumVelocity2 = sumVelocity2 + newVelocity*newVelocity;
+		// sumVelocity = sumVelocity + newVelocity;
+		// sumVelocity2 = sumVelocity2 + newVelocity*newVelocity;
 	}
 }
+
+// void MDBox::updateVelocities()
+// {
+// 	// Vector3 sumVelocity = { 0.0, 0.0, 0.0 };
+// 	// double sumVelocity2 = 0.0;
+// 	double mass = simulationParams.material->mass* PHConstants::amuToefA;
+
+// 	for (auto& atom : atoms)
+// 	{
+// 		Vector3 oldVelocity = atom->velocity();
+// 		Vector3 newForce = atom->totalForce();
+// 		Vector3 oldForce = atom->forcePreviousTimestep();
+// 		double  deltatime = simulationParams.timestepLength;
+// 		Vector3 newVelocity = oldVelocity + (deltatime / 2)*(oldForce + newForce) / mass;
+// 		atom->setVelocity(newVelocity);
+// 		// sumVelocity = sumVelocity + newVelocity;
+// 		// sumVelocity2 = sumVelocity2 + newVelocity*newVelocity;
+// 	}
+// }
 
 MDBox::~MDBox()
 {

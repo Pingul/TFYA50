@@ -13,11 +13,6 @@ class Material;
 class Measure;
 class Vector3;
 
-typedef struct workArg {
-	unsigned long start;
-	unsigned long end;
-} workArg;
-
 class MDBox
 {
 	friend Measure;
@@ -32,11 +27,15 @@ class MDBox
 		void updateForces(const Material&);
 		void updatePositions();
 		void updateVelocities();
-		void DEBUG_PRINT();
-		void DEBUG_VERLET_LIST();
 
 		// Gives an unmodifiable reference to atoms, for statistical usage
 		const std::vector<Atom*>& atomSnapshot() const { return atoms; }
+
+		// Parallelization
+		void forceWork(int, int);
+		void zeroForce(int, int);
+		void positionWork(int, int );
+		void velocityWork(int, int );
 
 	private:
 		const SimulationParams& simulationParams;
@@ -48,11 +47,10 @@ class MDBox
 		void createInitialAtoms(const Lattice&);
 		void setInitialVelocities(double temperature);
 
+		void createTasks();
+
 		// Helper functions for the verlet list
 		bool atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge);
-
-		// Parallelization
-		void forceWork(workArg);
 };
 
 #endif

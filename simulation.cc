@@ -6,6 +6,7 @@
 #include "fileIO.h"
 #include "measure.h"
 #include "thermostat.h"
+#include "threadpool.h"
 
 #include <cmath>
 #include <map>
@@ -52,6 +53,7 @@ std::string fileName(std::string filePath)
 Simulation::Simulation(const char* setFile)
 {
 	Random::setup();
+	Threadpool::dispatchOnce(3);
 	params = new SimulationParams{setFile};
 	box = new MDBox{ *params };
 	filePrefix = fileName(setFile) + "_";
@@ -106,12 +108,18 @@ void Simulation::saveMetaData()
 
 void Simulation::run()
 {
+	// Checking time
+	auto start = std::chrono::system_clock::now();
+
+	std::cout << "Running simulation with " << box->atomSnapshot().size() << " atoms" << std::endl;
+	std::cout << "Start temperature is " << params->initialTemperature << " K";
+	if (params->thermostat != nullptr)
+		std::cout << " and using a thermostat with " << params->goalTemperature << " K";
+	std::cout << std::endl << "Go!" << std::endl;
+
 	setupMeasures();
 	if (params->saveVisualizationData)
 		fileIO::VIS::writeSettings(filePath() + visFile, *params);
-
-	// Checking time
-	auto start = std::chrono::system_clock::now();
 
 	for (int i = 0; i < params->timesteps; ++i)
 	{

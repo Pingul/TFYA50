@@ -1,11 +1,14 @@
 #include "threadpool.h"
 
+Threadpool* Threadpool::_shared = nullptr;
+
 Threadpool::Threadpool(int n)
 {
+	nbr_threads = n;
+	threadBusy = new bool[n];
 	for (int i = 0; i < n; i++)
 	{
-		std::cout << "thread " << i << " created" << std::endl;
-		threads.push_back(std::thread{&Threadpool::taskLoop, this});
+		threads.push_back(std::thread{&Threadpool::taskLoop, this, i});
 	}
 }
 
@@ -20,9 +23,8 @@ Threadpool::~Threadpool()
 	}
 }
 
-void Threadpool::taskLoop()
+void Threadpool::taskLoop(int n)
 {
-	// std::cout << "hello world" << std::endl;
 	while (!stopThreads)
 	{
 		Task* task{nullptr};
@@ -32,11 +34,15 @@ void Threadpool::taskLoop()
 			{
 				task = tasks.front();
 				tasks.pop();
+				threadBusy[n] = true;
 			}
 			// Lock released
 		}
 		if (task != nullptr)
+		{
 			task->execute();
+			threadBusy[n] = false;
+		}
 	}
 }
 
@@ -48,21 +54,42 @@ void Threadpool::addTask(Task* t)
 
 void Threadpool::sync()
 {
-	while(!tasks.empty());
+	while(!tasks.empty())
+	{
+		std::this_thread::yield();
+	}
+
+	bool busy;
+	do
+	{
+		busy = false;
+		for (int i = 0; i < nbr_threads; i++)
+			busy |= threadBusy[i];
+	} while(busy);
 }
 
-int main()
+void Threadpool::dispatchOnce(int n)
 {
-	Threadpool p{4};
-	tTask t1;
-	tTask t2;
-	tTask t3;
-	tTask t4;
-	tTask t5;
-	p.addTask(&t1);
-	p.addTask(&t2);
-	p.addTask(&t3);
-	p.addTask(&t4);
-	p.addTask(&t5);
-	p.sync();
+	if (_shared == nullptr)
+		_shared = new Threadpool(n);
 }
+
+// int main()
+// {
+// 	Threadpool::dispatchOnce(4);
+// 	tTask t1;
+// 	bTask t2;
+// 	Threadpool::shared().addTask(&t1);
+// 	Threadpool::shared().addTask(&t1);
+// 	Threadpool::shared().addTask(&t1);
+// 	Threadpool::shared().addTask(&t1);
+// 	Threadpool::shared().addTask(&t2);
+// 	Threadpool::shared().sync();
+// 	Threadpool::shared().addTask(&t2);
+// 	Threadpool::shared().addTask(&t2);
+// 	Threadpool::shared().addTask(&t2);
+// 	Threadpool::shared().addTask(&t2);
+// 	Threadpool::shared().addTask(&t1);
+// 	Threadpool::shared().sync();
+
+// }
