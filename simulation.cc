@@ -54,7 +54,7 @@ Simulation::Simulation(const char* setFile)
 {
 	Random::setup();
 	params = new SimulationParams{setFile};
-	Threadpool::dispatchOnce(params->nbrThreads);
+	Threadpool::dispatchOnce(params->threads);
 	filePrefix = fileName(setFile) + "_";
 	//filePrefix = getCurrentDateAndTime() + " | ";
 }
@@ -111,7 +111,7 @@ void Simulation::run()
 	auto start = std::chrono::system_clock::now();
 	box = new MDBox{ *params };
 
-	std::cout << "Running simulation with " << box->atomSnapshot().size() << " atoms on " << params->nbrThreads << " threads" << std::endl;
+	std::cout << "Running simulation with " << box->atomSnapshot().size() << " atoms on " << params->threads << " threads" << std::endl;
 	std::cout << "Start temperature is " << params->initialTemperature << " K";
 	if (params->thermostat != nullptr)
 		std::cout << " and using a thermostat with " << params->goalTemperature << " K";
@@ -273,8 +273,8 @@ void SimulationParams::initSettings(const char* setFile)
 			dimensions.z = std::round(value);
 		else if (variable.compare("latticeConstant") == 0)
 			lattice->latticeConstant = value; // Dependent on the lattice that we created earlier
-		else if (variable.compare("nbrThreads") == 0)
-			nbrThreads = (int)std::round(value);
+		else if (variable.compare("threads") == 0)
+			threads = (int)std::round(value);
 		else
 			throw std::runtime_error{ "Could not find a match for setting '" + variable + "'" };
 	}

@@ -61,7 +61,7 @@ class SimulationParams
 		//int currentTimestep{-1};
 		int verletListUpdateFrequency{ 10 };
 
-		int nbrThreads{1};
+		int threads{1};
 		std::string outputDirectory{ "" };
 		std::string settingsFileName;
 
