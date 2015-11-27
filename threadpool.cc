@@ -43,6 +43,8 @@ void Threadpool::taskLoop(int n)
 			task->execute();
 			threadBusy[n] = false;
 		}
+		else
+			std::this_thread::yield();
 	}
 }
 
