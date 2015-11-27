@@ -3,6 +3,7 @@
 #include "measure.h"
 #include "lattice.h"
 #include "atom.h"
+#include "mdbox.h"
 #include <iostream>
 #include <fstream>
 #include <regex>
@@ -179,9 +180,21 @@ namespace fileIO
 			std::ofstream simFile{path + "/" + file + ".sim"};
 			if (simFile.is_open())
 			{
+				// Measures
+				std::string m{"AVERAGES"};
+				simFile.write(m.c_str(), m.size());
+				int start = sim.params->calculateMeanAfter;
+				int end = sim.params->timesteps;
+				for (auto& measure : sim.measures)
+				{	
+					std::string s{"\n" + measure->name() + " : " + std::to_string(measure->average(start, end))};
+					simFile.write(s.c_str(), s.size());
+				}
+				m = {"\n\nMEASURE FILES"};
+				simFile.write(m.c_str(), m.size());
 				for (auto& measure : sim.measures)
 				{
-					std::string s{sim.filePrefix + measure->name() + ".mdf\n"};
+					std::string s{"\n" + sim.filePrefix + measure->name() + ".mdf"};
 					simFile.write(s.c_str(), s.size());
 				}
 			}

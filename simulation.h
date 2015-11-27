@@ -60,6 +60,7 @@ class SimulationParams
 		// Internal parameters
 		//int currentTimestep{-1};
 		int verletListUpdateFrequency{ 10 };
+		int calculateMeanAfter{0};
 
 		int threads{1};
 		std::string outputDirectory{ "" };

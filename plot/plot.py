@@ -21,7 +21,10 @@ def plot_mdf(file_path):
 	plt.title(file_path)
 
 # call it with 'python plot path/to/directory simulation_name'
-def main(directory, simulation_name):
+def main(simulation_path):
+	parts = simulation_path.rsplit("/")	
+	simulation_name = parts[-1];
+	directory = "/".join(parts[0:-1])
 
 	if simulation_name.split(".")[-1] == "mdf": # if we run with a single mdf-file, we only plot that one
 		plot_mdf(directory + "/" + simulation_name)
@@ -32,7 +35,7 @@ def main(directory, simulation_name):
 
 	files = []
 	with open(directory + "/" + simulation_name, 'r') as f:
-		files = [line.rstrip("\n") for line in f.readlines()]
+		files = f.read().rsplit("MEASURE FILES\n")[-1].rsplit("\n")
 	
 	figures = 0
 	for file in files:
@@ -41,4 +44,4 @@ def main(directory, simulation_name):
 		plot_mdf(directory + "/" + file)
 	plt.show()
 
-main(sys.argv[1], sys.argv[2])
+main(sys.argv[1])

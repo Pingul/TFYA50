@@ -20,6 +20,7 @@ class Measure
 		virtual std::string name() { return "UNDEFINED"; }
 		virtual void saveToFile(const std::string&);
 		virtual void calculate(double, const SimulationParams&, const MDBox&) = 0;
+		virtual double average(int start, int end);
 
 	protected:
 		// Accessor functions that are necessary in order to use the friendship property of the MDBox

@@ -534,7 +534,6 @@ void MDBox::forceWork(int start, int end) // what atoms to loop over
 		for (auto& atomTranslationPair : interactionList)
 		{
 			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
-			Vector3 diff{translatedInteractingAtomPosition - atom->at()};
 			Vector3 interaction = simulationParams.material->potential->interaction(atom->at(), translatedInteractingAtomPosition, simulationParams);
 			Vector3 totalForceAtom = atom->totalForce() - interaction;
 			Vector3 totalForceInteractingAtom = atomTranslationPair.first->totalForce() + interaction;
@@ -543,65 +542,6 @@ void MDBox::forceWork(int start, int end) // what atoms to loop over
 		}
 	}
 }
-
-
-// void MDBox::updateForces(const Material& material)
-// {
-// 	for (auto& atom : atoms)
-// 	{
-// 		atom->setForce({ 0.0, 0.0, 0.0 });
-// 	}
-
-// 	int atomIndex = 0;
-// 	for (auto& interactionList : verletList)
-// 	{
-// 		Atom* atom{ atoms[atomIndex++] };
-// 		for (auto& atomTranslationPair : interactionList)
-// 		{
-// 			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
-// 			Vector3 diff{translatedInteractingAtomPosition - atom->at()};
-// 			if (sqrt(diff*diff) > simulationParams.cutoffDistance)
-// 				continue;
-// 			Vector3 interaction = simulationParams.material->potential->interaction(atom->at(), translatedInteractingAtomPosition, simulationParams);
-// 			Vector3 totalForceAtom = atom->totalForce() - interaction;
-// 			Vector3 totalForceInteractingAtom = atomTranslationPair.first->totalForce() + interaction;
-// 			atom->setForce (totalForceAtom);
-// 			atomTranslationPair.first->setForce(totalForceInteractingAtom);
-// 		}
-// 	}
-// }
-
-// void MDBox::updatePositions()
-// {
-// 	for (auto& atom : atoms)
-// 	{
-// 		Vector3 oldPosition = atom->at();
-// 		Vector3 oldVelocity = atom->velocity();
-// 		Vector3 oldForce = atom->totalForce();
-// 		double  deltatime = simulationParams.timestepLength;
-// 		double mass = simulationParams.material->mass* PHConstants::amuToefA;
-// 		Vector3 newPosition = oldPosition + oldVelocity * deltatime + (oldForce / mass)*(deltatime / 2)*deltatime;
-
-// 		static const double offset = 1.0; // 0 seems like a bad number, but I do not know why
-// 		if (newPosition.x < -offset)
-// 			newPosition.x = newPosition.x + simulationParams.lattice->latticeConstant*dimensions.x;
-// 		else if (newPosition.x >= simulationParams.lattice->latticeConstant*dimensions.x + offset)
-// 			newPosition.x = newPosition.x - simulationParams.lattice->latticeConstant*dimensions.x;
-
-// 		if (newPosition.y < -offset)
-// 			newPosition.y = newPosition.y + simulationParams.lattice->latticeConstant*dimensions.y;
-// 		else if (newPosition.y >= simulationParams.lattice->latticeConstant*dimensions.y + offset)
-// 			newPosition.y = newPosition.y - simulationParams.lattice->latticeConstant*dimensions.y;
-
-// 		if (newPosition.z < -offset)
-// 			newPosition.z = newPosition.z + simulationParams.lattice->latticeConstant*dimensions.z;
-// 		else if (newPosition.z >= simulationParams.lattice->latticeConstant*dimensions.z + offset)
-// 			newPosition.z = newPosition.z - simulationParams.lattice->latticeConstant*dimensions.z;
-
-// 		atom->setPosition(newPosition);
-// 		atom->setForcePreviousTimestep(oldForce);
-// 	}
-// }
 
 void MDBox::updatePositions()
 {
@@ -656,8 +596,6 @@ void MDBox::updateVelocities()
 
 void MDBox::velocityWork(int start, int end)
 {
-	// Vector3 sumVelocity = { 0.0, 0.0, 0.0 };
-	// double sumVelocity2 = 0.0;
 	double mass = simulationParams.material->mass* PHConstants::amuToefA;
 
 	for (int i = start; i < end; i++)
@@ -669,29 +607,8 @@ void MDBox::velocityWork(int start, int end)
 		double  deltatime = simulationParams.timestepLength;
 		Vector3 newVelocity = oldVelocity + (deltatime / 2)*(oldForce + newForce) / mass;
 		atom->setVelocity(newVelocity);
-		// sumVelocity = sumVelocity + newVelocity;
-		// sumVelocity2 = sumVelocity2 + newVelocity*newVelocity;
 	}
 }
-
-// void MDBox::updateVelocities()
-// {
-// 	// Vector3 sumVelocity = { 0.0, 0.0, 0.0 };
-// 	// double sumVelocity2 = 0.0;
-// 	double mass = simulationParams.material->mass* PHConstants::amuToefA;
-
-// 	for (auto& atom : atoms)
-// 	{
-// 		Vector3 oldVelocity = atom->velocity();
-// 		Vector3 newForce = atom->totalForce();
-// 		Vector3 oldForce = atom->forcePreviousTimestep();
-// 		double  deltatime = simulationParams.timestepLength;
-// 		Vector3 newVelocity = oldVelocity + (deltatime / 2)*(oldForce + newForce) / mass;
-// 		atom->setVelocity(newVelocity);
-// 		// sumVelocity = sumVelocity + newVelocity;
-// 		// sumVelocity2 = sumVelocity2 + newVelocity*newVelocity;
-// 	}
-// }
 
 MDBox::~MDBox()
 {

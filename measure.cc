@@ -38,6 +38,24 @@ double Measure::value(Measure* measure, double timestamp)
 	return measure->values.at(index);
 }
 
+double Measure::average(int start, int end)
+{
+	if (start >= end)
+		return 0.0;
+
+	double val{0.0};
+	int used = 0;
+	for (int i = 0; i < values.size(); i++)
+	{
+		if (timestamps[i] >= start && timestamps[i] <= end)
+		{
+			val += values[i];
+			used++;
+		}
+	}
+	return used == 0 ? 0.0 : val/used;
+}
+
 void TotalEnergy::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
 	double energy{Measure::value(kineticEnergy, t) + Measure::value(potentialEnergy, t)};
@@ -133,6 +151,7 @@ void DebyeTemperature::calculate(double t, const SimulationParams& params, const
 	timestamps.push_back(t);
 	values.push_back(debyeTemperature);
 }
+
 
 // void Pressure::calculate(double t, const SimulationParams& params, const MDBox& box)
 // {

@@ -71,7 +71,7 @@ void Simulation::setupMeasures()
 	params->totalEnergy = new TotalEnergy(params->kineticEnergy, params->potentialEnergy);
 	params->temperature = new Temperature(params->kineticEnergy);
 	params->msd = new MSD();
-	// params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
+	params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
 
 	// This makes administration somewhat easier
 	// Only add the measures you want to calculate independently
@@ -80,7 +80,7 @@ void Simulation::setupMeasures()
 	measures.push_back(params->totalEnergy);
 	measures.push_back(params->temperature);
 	measures.push_back(params->msd);
-	// measures.push_back(params->debyeTemperature);
+	measures.push_back(params->debyeTemperature);
 }
 
 void Simulation::calculateMeasures(double t)
@@ -273,8 +273,29 @@ void SimulationParams::initSettings(const char* setFile)
 			dimensions.z = std::round(value);
 		else if (variable.compare("latticeConstant") == 0)
 			lattice->latticeConstant = value; // Dependent on the lattice that we created earlier
+		else if (variable.compare("epsilon") == 0)
+		{
+			// Special case for LJ potential
+			if (material == nullptr || material->potential == nullptr)
+				throw std::runtime_error{"No material specified for 'epislon'"};
+
+			LJPotential* pot = dynamic_cast<LJPotential*>(material->potential);
+			if (pot != nullptr)
+				pot->epsilon = value;
+		}
+		else if (variable.compare("sigma") == 0)
+		{
+			if (material == nullptr || material->potential == nullptr)
+				throw std::runtime_error{"No material specified for 'sigma'"};
+
+			LJPotential* pot = dynamic_cast<LJPotential*>(material->potential);
+			if (pot != nullptr)
+				pot->sigma = value;
+		}
 		else if (variable.compare("threads") == 0)
 			threads = (int)std::round(value);
+		else if (variable.compare("calculateMeanAfter") == 0)
+			calculateMeanAfter = (int)std::round(value);
 		else
 			throw std::runtime_error{ "Could not find a match for setting '" + variable + "'" };
 	}
@@ -288,6 +309,11 @@ void SimulationParams::validateSettings()
 	{
 		errors++;
 		variables.push_back("timestep");
+	}
+	if (calculateMeanAfter > timesteps || calculateMeanAfter < 0)
+	{
+		errors++;
+		variables.push_back("calculateMeanAfter");	
 	}
 	if (cutoffDistance <= 0.0)
 	{
