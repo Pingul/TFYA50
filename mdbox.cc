@@ -535,8 +535,6 @@ void MDBox::forceWork(int start, int end) // what atoms to loop over
 		{
 			Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
 			Vector3 diff{translatedInteractingAtomPosition - atom->at()};
-			if (sqrt(diff*diff) > simulationParams.cutoffDistance)
-				continue;
 			Vector3 interaction = simulationParams.material->potential->interaction(atom->at(), translatedInteractingAtomPosition, simulationParams);
 			Vector3 totalForceAtom = atom->totalForce() - interaction;
 			Vector3 totalForceInteractingAtom = atomTranslationPair.first->totalForce() + interaction;
