@@ -69,8 +69,9 @@ void Simulation::setupMeasures()
 	params->potentialEnergy = new PotentialEnergy();
 	params->totalEnergy = new TotalEnergy(params->kineticEnergy, params->potentialEnergy);
 	params->temperature = new Temperature(params->kineticEnergy);
-	 params->msd = new MSD();
-	// params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
+	params->msd = new MSD();
+	params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
+	params->pressure = new Pressure(params->temperature);
 
 	// This makes administration somewhat easier	
 	measures.push_back(params->kineticEnergy);
@@ -78,7 +79,8 @@ void Simulation::setupMeasures()
 	measures.push_back(params->totalEnergy);
 	measures.push_back(params->temperature);
 	measures.push_back(params->msd);
-	// measures.push_back(params->debyeTemperature);
+	measures.push_back(params->debyeTemperature);
+	measures.push_back(params->pressure);
 }
 
 void Simulation::calculateMeasures(double t)

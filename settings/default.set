@@ -4,6 +4,9 @@
 timesteps = 10000
 timestepLength = 1 # The timestep is measured in femtoseconds
 
+# Verlet list update freq
+verletListUpdateFrequency = 200
+
 # Visualization
 saveVisualizationData = 0 # boolean
 visualizationLogRate = 5 # Save data every x femtosecond
@@ -13,14 +16,14 @@ outputDirectory = ../../data
 measureDataLogRate = 1 # every x femtosecond
 cutoffDistance = 6.40 # in Ångström
 
-#thermostat = thermostatType # string
-goalTemperature = 40 # Kelvin
+thermostat = berendsen # string
+goalTemperature = 298 # Kelvin
 
-initialTemperature = 40 # Kelvin
+initialTemperature = 298 # Kelvin
 
 pBCx=1 # 0 for removing PBC in one direction
 pBCy=1
-pBCz=0
+pBCz=1
 
 dimensions.x = 4 # in Unit cells
 dimensions.y = 4

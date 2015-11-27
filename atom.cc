@@ -20,6 +20,11 @@ Vector3 Atom::forcePreviousTimestep() const
 	return forceprevioustimestep_;
 }
 
+Vector3 Atom::initialPosition() const
+{
+	return initialPosition_;
+}
+
 void Atom::setPosition(const Vector3& coordinates)
 {
 	coordinates_ = coordinates;
@@ -38,4 +43,9 @@ void Atom::setForce(const Vector3& force)
 void Atom::setForcePreviousTimestep(const Vector3& forceprevioustimestep)
 {
 	forceprevioustimestep_ = forceprevioustimestep;
+}
+
+void Atom::setInitialPosition(const Vector3& initialPosition)
+{
+	initialPosition_ = initialPosition;
 }
