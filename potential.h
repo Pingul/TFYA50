@@ -32,7 +32,6 @@ class LJPotential : public AtomicPotential
 		virtual Vector3 interaction(const Vector3&, const Vector3&, const SimulationParams&);
 		virtual double potentialEnergy(const Vector3&, const Vector3&, const SimulationParams&);
 
-	private:
 		double epsilon;	//in eV
 		double sigma;	//in Angstrom
 };
