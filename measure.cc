@@ -103,7 +103,7 @@ void PotentialEnergy::calculate(double t, const SimulationParams& params, const 
 
 void Temperature::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
-	double temperature = { Measure::value(kineticEnergy, t) * 2.0 / (double(atoms(box).size())*3.0*PHConstants::boltzmann) };  //(3.0*PHConstants::boltzmann*params.dimensions.x*params.dimensions.y*params.dimensions.z*4.0) };
+	double temperature = { Measure::value(kineticEnergy, t) * 2.0 / (double(atoms(box).size())*3.0*PHConstants::boltzmann) }; 
 
 	timestamps.push_back(t);
 	values.push_back(temperature);	
@@ -113,24 +113,10 @@ void MSD::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
 	double msd = 0;
 	int atomIndex = 0;
-	
-	for (int iii = 0; iii < params.dimensions.x; ++iii)
+
+	for (auto& atom : atoms(box))
 	{
-		for (int jjj = 0; jjj < params.dimensions.y; ++jjj)
-		{
-			for (int kkk = 0; kkk < params.dimensions.z; ++kkk)
-			{
-				for (auto& position : params.lattice->atomPositions)
-				{
-
-					Atom* atom{ atoms(box)[atomIndex] };
-					Vector3 fccPosition=params.lattice->latticeConstant*position + params.lattice->latticeConstant*Vector3{ (double)iii, (double)jjj, (double)kkk };
-					msd += (atom->at() - fccPosition)*(atom->at() - fccPosition);
-
-					atomIndex++;
-				}
-			}
-		}
+		msd += (atom->at() - atom->initialPosition())*(atom->at() - atom->initialPosition());
 	}
 
 	msd = msd / double(atoms(box).size());
@@ -153,37 +139,32 @@ void DebyeTemperature::calculate(double t, const SimulationParams& params, const
 }
 
 
-// void Pressure::calculate(double t, const SimulationParams& params, const MDBox& box)
-// {
-// 	int npart = atoms(box).size();
-// 	double instantT = { Measure::value(temperature,t) };
+ void Pressure::calculate(double t, const SimulationParams& params, const MDBox& box)
+ {
+ 	int npart = atoms(box).size();
+ 	double instantT = { Measure::value(temperature,t) };
 
-// 	double pressure = (npart*PHConstants::boltzmann*instantT)/pow(4000,3);
-// 	int atomIndex = 0;
+	double pressure = 0;
+	int atomIndex = 0;
+	double volume = params.dimensions.x * params.dimensions.y * params.dimensions.z * pow(params.lattice->latticeConstant, 3);
+ 	for (auto& interactionList : verletList(box))
+ 	{
+ 		double energyPerAtom = 0;
+ 		Atom* atom{ atoms(box)[atomIndex] };
 
-// 	for (auto& interactionList : verletList(box))
-// 	{
-// 		double energyPerAtom = 0;
-// 		Atom* atom{ atoms(box)[atomIndex] };
+ 		for (auto& atomTranslationPair : interactionList)
+ 		{
+ 			Vector3 currentAtomPosition = atom->at();
 
-// 		for (auto& atomTranslationPair : interactionList)
-// 		{
-// 			//Vector3 translatedInteractingAtomPosition = atomTranslationPair.first->at() + atomTranslationPair.second;
-// 			Vector3 currentAtomPosition = atom->at();
+			Atom* otherAtom = atomTranslationPair.first;
+ 			Vector3 distBetween = otherAtom->at() - atom->at();
+ 			Vector3 forceBetween = params.material->potential->interaction(atom->at(), otherAtom->at(), params);
+			pressure += distBetween * forceBetween;
+		}
+		atomIndex++;
+	}
+	pressure = (npart*PHConstants::boltzmann*instantT) / volume + pressure/(6.0*volume);
 
-// 			Atom* otherAtom = atomTranslationPair.first;
-
-// 			Vector3 distBetween = otherAtom->at() - atom->at();
-// 			Vector3 forceBetween = params.material->potential->interaction(atom->at(), otherAtom->at(), params);
-
-// 			pressure += pressure;
-// 		}
-// 		atomIndex++;
-// 		pressure += pressure;
-// 	}
-// 	std::cout << "Pressure = " << pressure << std::endl;
-// 	//std::cout << " " << params.material->potential->potentialEnergy({ 0,0,0 }, { 6.1,0,0 }, params);
-
-// 	timestamps.push_back(t);
-// 	values.push_back(pressure);
-// }
+ 	timestamps.push_back(t);
+ 	values.push_back(pressure);
+ }

@@ -459,6 +459,7 @@ void MDBox::createInitialAtoms(const Lattice& lattice)
 				{
 					Atom* atom = new Atom();
 					atom->setPosition(lattice.latticeConstant*position + lattice.latticeConstant*Vector3{ (double)iii, (double)jjj, (double)kkk });
+					atom->setInitialPosition(lattice.latticeConstant*position + lattice.latticeConstant*Vector3{ (double)iii, (double)jjj, (double)kkk });
 					atoms.push_back(atom);
 				}
 			}
