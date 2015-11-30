@@ -130,6 +130,7 @@
     <ClCompile Include="..\..\random.cc" />
     <ClCompile Include="..\..\simulation.cc" />
     <ClCompile Include="..\..\thermostat.cc" />
+    <ClCompile Include="..\..\threadpool.cc" />
     <ClCompile Include="..\..\vector.cc" />
   </ItemGroup>
   <ItemGroup>
@@ -144,6 +145,7 @@
     <ClInclude Include="..\..\random.h" />
     <ClInclude Include="..\..\simulation.h" />
     <ClInclude Include="..\..\thermostat.h" />
+    <ClInclude Include="..\..\threadpool.h" />
     <ClInclude Include="..\..\vector.h" />
   </ItemGroup>
   <ItemGroup>

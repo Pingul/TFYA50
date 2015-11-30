@@ -25,7 +25,7 @@ int main(int argc, char* argv[])
 	}
 
 	// press enter to quit
-	std::cin.ignore();
+	//std::cin.ignore();
 
 	return 0;
 }

@@ -95,14 +95,28 @@ void Simulation::saveMeasures()
 {
 	for (auto& measure : measures)
 	{
-		measure->saveToFile(filePath() + measure->name() + ".mdf");
+		try
+		{
+			measure->saveToFile(filePath() + measure->name() + ".mdf");
+		}
+		catch (std::exception& e)
+		{
+			std::cout << "SAVE ERROR: " << e.what() << std::endl;
+		}
 	}
 }
 
 void Simulation::saveMetaData()
 {
-	std::string fName{fileName(params->settingsFileName)};
-	fileIO::SIM::write(filePath(false), fName, *this);
+	try
+	{
+		std::string fName{ fileName(params->settingsFileName) };
+		fileIO::SIM::write(filePath(false), fName, *this);
+	}
+	catch (std::exception& e)
+	{
+		std::cout << "SAVE ERROR: " << e.what() << std::endl;
+	}
 }
 
 void Simulation::run()
