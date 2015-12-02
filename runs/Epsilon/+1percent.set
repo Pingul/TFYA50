@@ -1,27 +1,31 @@
 # definition of a settingsfile
 
 # Number of timesteps
-timesteps = 10000
+timesteps = 50000
 timestepLength = 1 # The timestep is measured in femtoseconds
+
+verletListUpdateFrequency = 200
 
 # Visualization
 saveVisualizationData = 0 # boolean
 visualizationLogRate = 5 # Save data every x femtosecond
 
-outputDirectory = ../runs/Epsilon
+outputDirectory = data
 
 measureDataLogRate = 1 # every x femtosecond
-cutoffDistance = 5.80 # in Ångström
+cutoffDistance = 9.275 # in Ångström
 
 #thermostat = berendsen # string
 goalTemperature = 300 # Kelvin
 
 initialTemperature = 300 # Kelvin
 
-dimensions.x = 4 # in Unit cells
-dimensions.y = 4
-dimensions.z = 4
+dimensions.x = 8 # in Unit cells
+dimensions.y = 8
+dimensions.z = 8
 
 lattice = fcc
 latticeConstant = 4.090 # Ångström
 material = silver
+
+epsilon = 0.3434
