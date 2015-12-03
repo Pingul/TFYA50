@@ -76,6 +76,7 @@ class SimulationParams
 		class TotalEnergy* totalEnergy{nullptr};
 		class Temperature* temperature{nullptr};
 		class MSD* msd{ nullptr };
+		class SurfaceMSD* surfaceMSD{ nullptr };
 		class DebyeTemperature* debyeTemperature{ nullptr };
 		class Pressure* pressure{ nullptr };
 

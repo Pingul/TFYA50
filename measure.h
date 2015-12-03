@@ -94,6 +94,16 @@ public:
 	virtual void calculate(double, const SimulationParams&, const MDBox&);
 };
 
+class SurfaceMSD : public Measure
+{
+public:
+	SurfaceMSD() = default;
+	virtual ~SurfaceMSD() = default;
+
+	virtual std::string name() { return "surfacemsd"; }
+	virtual void calculate(double, const SimulationParams&, const MDBox&);
+};
+
 class DebyeTemperature : public Measure
 {
 public:

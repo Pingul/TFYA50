@@ -125,6 +125,64 @@ void MSD::calculate(double t, const SimulationParams& params, const MDBox& box)
 	values.push_back(msd);
 }
 
+
+void SurfaceMSD::calculate(double t, const SimulationParams& params, const MDBox& box)
+{
+	double smsd = 0;
+
+	if (!params.pBCx)
+	{
+		int used = 0;
+		for (int atomIndex = 0; atomIndex < atoms(box).size(); ++atomIndex)
+		{
+			Atom* atom = atoms(box).at(atomIndex);
+			if (atom->at().x < 2 * params.lattice->latticeConstant || atom->at().x > params.dimensions.x*params.lattice->latticeConstant - 2 * params.lattice->latticeConstant)
+			{
+				smsd += (atom->at().x - atom->initialPosition().x)*(atom->at().x - atom->initialPosition().x);
+				used++;
+			}
+		}
+
+		smsd = smsd / used;
+	}
+
+	if (!params.pBCy)
+	{
+		int used = 0;
+		for (int atomIndex = 0; atomIndex < atoms(box).size(); ++atomIndex)
+		{
+			Atom* atom = atoms(box).at(atomIndex);
+			if (atom->at().y < 2 * params.lattice->latticeConstant || atom->at().y > params.dimensions.y*params.lattice->latticeConstant - 2 * params.lattice->latticeConstant)
+			{
+				smsd += (atom->at().y - atom->initialPosition().y)*(atom->at().y - atom->initialPosition().y);
+				used++;
+			}
+		}
+
+		smsd = smsd / used;
+	}
+
+	if (!params.pBCz)
+	{
+		int used = 0;
+		for (int atomIndex = 0; atomIndex < atoms(box).size(); ++atomIndex)
+		{
+			Atom* atom = atoms(box).at(atomIndex);
+			if (atom->at().z < 2 * params.lattice->latticeConstant || atom->at().z > params.dimensions.z*params.lattice->latticeConstant - 2 * params.lattice->latticeConstant)
+			{
+				smsd += (atom->at().z - atom->initialPosition().z)*(atom->at().z - atom->initialPosition().z);
+				used++;
+			}
+		}
+
+		smsd = smsd / used;
+	}
+
+
+	timestamps.push_back(t);
+	values.push_back(smsd);
+}
+
 void DebyeTemperature::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
 	double mass = params.material->mass*PHConstants::amuToefA;
@@ -163,7 +221,7 @@ void DebyeTemperature::calculate(double t, const SimulationParams& params, const
 		}
 		atomIndex++;
 	}
-	pressure = (npart*PHConstants::boltzmann*instantT) / volume + pressure/(6.0*volume);
+	pressure = (npart*PHConstants::boltzmann*instantT) / volume + pressure/(6.0*volume*atoms(box).size());
 
  	timestamps.push_back(t);
  	values.push_back(pressure);
