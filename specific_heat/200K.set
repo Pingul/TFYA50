@@ -1,0 +1,45 @@
+# definition of a settingsfile
+outputDirectory = data/specific_heat
+
+# Timesteps
+timesteps = 50000
+timestepLength = 1 # The timestep is measured in femtoseconds
+calculateMeanAfter = 5000
+
+# Verlet list
+verletListUpdateFrequency = 200
+cutoffDistance = 9.275 # in Ångström
+
+# Visualisation
+saveVisualizationData = 0 # boolean
+visualizationLogRate = 5 # Save data every x femtosecond
+
+# Measures
+measureDataLogRate = 1 # every x femtosecond
+
+# Temperature and thermostat
+initialTemperature = 200 # Kelvin
+#thermostat = berendsen # string
+#goalTemperature = 320 # Kelvin
+#thermostatScaling = 0.25
+
+# Periodic boundary
+pBCx=1 # 0 for removing PBC in one direction
+pBCy=1
+pBCz=1
+
+# Box size
+dimensions.x = 8 # in Unit cells
+dimensions.y = 8
+dimensions.z = 8
+
+# Lattice 
+lattice = fcc
+latticeConstant = 4.090 # Ångström
+
+# Material
+material = silver
+
+# Potential parameters (only works with LJ)
+#epsilon = 2
+#sigma = 0.1
