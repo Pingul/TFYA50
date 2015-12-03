@@ -74,6 +74,7 @@ void Simulation::setupMeasures()
 	params->surfaceMSD = new SurfaceMSD();
 	params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
 	params->pressure = new Pressure(params->temperature);
+	params->specificHeat = new SpecificHeat(params->temperature);
 
 	// This makes administration somewhat easier
 	// Only add the measures you want to calculate independently
@@ -85,6 +86,7 @@ void Simulation::setupMeasures()
 	measures.push_back(params->surfaceMSD); 
 	measures.push_back(params->debyeTemperature);
 	measures.push_back(params->pressure);
+	measures.push_back(params->specificHeat);
 }
 
 void Simulation::calculateMeasures(double t)
@@ -129,7 +131,7 @@ void Simulation::run()
 	auto start = std::chrono::system_clock::now();
 	box = new MDBox{ *params };
 
-	std::cout << "Running simulation with " << box->atomSnapshot().size() << " atoms on " << params->threads << " threads" << std::endl;
+	std::cout << "Running simulation with " << box->atomSnapshot().size() << " atoms for " << params->timesteps << " timesteps." << std::endl;//<< params->threads << " threads" << std::endl;
 	std::cout << "Start temperature is " << params->initialTemperature << " K";
 	if (params->thermostat != nullptr)
 		std::cout << " and using a thermostat with " << params->goalTemperature << " K";

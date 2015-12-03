@@ -112,7 +112,6 @@ void Temperature::calculate(double t, const SimulationParams& params, const MDBo
 void MSD::calculate(double t, const SimulationParams& params, const MDBox& box)
 {
 	double msd = 0;
-	int atomIndex = 0;
 
 	for (auto& atom : atoms(box))
 	{
@@ -207,13 +206,10 @@ void DebyeTemperature::calculate(double t, const SimulationParams& params, const
 	double volume = params.dimensions.x * params.dimensions.y * params.dimensions.z * pow(params.lattice->latticeConstant, 3);
  	for (auto& interactionList : verletList(box))
  	{
- 		double energyPerAtom = 0;
  		Atom* atom{ atoms(box)[atomIndex] };
 
  		for (auto& atomTranslationPair : interactionList)
  		{
- 			Vector3 currentAtomPosition = atom->at();
-
 			Atom* otherAtom = atomTranslationPair.first;
  			Vector3 distBetween = otherAtom->at() - atom->at();
  			Vector3 forceBetween = params.material->potential->interaction(atom->at(), otherAtom->at(), params);
@@ -226,3 +222,20 @@ void DebyeTemperature::calculate(double t, const SimulationParams& params, const
  	timestamps.push_back(t);
  	values.push_back(pressure);
  }
+
+void SpecificHeat::calculate(double t, const SimulationParams& params, const MDBox& box)
+{
+	static double accTemp = 0.0;
+	static double accTemp2 = 0.0;
+	double temp{Measure::value(temperature, t)};
+	accTemp += temp;
+	accTemp2 += temp*temp;
+
+	double n{(double)atoms(box).size()};
+	double meanTemp{accTemp/n};
+	double meanTemp2{accTemp2/n};
+
+	double specificHeat{1/( (2/(3*n*PHConstants::boltzmann)) * (1 - 2*n/3*(meanTemp2/(meanTemp*meanTemp) - 1)) )};
+	timestamps.push_back(t);
+	values.push_back(specificHeat);
+}

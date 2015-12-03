@@ -187,7 +187,7 @@ namespace fileIO
 				int end = sim.params->timesteps;
 				for (auto& measure : sim.measures)
 				{	
-					std::string s{"\n" + measure->name() + " : " + std::to_string(measure->average(start, end))};
+					std::string s{"\n" + measure->name() + " : " + std::to_string(measure->average(start, end)) + " " + measure->unit()};
 					simFile.write(s.c_str(), s.size());
 				}
 				m = {"\n\nMEASURE FILES"};

@@ -18,6 +18,7 @@ class Measure
 
 		virtual ~Measure() = default;
 		virtual std::string name() { return "UNDEFINED"; }
+		virtual std::string unit() { return "UNIT"; }
 		virtual void saveToFile(const std::string&);
 		virtual void calculate(double, const SimulationParams&, const MDBox&) = 0;
 		virtual double average(int start, int end);
@@ -39,6 +40,7 @@ class KineticEnergy : public Measure
 		virtual ~KineticEnergy() = default;
 
 		virtual std::string name() { return "kinetic"; }
+		virtual std::string unit() { return "eV"; }
 		virtual void calculate(double, const SimulationParams&, const MDBox&);
 };
 
@@ -49,6 +51,7 @@ class PotentialEnergy : public Measure
 		virtual ~PotentialEnergy() = default;
 
 		virtual std::string name() { return "potential"; }
+		virtual std::string unit() { return "eV"; }
 		virtual void calculate(double, const SimulationParams&, const MDBox&);
 };
 
@@ -62,6 +65,7 @@ class TotalEnergy : public Measure
 		virtual ~TotalEnergy() = default;
 
 		virtual std::string name() { return "totalEnergy"; }
+		virtual std::string unit() { return "eV"; }
 		virtual void calculate(double, const SimulationParams& params, const MDBox& box);
 
 	private:
@@ -77,6 +81,7 @@ class Temperature : public Measure
 		virtual ~Temperature() = default;
 
 		virtual std::string name() { return "temperature"; }
+		virtual std::string unit() { return "K"; }
 		virtual void calculate(double, const SimulationParams&, const MDBox&);
 
 	private:
@@ -91,6 +96,7 @@ public:
 	virtual ~MSD() = default;
 
 	virtual std::string name() { return "msd"; }
+	virtual std::string unit() { return "Å"; }
 	virtual void calculate(double, const SimulationParams&, const MDBox&);
 };
 
@@ -101,6 +107,7 @@ public:
 	virtual ~SurfaceMSD() = default;
 
 	virtual std::string name() { return "surfacemsd"; }
+	virtual std::string unit() { return "Å"; }
 	virtual void calculate(double, const SimulationParams&, const MDBox&);
 };
 
@@ -114,6 +121,7 @@ public:
 	virtual ~DebyeTemperature() = default;
 
 	virtual std::string name() { return "debyeTemp"; }
+	virtual std::string unit() { return "K"; }
 	virtual void calculate(double, const SimulationParams& params, const MDBox& box);
 
 private:
@@ -129,10 +137,26 @@ public:
 	virtual ~Pressure() = default;
 
 	virtual std::string name() { return "pressure"; }
+	virtual std::string unit() { return "eV/Å^3"; }
 	virtual void calculate(double, const SimulationParams&, const MDBox&);
 
 private:
 	Temperature* temperature;
+};
+
+class SpecificHeat : public Measure
+{
+public:
+	SpecificHeat(Temperature* temp)
+		: temperature{temp} {}
+	~SpecificHeat() = default;
+
+	virtual std::string name() { return "specificHeat"; }
+	virtual std::string unit() { return "eV/K"; }
+	virtual void calculate(double, const SimulationParams&, const MDBox&);
+private:
+	Temperature* temperature;
+
 };
 
 #endif
