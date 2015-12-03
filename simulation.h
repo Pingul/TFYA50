@@ -52,6 +52,7 @@ class SimulationParams
 		double cutoffDistance{ -1.0 }; // in Ångström
 		double initialTemperature{ -1.0 }; // Kelvin
 		double goalTemperature; // Kelvin
+		double thermostatScaling{1.0};
 		Vector3 dimensions{ -1, -1, -1 }; // in Unit cells
 		bool pBCx{ true };
 		bool pBCy{ true };

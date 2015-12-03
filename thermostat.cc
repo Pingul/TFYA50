@@ -15,7 +15,8 @@ void BerendsenThermostat::scaleTemperature(double t, MDBox& box)
 	double currentTemp = Measure::value(params.temperature, t);
 	double goalTemp = params.goalTemperature;
 	double deltatime = params.timestepLength;
-	double scaleFactor = sqrt(1 + (deltatime/(0.5*pow(10,3)))*(goalTemp / currentTemp - 1));
+	static double scaling = deltatime/(params.thermostatScaling*1000);
+	double scaleFactor = sqrt(1 + scaling*(goalTemp / currentTemp - 1));
 	
 	for (auto& atom : atoms(box))
 	{

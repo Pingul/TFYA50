@@ -54,7 +54,7 @@ Simulation::Simulation(const char* setFile)
 {
 	Random::setup();
 	params = new SimulationParams{setFile};
-	Threadpool::dispatchOnce(params->threads);
+	// Threadpool::dispatchOnce(params->threads);
 	filePrefix = fileName(setFile) + "_";
 	//filePrefix = getCurrentDateAndTime() + " | ";
 }
@@ -273,6 +273,8 @@ void SimulationParams::initSettings(const char* setFile)
 			dimensions.z = std::round(value);
 		else if (variable.compare("latticeConstant") == 0)
 			lattice->latticeConstant = value; // Dependent on the lattice that we created earlier
+		else if (variable.compare("thermostatScaling") == 0)
+			thermostatScaling = value;
 		else if (variable.compare("epsilon") == 0)
 		{
 			// Special case for LJ potential
