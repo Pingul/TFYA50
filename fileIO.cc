@@ -94,7 +94,7 @@ namespace fileIO
 				simFile.close();
 			}
 			else
-				throw std::runtime_error{ "Could not open settings file" };
+				throw std::runtime_error{ "Could not open settings file '" + std::string(file) + "'"};
 		}
 	}
 
