@@ -10,10 +10,11 @@ def main(file):
 	t = time.time()
 	bin = "./main "
 	if os.name == "nt":
-		bin = "MDSim\Debug\MDSim.exe "
+		bin = r"MDSim\x64\Release\MDSim.exe "
 	for f in files:
 		print("RUNNING '" + f + "'\n")
 		call = bin + f
+		print(call)
 		os.system(call)
 		current_t = time.time()
 		print("\nCOMPLETED '" + f + "'\nCURRENTLY SPENT " + str(current_t - t) + " SECONDS EXECUTING")
