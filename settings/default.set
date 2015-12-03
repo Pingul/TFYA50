@@ -1,25 +1,25 @@
 # definition of a settingsfile
 
 # Number of timesteps
-timesteps = 50000
+timesteps = 15000
 timestepLength = 1 # The timestep is measured in femtoseconds
+calculateMeanAfter = 1000
 
 # Verlet list update freq
 verletListUpdateFrequency = 200
 
-# Visualization
 saveVisualizationData = 0 # boolean
 visualizationLogRate = 5 # Save data every x femtosecond
 
 outputDirectory = data
 
 measureDataLogRate = 1 # every x femtosecond
-cutoffDistance = 6.625 # in Ångström
+cutoffDistance = 9.5 # in Ångström
 
-# thermostat = berendsen # string
-goalTemperature = 298 # Kelvin
-
-initialTemperature = 300 # Kelvin
+initialTemperature = 280 # Kelvin
+thermostat = berendsen # string
+goalTemperature = 320 # Kelvin
+thermostatScaling = 0.25
 
 pBCx=1 # 0 for removing PBC in one direction
 pBCy=1
@@ -33,7 +33,6 @@ lattice = fcc
 latticeConstant = 4.090 # Ångström
 material = silver
 
-# Calc Mean
-calculateMeanAfter = 5000
-
-threads = 2
+#potential parameters
+#epsilon = 2
+#sigma = 0.1

@@ -101,7 +101,7 @@ MDBox::MDBox(const SimulationParams& params) : simulationParams{params}
 	setInitialVelocities(simulationParams.initialTemperature);
 	updateVerletList();
 	vCutoff = simulationParams.cutoffDistance*1.1; // We increase this a little to take a little too many atoms in the verlet initially
-	createTasks();
+	// createTasks();
 }
 
 bool MDBox::atEdge(const Atom& atom, bool xEdge, bool yEdge, bool zEdge)
@@ -504,16 +504,18 @@ void MDBox::setInitialVelocities(double temperature)
 
 void MDBox::updateForces(const Material& material)
 {
-	for (auto& t : ztasks)
-	{
-		Threadpool::shared().addTask(&t);
-	}
-	Threadpool::shared().sync();
-	for (auto& t : ftasks)
-	{
-		Threadpool::shared().addTask(&t);
-	}
-	Threadpool::shared().sync();
+	// for (auto& t : ztasks)
+	// {
+	// 	Threadpool::shared().addTask(&t);
+	// }
+	// Threadpool::shared().sync();
+	// for (auto& t : ftasks)
+	// {
+	// 	Threadpool::shared().addTask(&t);
+	// }
+	// Threadpool::shared().sync();
+	zeroForce(0, atoms.size());
+	forceWork(0, atoms.size());
 }
 
 void MDBox::zeroForce(int start, int end)
@@ -546,11 +548,12 @@ void MDBox::forceWork(int start, int end) // what atoms to loop over
 
 void MDBox::updatePositions()
 {
-	for (auto& t : ptasks)
-	{
-		Threadpool::shared().addTask(&t);
-	}
-	Threadpool::shared().sync();
+	// for (auto& t : ptasks)
+	// {
+	// 	Threadpool::shared().addTask(&t);
+	// }
+	// Threadpool::shared().sync();
+	positionWork(0, atoms.size());
 }
 
 void MDBox::positionWork(int start, int end)
@@ -588,11 +591,12 @@ void MDBox::positionWork(int start, int end)
 
 void MDBox::updateVelocities()
 {
-	for (auto& t : vtasks)
-	{
-		Threadpool::shared().addTask(&t);
-	}
-	Threadpool::shared().sync();
+	// for (auto& t : vtasks)
+	// {
+	// 	Threadpool::shared().addTask(&t);
+	// }
+	// Threadpool::shared().sync();
+	velocityWork(0, atoms.size());
 }
 
 void MDBox::velocityWork(int start, int end)
