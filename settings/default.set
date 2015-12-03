@@ -1,38 +1,45 @@
 # definition of a settingsfile
+outputDirectory = data
 
-# Number of timesteps
+# Timesteps
 timesteps = 15000
 timestepLength = 1 # The timestep is measured in femtoseconds
 calculateMeanAfter = 1000
 
-# Verlet list update freq
+# Verlet list
 verletListUpdateFrequency = 200
+cutoffDistance = 9.5 # in Ångström
 
+# Visualisation
 saveVisualizationData = 0 # boolean
 visualizationLogRate = 5 # Save data every x femtosecond
 
-outputDirectory = data
-
+# Measures
 measureDataLogRate = 1 # every x femtosecond
-cutoffDistance = 9.5 # in Ångström
 
+# Temperature and thermostat
 initialTemperature = 280 # Kelvin
 thermostat = berendsen # string
 goalTemperature = 320 # Kelvin
 thermostatScaling = 0.25
 
+# Periodic boundary
 pBCx=1 # 0 for removing PBC in one direction
 pBCy=1
 pBCz=1
 
+# Box size
 dimensions.x = 4 # in Unit cells
 dimensions.y = 4
 dimensions.z = 4
 
+# Lattice 
 lattice = fcc
 latticeConstant = 4.090 # Ångström
+
+# Material
 material = silver
 
-#potential parameters
+# Potential parameters (only works with LJ)
 #epsilon = 2
 #sigma = 0.1
