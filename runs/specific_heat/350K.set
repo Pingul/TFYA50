@@ -19,9 +19,9 @@ measureDataLogRate = 1 # every x femtosecond
 
 # Temperature and thermostat
 initialTemperature = 350 # Kelvin
-#thermostat = berendsen # string
-#goalTemperature = 320 # Kelvin
-#thermostatScaling = 0.25
+thermostat = berendsen # string
+goalTemperature = 350 # Kelvin
+thermostatScaling = 0.5
 
 # Periodic boundary
 pBCx=1 # 0 for removing PBC in one direction

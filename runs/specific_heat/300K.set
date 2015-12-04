@@ -1,5 +1,5 @@
 # definition of a settingsfile
-outputDirectory = data/specific_heat
+outputDirectory = runs/specific_heat
 
 # Timesteps
 timesteps = 50000
@@ -19,9 +19,9 @@ measureDataLogRate = 1 # every x femtosecond
 
 # Temperature and thermostat
 initialTemperature = 300 # Kelvin
-#thermostat = berendsen # string
-#goalTemperature = 320 # Kelvin
-#thermostatScaling = 0.25
+thermostat = berendsen # string
+goalTemperature = 300 # Kelvin
+thermostatScaling = 0.5
 
 # Periodic boundary
 pBCx=1 # 0 for removing PBC in one direction

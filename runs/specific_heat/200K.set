@@ -1,5 +1,5 @@
 # definition of a settingsfile
-outputDirectory = data/specific_heat
+outputDirectory = runs/specific_heat
 
 # Timesteps
 timesteps = 50000
