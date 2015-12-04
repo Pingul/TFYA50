@@ -1,0 +1,9 @@
+AVERAGES
+kinetic : 39.788527
+potential : -5797.679853
+totalEnergy : -5757.891326
+
+MEASURE FILES
+TotalEnergy_kinetic.mdf
+TotalEnergy_potential.mdf
+TotalEnergy_totalEnergy.mdf

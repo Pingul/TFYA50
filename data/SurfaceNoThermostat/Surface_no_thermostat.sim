@@ -1,0 +1,19 @@
+AVERAGES
+kinetic : 40.995093
+potential : -5495.393155
+totalEnergy : -5454.398061
+temperature : 154.859353
+msd : 0.014503
+surfacemsd : 0.018015
+debyeTemp : 141.012108
+pressure : 0.000782
+
+MEASURE FILES
+Surface_no_thermostat_kinetic.mdf
+Surface_no_thermostat_potential.mdf
+Surface_no_thermostat_totalEnergy.mdf
+Surface_no_thermostat_temperature.mdf
+Surface_no_thermostat_msd.mdf
+Surface_no_thermostat_surfacemsd.mdf
+Surface_no_thermostat_debyeTemp.mdf
+Surface_no_thermostat_pressure.mdf
