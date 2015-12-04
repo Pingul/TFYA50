@@ -1,0 +1,21 @@
+AVERAGES
+kinetic : 39.706286 eV
+potential : -5797.762716 eV
+totalEnergy : -5758.056430 eV
+temperature : 149.990871 K
+msd : 0.003585 Å
+surfacemsd : 0.000000 Å
+debyeTemp : 237.712354 K
+pressure : 0.000760 eV/Å^3
+specificHeat : 0.000219 eV/K
+
+MEASURE FILES
+150K_kinetic.mdf
+150K_potential.mdf
+150K_totalEnergy.mdf
+150K_temperature.mdf
+150K_msd.mdf
+150K_surfacemsd.mdf
+150K_debyeTemp.mdf
+150K_pressure.mdf
+150K_specificHeat.mdf
