@@ -196,6 +196,23 @@ void DebyeTemperature::calculate(double t, const SimulationParams& params, const
 }
 
 
+void SurfaceDebyeTemperature::calculate(double t, const SimulationParams& params, const MDBox& box)
+{
+	if (!params.pBCx || !params.pBCy || !params.pBCz)
+	{
+		double mass = params.material->mass*PHConstants::amuToefA;
+		double instantT = { Measure::value(temperature,t) };
+		double surfaceMeanSquareDisplacement = { Measure::value(surfaceMSD,t) };
+		double hBar2 = pow(PHConstants::planckConstant, 2);
+
+		double surfaceDebyeTemperature = sqrt(3.0*hBar2*instantT / (mass*PHConstants::boltzmann*surfaceMeanSquareDisplacement));
+
+		timestamps.push_back(t);
+		values.push_back(surfaceDebyeTemperature);
+	}
+}
+
+
  void Pressure::calculate(double t, const SimulationParams& params, const MDBox& box)
  {
  	int npart = atoms(box).size();

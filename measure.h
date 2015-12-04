@@ -129,6 +129,24 @@ private:
 	MSD* mSD;
 };
 
+class SurfaceDebyeTemperature : public Measure
+{
+public:
+	SurfaceDebyeTemperature(Temperature* temp, SurfaceMSD* smsd)
+		: temperature{ temp }, surfaceMSD{ smsd } {}
+	SurfaceDebyeTemperature(SurfaceMSD* smsd, Temperature* temp)
+		: temperature{ temp }, surfaceMSD{ smsd } {}
+	virtual ~SurfaceDebyeTemperature() = default;
+
+	virtual std::string name() { return "surfaceDebyeTemp"; }
+	virtual std::string unit() { return "K"; }
+	virtual void calculate(double, const SimulationParams& params, const MDBox& box);
+
+private:
+	Temperature* temperature;
+	SurfaceMSD* surfaceMSD;
+};
+
 class Pressure : public Measure
 {
 public:

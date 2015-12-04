@@ -78,6 +78,7 @@ class SimulationParams
 		class MSD* msd{ nullptr };
 		class SurfaceMSD* surfaceMSD{ nullptr };
 		class DebyeTemperature* debyeTemperature{ nullptr };
+		class SurfaceDebyeTemperature* surfaceDebyeTemperature{ nullptr };
 		class Pressure* pressure{ nullptr };
 		class SpecificHeat* specificHeat{ nullptr };
 

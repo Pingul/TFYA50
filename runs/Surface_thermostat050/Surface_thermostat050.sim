@@ -1,11 +1,12 @@
 AVERAGES
-kinetic : 79.411373 eV
-potential : -5455.520270 eV
-totalEnergy : -5376.108897 eV
-temperature : 299.977214 K
-msd : 0.026943 Å
-surfacemsd : 0.032220 Å
-debyeTemp : 132.968260 K
+kinetic : 79.414246 eV
+potential : -5455.515490 eV
+totalEnergy : -5376.101244 eV
+temperature : 299.988063 K
+msd : 0.026449 Å
+surfacemsd : 0.032025 Å
+debyeTemp : 133.266258 K
+surfaceDebyeTemp : 129.968846 K
 pressure : 0.001513 eV/Å^3
 specificHeat : 0.000219 eV/K
 
@@ -17,5 +18,6 @@ Surface_thermostat050_temperature.mdf
 Surface_thermostat050_msd.mdf
 Surface_thermostat050_surfacemsd.mdf
 Surface_thermostat050_debyeTemp.mdf
+Surface_thermostat050_surfaceDebyeTemp.mdf
 Surface_thermostat050_pressure.mdf
 Surface_thermostat050_specificHeat.mdf

@@ -73,6 +73,7 @@ void Simulation::setupMeasures()
 	params->msd = new MSD();
 	params->surfaceMSD = new SurfaceMSD();
 	params->debyeTemperature = new DebyeTemperature(params->temperature, params->msd);
+	params->surfaceDebyeTemperature = new SurfaceDebyeTemperature(params->temperature, params->surfaceMSD);
 	params->pressure = new Pressure(params->temperature);
 	params->specificHeat = new SpecificHeat(params->temperature);
 
@@ -85,6 +86,7 @@ void Simulation::setupMeasures()
 	measures.push_back(params->msd);
 	measures.push_back(params->surfaceMSD); 
 	measures.push_back(params->debyeTemperature);
+	measures.push_back(params->surfaceDebyeTemperature);
 	measures.push_back(params->pressure);
 	measures.push_back(params->specificHeat);
 }
