@@ -1,0 +1,13 @@
+AVERAGES
+kinetic : 39.775133 eV
+potential : -5797.691347 eV
+totalEnergy : -5757.916215 eV
+temperature : 150.250941 K
+pressure : 0.000762 eV/Å^3
+
+MEASURE FILES
+Pressure_kinetic.mdf
+Pressure_potential.mdf
+Pressure_totalEnergy.mdf
+Pressure_temperature.mdf
+Pressure_pressure.mdf
